@@ -1,0 +1,52 @@
+{
+  "schemaVersion": "1.0",
+  "tenantId": "demo-bank",
+  "sourceId": "crm-parties",
+  "snapshotId": "crm-parties@sha256:503d103ab015d2fb7720ba7e4aeed7f54e999426e22bc6e126fd663b79f5146a",
+  "field": "cif_no",
+  "logicalType": "string",
+  "sourceLocator": "data/synthetic/crm_parties.csv#field=cif_no",
+  "observedAt": "2026-07-22T13:51:12Z",
+  "extractorName": "ontology-appliance-csv-profiler",
+  "extractorVersion": "1.0.0",
+  "sourceSha256": "503d103ab015d2fb7720ba7e4aeed7f54e999426e22bc6e126fd663b79f5146a",
+  "bounds": {
+    "maximumRows": 100,
+    "observedRows": 6,
+    "maximumBytes": 65536,
+    "observedBytes": 492
+  },
+  "statistics": {
+    "rowCount": 6,
+    "nonNullCount": 6,
+    "nullCount": 0,
+    "nullRate": 0.0,
+    "distinctCount": 5,
+    "uniquenessRatio": 0.833333,
+    "pattern": "^CIF-[0-9]{4}$",
+    "patternMatchCount": 6,
+    "patternMatchRate": 1.0
+  },
+  "relationshipEvidence": {
+    "partyTypes": [
+      "PERSON",
+      "LEGAL_ENTITY"
+    ],
+    "partyIdPresentCount": 6
+  },
+  "counterexamples": [
+    {
+      "value": "CIF-0042",
+      "occurrences": 2,
+      "partyIds": [
+        "P-HIST-1",
+        "P-HIST-2"
+      ],
+      "locators": [
+        "data/synthetic/crm_parties.csv#row=6:field=cif_no",
+        "data/synthetic/crm_parties.csv#row=7:field=cif_no"
+      ],
+      "claim": "cif_no is not absolutely unique across historical merged CRM records."
+    }
+  ]
+}

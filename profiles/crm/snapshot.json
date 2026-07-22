@@ -1,0 +1,26 @@
+{
+  "accessMode": "read_only",
+  "content": {
+    "byteCount": 492,
+    "recordCount": 6,
+    "sha256": "503d103ab015d2fb7720ba7e4aeed7f54e999426e22bc6e126fd663b79f5146a",
+    "sourceAssets": [
+      {
+        "byteCount": 492,
+        "mediaType": "text/csv",
+        "path": "data/synthetic/crm_parties.csv",
+        "sha256": "503d103ab015d2fb7720ba7e4aeed7f54e999426e22bc6e126fd663b79f5146a"
+      }
+    ]
+  },
+  "extractorName": "ontology-appliance-csv-profiler",
+  "extractorVersion": "1.0.0",
+  "observedAt": "2026-07-22T13:51:12Z",
+  "profileLocator": "profiles/crm/profile.json",
+  "schemaLocator": "contracts/crm.schema.json",
+  "schemaVersion": "1.0",
+  "snapshotId": "crm-parties@sha256:503d103ab015d2fb7720ba7e4aeed7f54e999426e22bc6e126fd663b79f5146a",
+  "sourceId": "crm-parties",
+  "sourceLocator": "data/synthetic/crm_parties.csv",
+  "tenantId": "demo-bank"
+}

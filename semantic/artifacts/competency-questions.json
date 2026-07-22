@@ -1,0 +1,309 @@
+{
+  "$schema": "urn:ontology-appliance:schema:competency-question-golden:1",
+  "schemaVersion": "2.0",
+  "bundleVersion": "2026.07.1-demo-bank",
+  "ontologyVersion": "2026.07.1",
+  "tenantId": "demo-bank",
+  "validatedAt": "2026-07-22T13:51:12Z",
+  "normalization": {
+    "rdfTerms": "IRIs and literals are serialized as their stable lexical strings.",
+    "rowOrdering": "Each SELECT template has an explicit ORDER BY and rows retain projected variable order.",
+    "comparison": "Deep JSON equality; no row-count threshold, subset, or unordered comparison is allowed."
+  },
+  "questions": [
+    {
+      "id": "CQ-001",
+      "queryVersion": "1.0.0",
+      "question": "Which accounts are linked to sanctioned parties through beneficial ownership?",
+      "evaluationRef": "services/semantic-gateway/tests/test_api.py#test_competency_questions_match_golden_exactly[CQ-001]",
+      "sparql": "PREFIX oa: <urn:ontology-appliance:vocab:>\nSELECT DISTINCT ?sanction ?party ?entity ?account WHERE {\n  ?sanction a oa:SanctionsEntry ; oa:targetsParty ?party .\n  ?party oa:beneficialOwnerOf ?entity .\n  ?entity oa:hasAccount ?account .\n}\nORDER BY ?account",
+      "evidenceIris": [
+        "urn:ontology-appliance:demo-bank:resource:evidence-sanctions-eu-998",
+        "urn:ontology-appliance:demo-bank:resource:evidence-crm-p-1001",
+        "urn:ontology-appliance:demo-bank:resource:evidence-kyc-document-1001",
+        "urn:ontology-appliance:demo-bank:resource:evidence-accounts-snapshot"
+      ],
+      "expectedOutcome": {
+        "rows": [
+          {
+            "sanction": "urn:ontology-appliance:demo-bank:resource:sanctions-entry-eu-998",
+            "party": "urn:ontology-appliance:demo-bank:resource:party-p-1001",
+            "entity": "urn:ontology-appliance:demo-bank:resource:entity-le-2001",
+            "account": "urn:ontology-appliance:demo-bank:resource:account-es120001"
+          }
+        ],
+        "evidence": [
+          {
+            "evidenceIri": "urn:ontology-appliance:demo-bank:resource:evidence-sanctions-eu-998",
+            "sourceId": "sanctions-mock",
+            "snapshotId": "sanctions-mock@sha256:9307b98034dfc4d49952fad88cc445a37fd081452e6ac437f4302c98807cca72",
+            "locator": "data/synthetic/sanctions.json#/records/0",
+            "contentSha256": "9307b98034dfc4d49952fad88cc445a37fd081452e6ac437f4302c98807cca72"
+          },
+          {
+            "evidenceIri": "urn:ontology-appliance:demo-bank:resource:evidence-crm-p-1001",
+            "sourceId": "crm-parties",
+            "snapshotId": "crm-parties@sha256:503d103ab015d2fb7720ba7e4aeed7f54e999426e22bc6e126fd663b79f5146a",
+            "locator": "data/synthetic/crm_parties.csv#row=2",
+            "contentSha256": "503d103ab015d2fb7720ba7e4aeed7f54e999426e22bc6e126fd663b79f5146a"
+          },
+          {
+            "evidenceIri": "urn:ontology-appliance:demo-bank:resource:evidence-kyc-document-1001",
+            "sourceId": "kyc-documents",
+            "snapshotId": "kyc-le-2001@sha256:ab6ca88676c4f2091c09228d718cbccb9f6711df9c0727026a5aff820aec1787",
+            "locator": "data/synthetic/kyc/LE-2001.txt#line=4",
+            "contentSha256": "ab6ca88676c4f2091c09228d718cbccb9f6711df9c0727026a5aff820aec1787"
+          },
+          {
+            "evidenceIri": "urn:ontology-appliance:demo-bank:resource:evidence-accounts-snapshot",
+            "sourceId": "core-accounts",
+            "snapshotId": "core-accounts@sha256:5048c0b5a286afecb3b7bdcc81891b54bda12ab151e7097fcf81b3f1b5bb974a",
+            "locator": "data/synthetic/accounts.csv",
+            "contentSha256": "5048c0b5a286afecb3b7bdcc81891b54bda12ab151e7097fcf81b3f1b5bb974a"
+          }
+        ],
+        "bundleVersion": "2026.07.1-demo-bank",
+        "ontologyVersion": "2026.07.1",
+        "traceId": "golden-cq-001-2026-07-1"
+      },
+      "status": "PASS"
+    },
+    {
+      "id": "CQ-002",
+      "queryVersion": "1.0.0",
+      "question": "Which payments originate from accounts linked to sanctioned beneficial owners?",
+      "evaluationRef": "services/semantic-gateway/tests/test_api.py#test_competency_questions_match_golden_exactly[CQ-002]",
+      "sparql": "PREFIX oa: <urn:ontology-appliance:vocab:>\nSELECT DISTINCT ?payment ?account ?amount ?currency ?beneficiaryAccount WHERE {\n  ?sanction a oa:SanctionsEntry ; oa:targetsParty ?party .\n  ?party oa:beneficialOwnerOf ?entity .\n  ?entity oa:hasAccount ?account .\n  ?payment a oa:Payment ; oa:fromAccount ?account ; oa:amount ?amount ; oa:currency ?currency .\n  OPTIONAL { ?payment oa:toAccount ?beneficiaryAccount }\n}\nORDER BY ?payment",
+      "evidenceIris": [
+        "urn:ontology-appliance:demo-bank:resource:evidence-sanctions-eu-998",
+        "urn:ontology-appliance:demo-bank:resource:evidence-crm-p-1001",
+        "urn:ontology-appliance:demo-bank:resource:evidence-kyc-document-1001",
+        "urn:ontology-appliance:demo-bank:resource:evidence-accounts-snapshot",
+        "urn:ontology-appliance:demo-bank:resource:evidence-payments-snapshot"
+      ],
+      "expectedOutcome": {
+        "rows": [
+          {
+            "payment": "urn:ontology-appliance:demo-bank:resource:payment-pay-5001",
+            "account": "urn:ontology-appliance:demo-bank:resource:account-es120001",
+            "amount": "125000.00",
+            "currency": "EUR",
+            "beneficiaryAccount": "urn:ontology-appliance:demo-bank:resource:account-de890001"
+          },
+          {
+            "payment": "urn:ontology-appliance:demo-bank:resource:payment-pay-5002",
+            "account": "urn:ontology-appliance:demo-bank:resource:account-es120001",
+            "amount": "17000.00",
+            "currency": "USD",
+            "beneficiaryAccount": "urn:ontology-appliance:demo-bank:resource:account-de890001"
+          }
+        ],
+        "evidence": [
+          {
+            "evidenceIri": "urn:ontology-appliance:demo-bank:resource:evidence-sanctions-eu-998",
+            "sourceId": "sanctions-mock",
+            "snapshotId": "sanctions-mock@sha256:9307b98034dfc4d49952fad88cc445a37fd081452e6ac437f4302c98807cca72",
+            "locator": "data/synthetic/sanctions.json#/records/0",
+            "contentSha256": "9307b98034dfc4d49952fad88cc445a37fd081452e6ac437f4302c98807cca72"
+          },
+          {
+            "evidenceIri": "urn:ontology-appliance:demo-bank:resource:evidence-crm-p-1001",
+            "sourceId": "crm-parties",
+            "snapshotId": "crm-parties@sha256:503d103ab015d2fb7720ba7e4aeed7f54e999426e22bc6e126fd663b79f5146a",
+            "locator": "data/synthetic/crm_parties.csv#row=2",
+            "contentSha256": "503d103ab015d2fb7720ba7e4aeed7f54e999426e22bc6e126fd663b79f5146a"
+          },
+          {
+            "evidenceIri": "urn:ontology-appliance:demo-bank:resource:evidence-kyc-document-1001",
+            "sourceId": "kyc-documents",
+            "snapshotId": "kyc-le-2001@sha256:ab6ca88676c4f2091c09228d718cbccb9f6711df9c0727026a5aff820aec1787",
+            "locator": "data/synthetic/kyc/LE-2001.txt#line=4",
+            "contentSha256": "ab6ca88676c4f2091c09228d718cbccb9f6711df9c0727026a5aff820aec1787"
+          },
+          {
+            "evidenceIri": "urn:ontology-appliance:demo-bank:resource:evidence-accounts-snapshot",
+            "sourceId": "core-accounts",
+            "snapshotId": "core-accounts@sha256:5048c0b5a286afecb3b7bdcc81891b54bda12ab151e7097fcf81b3f1b5bb974a",
+            "locator": "data/synthetic/accounts.csv",
+            "contentSha256": "5048c0b5a286afecb3b7bdcc81891b54bda12ab151e7097fcf81b3f1b5bb974a"
+          },
+          {
+            "evidenceIri": "urn:ontology-appliance:demo-bank:resource:evidence-payments-snapshot",
+            "sourceId": "payments",
+            "snapshotId": "payments@sha256:0439bfd4fd9c595042add6fa1f6cdcae557a88f566c1e50eac8739e1e7c76d86",
+            "locator": "data/synthetic/payments.jsonl",
+            "contentSha256": "0439bfd4fd9c595042add6fa1f6cdcae557a88f566c1e50eac8739e1e7c76d86"
+          }
+        ],
+        "bundleVersion": "2026.07.1-demo-bank",
+        "ontologyVersion": "2026.07.1",
+        "traceId": "golden-cq-002-2026-07-1"
+      },
+      "status": "PASS"
+    },
+    {
+      "id": "CQ-003",
+      "queryVersion": "1.0.0",
+      "question": "Which party records are potential duplicates across sources, and what evidence supports that?",
+      "evaluationRef": "services/semantic-gateway/tests/test_api.py#test_competency_questions_match_golden_exactly[CQ-003]",
+      "sparql": "PREFIX oa: <urn:ontology-appliance:vocab:>\nSELECT DISTINCT ?party ?duplicate ?partySource ?duplicateSource ?evidence WHERE {\n  ?party oa:possibleDuplicateOf ?duplicate ; oa:sourceSystem ?partySource ; oa:evidence ?evidence .\n  ?duplicate oa:sourceSystem ?duplicateSource .\n  FILTER(STR(?party) < STR(?duplicate))\n}\nORDER BY ?party ?duplicate",
+      "evidenceIris": [
+        "urn:ontology-appliance:demo-bank:resource:evidence-aml-77",
+        "urn:ontology-appliance:demo-bank:resource:evidence-crm-p-1001"
+      ],
+      "expectedOutcome": {
+        "rows": [
+          {
+            "party": "urn:ontology-appliance:demo-bank:resource:party-aml-77",
+            "duplicate": "urn:ontology-appliance:demo-bank:resource:party-p-1001",
+            "partySource": "AML_CASES",
+            "duplicateSource": "CRM",
+            "evidence": "urn:ontology-appliance:demo-bank:resource:evidence-aml-77"
+          }
+        ],
+        "evidence": [
+          {
+            "evidenceIri": "urn:ontology-appliance:demo-bank:resource:evidence-aml-77",
+            "sourceId": "aml-cases",
+            "snapshotId": "aml-cases@sha256:7fce6a969a484aa2a1222c1f45a382a3f9f9f9d5d4f44b97b5dbcd9b562981cb",
+            "locator": "data/synthetic/aml_cases.csv#row=2",
+            "contentSha256": "7fce6a969a484aa2a1222c1f45a382a3f9f9f9d5d4f44b97b5dbcd9b562981cb"
+          },
+          {
+            "evidenceIri": "urn:ontology-appliance:demo-bank:resource:evidence-crm-p-1001",
+            "sourceId": "crm-parties",
+            "snapshotId": "crm-parties@sha256:503d103ab015d2fb7720ba7e4aeed7f54e999426e22bc6e126fd663b79f5146a",
+            "locator": "data/synthetic/crm_parties.csv#row=2",
+            "contentSha256": "503d103ab015d2fb7720ba7e4aeed7f54e999426e22bc6e126fd663b79f5146a"
+          }
+        ],
+        "bundleVersion": "2026.07.1-demo-bank",
+        "ontologyVersion": "2026.07.1",
+        "traceId": "golden-cq-003-2026-07-1"
+      },
+      "status": "PASS"
+    },
+    {
+      "id": "CQ-004",
+      "queryVersion": "1.0.0",
+      "question": "Why is cif_no mapped to Customer Identifier, and what counterexamples were found?",
+      "evaluationRef": "services/semantic-gateway/tests/test_api.py#test_competency_questions_match_golden_exactly[CQ-004]",
+      "sparql": "PREFIX oa: <urn:ontology-appliance:vocab:>\nSELECT ?mapping ?field ?concept ?evidence ?counterevidence ?counterexample ?lexical ?structural ?instance WHERE {\n  ?mapping a oa:MappingProposal ;\n    oa:mappingId \"mapping-crm-cif\" ;\n    oa:fieldName ?field ;\n    oa:mapsToConcept ?concept ;\n    oa:evidence ?evidence ;\n    oa:counterevidence ?counterevidence .\n  OPTIONAL { ?mapping oa:counterexample ?counterexample }\n  OPTIONAL { ?mapping oa:confidenceLexical ?lexical }\n  OPTIONAL { ?mapping oa:confidenceStructural ?structural }\n  OPTIONAL { ?mapping oa:confidenceInstance ?instance }\n}\nORDER BY ?mapping ?evidence ?counterevidence",
+      "evidenceIris": [
+        "urn:ontology-appliance:demo-bank:resource:evidence-crm-schema-cif",
+        "urn:ontology-appliance:demo-bank:resource:evidence-crm-profile-cif",
+        "urn:ontology-appliance:demo-bank:resource:evidence-crm-cif-duplicate-0042"
+      ],
+      "expectedOutcome": {
+        "rows": [
+          {
+            "mapping": "urn:ontology-appliance:demo-bank:resource:mapping-crm-cif",
+            "field": "cif_no",
+            "concept": "urn:ontology-appliance:vocab:CustomerIdentifier",
+            "evidence": "urn:ontology-appliance:demo-bank:resource:evidence-crm-profile-cif",
+            "counterevidence": "urn:ontology-appliance:demo-bank:resource:evidence-crm-cif-duplicate-0042",
+            "counterexample": "Two historical merged records reuse CIF-0042, so uniqueness is not absolute.",
+            "lexical": "0.96",
+            "structural": "0.92",
+            "instance": "0.88"
+          },
+          {
+            "mapping": "urn:ontology-appliance:demo-bank:resource:mapping-crm-cif",
+            "field": "cif_no",
+            "concept": "urn:ontology-appliance:vocab:CustomerIdentifier",
+            "evidence": "urn:ontology-appliance:demo-bank:resource:evidence-crm-schema-cif",
+            "counterevidence": "urn:ontology-appliance:demo-bank:resource:evidence-crm-cif-duplicate-0042",
+            "counterexample": "Two historical merged records reuse CIF-0042, so uniqueness is not absolute.",
+            "lexical": "0.96",
+            "structural": "0.92",
+            "instance": "0.88"
+          }
+        ],
+        "evidence": [
+          {
+            "evidenceIri": "urn:ontology-appliance:demo-bank:resource:evidence-crm-schema-cif",
+            "sourceId": "crm-parties",
+            "snapshotId": "crm-parties@sha256:503d103ab015d2fb7720ba7e4aeed7f54e999426e22bc6e126fd663b79f5146a",
+            "locator": "contracts/crm.schema.json#/properties/cif_no",
+            "contentSha256": "1e06c3c81dc5f2c2d60ad063ff54428aaf3620d6d15e5ac3c4c3e26f826599cd"
+          },
+          {
+            "evidenceIri": "urn:ontology-appliance:demo-bank:resource:evidence-crm-profile-cif",
+            "sourceId": "crm-parties",
+            "snapshotId": "crm-parties@sha256:503d103ab015d2fb7720ba7e4aeed7f54e999426e22bc6e126fd663b79f5146a",
+            "locator": "profiles/crm/cif_no.json#/statistics",
+            "contentSha256": "4b361852e6ee0f9719317b0999022a31a52fa92bb1d31e44ae3d1569523896e3"
+          },
+          {
+            "evidenceIri": "urn:ontology-appliance:demo-bank:resource:evidence-crm-cif-duplicate-0042",
+            "sourceId": "crm-parties",
+            "snapshotId": "crm-parties@sha256:503d103ab015d2fb7720ba7e4aeed7f54e999426e22bc6e126fd663b79f5146a",
+            "locator": "data/synthetic/crm_parties.csv#row=6:field=cif_no,row=7:field=cif_no",
+            "contentSha256": "503d103ab015d2fb7720ba7e4aeed7f54e999426e22bc6e126fd663b79f5146a"
+          }
+        ],
+        "bundleVersion": "2026.07.1-demo-bank",
+        "ontologyVersion": "2026.07.1",
+        "traceId": "golden-cq-004-2026-07-1"
+      },
+      "status": "PASS"
+    },
+    {
+      "id": "CQ-005",
+      "queryVersion": "1.0.0",
+      "question": "What is impacted if the ubo field mapping is deleted?",
+      "evaluationRef": "services/semantic-gateway/tests/test_api.py#test_competency_questions_match_golden_exactly[CQ-005]",
+      "sparql": "PREFIX oa: <urn:ontology-appliance:vocab:>\nPREFIX owl: <http://www.w3.org/2002/07/owl#>\nSELECT DISTINCT ?mapping ?concept ?dependency ?dependencyType WHERE {\n  ?mapping a oa:MappingProposal ; oa:fieldName \"ubo\" ; oa:mapsToConcept ?concept .\n  ?dependency oa:dependsOn ?mapping ; a ?dependencyType .\n  FILTER(?dependencyType != owl:Thing)\n}\nORDER BY ?dependency",
+      "evidenceIris": [
+        "urn:ontology-appliance:demo-bank:resource:evidence-crm-schema-ubo",
+        "urn:ontology-appliance:demo-bank:resource:evidence-kyc-document-1001"
+      ],
+      "expectedOutcome": {
+        "rows": [
+          {
+            "mapping": "urn:ontology-appliance:demo-bank:resource:mapping-crm-ubo",
+            "concept": "urn:ontology-appliance:vocab:UltimateBeneficialOwner",
+            "dependency": "urn:ontology-appliance:demo-bank:resource:question-cq-001",
+            "dependencyType": "urn:ontology-appliance:vocab:CompetencyQuestion"
+          },
+          {
+            "mapping": "urn:ontology-appliance:demo-bank:resource:mapping-crm-ubo",
+            "concept": "urn:ontology-appliance:vocab:UltimateBeneficialOwner",
+            "dependency": "urn:ontology-appliance:demo-bank:resource:question-cq-002",
+            "dependencyType": "urn:ontology-appliance:vocab:CompetencyQuestion"
+          },
+          {
+            "mapping": "urn:ontology-appliance:demo-bank:resource:mapping-crm-ubo",
+            "concept": "urn:ontology-appliance:vocab:UltimateBeneficialOwner",
+            "dependency": "urn:ontology-appliance:demo-bank:resource:relation-beneficial-owner",
+            "dependencyType": "urn:ontology-appliance:vocab:DerivedRelation"
+          }
+        ],
+        "evidence": [
+          {
+            "evidenceIri": "urn:ontology-appliance:demo-bank:resource:evidence-crm-schema-ubo",
+            "sourceId": "crm-parties",
+            "snapshotId": "crm-parties@sha256:503d103ab015d2fb7720ba7e4aeed7f54e999426e22bc6e126fd663b79f5146a",
+            "locator": "contracts/crm.schema.json#/properties/ubo",
+            "contentSha256": "1e06c3c81dc5f2c2d60ad063ff54428aaf3620d6d15e5ac3c4c3e26f826599cd"
+          },
+          {
+            "evidenceIri": "urn:ontology-appliance:demo-bank:resource:evidence-kyc-document-1001",
+            "sourceId": "kyc-documents",
+            "snapshotId": "kyc-le-2001@sha256:ab6ca88676c4f2091c09228d718cbccb9f6711df9c0727026a5aff820aec1787",
+            "locator": "data/synthetic/kyc/LE-2001.txt#line=4",
+            "contentSha256": "ab6ca88676c4f2091c09228d718cbccb9f6711df9c0727026a5aff820aec1787"
+          }
+        ],
+        "bundleVersion": "2026.07.1-demo-bank",
+        "ontologyVersion": "2026.07.1",
+        "traceId": "golden-cq-005-2026-07-1"
+      },
+      "status": "PASS"
+    }
+  ],
+  "summary": {
+    "total": 5,
+    "passed": 5
+  }
+}

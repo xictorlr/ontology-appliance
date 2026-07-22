@@ -1,0 +1,364 @@
+{
+  "evidence": [
+    {
+      "claim": {
+        "byteCount": 444,
+        "recordCount": 3
+      },
+      "classification": "INTERNAL",
+      "contentSha256": "0439bfd4fd9c595042add6fa1f6cdcae557a88f566c1e50eac8739e1e7c76d86",
+      "evidenceId": "evidence-payments-ledger-615e10b64f50496b",
+      "extractorName": "ontology-appliance-synthetic-profiler",
+      "extractorVersion": "1.0.0",
+      "locator": "data/synthetic/payments.jsonl",
+      "normalizedCoordinates": {
+        "artifact": "source-snapshot"
+      },
+      "observedAt": "2026-06-19T08:45:00Z",
+      "policyTags": [
+        "read-only",
+        "snapshot",
+        "synthetic"
+      ],
+      "snapshotId": "payments-ledger@sha256:0439bfd4fd9c595042add6fa1f6cdcae557a88f566c1e50eac8739e1e7c76d86",
+      "sourceId": "payments-ledger",
+      "tenantId": "demo-bank"
+    },
+    {
+      "claim": {
+        "profileStatistics": {
+          "fieldCount": 6,
+          "recordCount": 3
+        }
+      },
+      "classification": "INTERNAL",
+      "contentSha256": "fd5ef93417fa15b684903d47d84eaad1e7ce115564a71735e585dc8cab1dcf51",
+      "evidenceId": "evidence-payments-ledger-990b6808ca68329a",
+      "extractorName": "ontology-appliance-synthetic-profiler",
+      "extractorVersion": "1.0.0",
+      "locator": "profiles/payments/profile.json#/statistics",
+      "normalizedCoordinates": {
+        "profilePointer": "/statistics"
+      },
+      "observedAt": "2026-06-19T08:45:00Z",
+      "policyTags": [
+        "bounded-profile",
+        "read-only",
+        "synthetic"
+      ],
+      "snapshotId": "payments-ledger@sha256:0439bfd4fd9c595042add6fa1f6cdcae557a88f566c1e50eac8739e1e7c76d86",
+      "sourceId": "payments-ledger",
+      "tenantId": "demo-bank"
+    },
+    {
+      "claim": {
+        "profileStatistics": {
+          "distinctCount": 3,
+          "maximumLength": 8,
+          "minimumLength": 8,
+          "nonNullCount": 3,
+          "nullCount": 0,
+          "nullRate": 0.0,
+          "uniquenessRatio": 1.0
+        }
+      },
+      "classification": "INTERNAL",
+      "contentSha256": "828618240cb77fdcaa1f02906337e095aba9fe00dc3060d8d834d867f02d57f5",
+      "evidenceId": "evidence-payments-ledger-35c02a6d2e6929f7",
+      "extractorName": "ontology-appliance-synthetic-profiler",
+      "extractorVersion": "1.0.0",
+      "locator": "data/synthetic/payments.jsonl#json-path=$.payment_id",
+      "normalizedCoordinates": {
+        "field": "payment_id",
+        "profilePointer": "/fields/payment_id/statistics"
+      },
+      "observedAt": "2026-06-19T08:45:00Z",
+      "policyTags": [
+        "bounded-profile",
+        "read-only",
+        "synthetic"
+      ],
+      "snapshotId": "payments-ledger@sha256:0439bfd4fd9c595042add6fa1f6cdcae557a88f566c1e50eac8739e1e7c76d86",
+      "sourceId": "payments-ledger",
+      "tenantId": "demo-bank"
+    },
+    {
+      "claim": {
+        "profileStatistics": {
+          "distinctCount": 2,
+          "maximumLength": 8,
+          "minimumLength": 8,
+          "nonNullCount": 3,
+          "nullCount": 0,
+          "nullRate": 0.0,
+          "uniquenessRatio": 0.666667
+        }
+      },
+      "classification": "INTERNAL",
+      "contentSha256": "85eac1f0d9e72c3edee8dfc5dfa3c4f090502a01058e547f2a2e9c16186ee37c",
+      "evidenceId": "evidence-payments-ledger-deb3e1e577491660",
+      "extractorName": "ontology-appliance-synthetic-profiler",
+      "extractorVersion": "1.0.0",
+      "locator": "data/synthetic/payments.jsonl#json-path=$.from_account",
+      "normalizedCoordinates": {
+        "field": "from_account",
+        "profilePointer": "/fields/from_account/statistics"
+      },
+      "observedAt": "2026-06-19T08:45:00Z",
+      "policyTags": [
+        "bounded-profile",
+        "read-only",
+        "synthetic"
+      ],
+      "snapshotId": "payments-ledger@sha256:0439bfd4fd9c595042add6fa1f6cdcae557a88f566c1e50eac8739e1e7c76d86",
+      "sourceId": "payments-ledger",
+      "tenantId": "demo-bank"
+    },
+    {
+      "claim": {
+        "profileStatistics": {
+          "distinctCount": 1,
+          "maximumLength": 8,
+          "minimumLength": 8,
+          "nonNullCount": 3,
+          "nullCount": 0,
+          "nullRate": 0.0,
+          "uniquenessRatio": 0.333333
+        }
+      },
+      "classification": "INTERNAL",
+      "contentSha256": "b52f6e1aa5a2d794850aa20918566a1cd45a5c7b0ba29319d0ede8d694211b7c",
+      "evidenceId": "evidence-payments-ledger-3714ab4a0321f240",
+      "extractorName": "ontology-appliance-synthetic-profiler",
+      "extractorVersion": "1.0.0",
+      "locator": "data/synthetic/payments.jsonl#json-path=$.to_account",
+      "normalizedCoordinates": {
+        "field": "to_account",
+        "profilePointer": "/fields/to_account/statistics"
+      },
+      "observedAt": "2026-06-19T08:45:00Z",
+      "policyTags": [
+        "bounded-profile",
+        "read-only",
+        "synthetic"
+      ],
+      "snapshotId": "payments-ledger@sha256:0439bfd4fd9c595042add6fa1f6cdcae557a88f566c1e50eac8739e1e7c76d86",
+      "sourceId": "payments-ledger",
+      "tenantId": "demo-bank"
+    },
+    {
+      "claim": {
+        "profileStatistics": {
+          "distinctCount": 3,
+          "maximumDecimal": "125000.00",
+          "maximumLength": 9,
+          "minimumDecimal": "320.00",
+          "minimumLength": 6,
+          "nonNullCount": 3,
+          "nullCount": 0,
+          "nullRate": 0.0,
+          "sumDecimal": "142320.00",
+          "uniquenessRatio": 1.0
+        }
+      },
+      "classification": "INTERNAL",
+      "contentSha256": "40888960b3ad62ccb7dfc876e9dd333f2bca0e8133e0a728f5e621bf23c15731",
+      "evidenceId": "evidence-payments-ledger-94aa15e02578161d",
+      "extractorName": "ontology-appliance-synthetic-profiler",
+      "extractorVersion": "1.0.0",
+      "locator": "data/synthetic/payments.jsonl#json-path=$.amount",
+      "normalizedCoordinates": {
+        "field": "amount",
+        "profilePointer": "/fields/amount/statistics"
+      },
+      "observedAt": "2026-06-19T08:45:00Z",
+      "policyTags": [
+        "bounded-profile",
+        "read-only",
+        "synthetic"
+      ],
+      "snapshotId": "payments-ledger@sha256:0439bfd4fd9c595042add6fa1f6cdcae557a88f566c1e50eac8739e1e7c76d86",
+      "sourceId": "payments-ledger",
+      "tenantId": "demo-bank"
+    },
+    {
+      "claim": {
+        "profileStatistics": {
+          "distinctCount": 2,
+          "maximumLength": 3,
+          "minimumLength": 3,
+          "nonNullCount": 3,
+          "nullCount": 0,
+          "nullRate": 0.0,
+          "uniquenessRatio": 0.666667
+        }
+      },
+      "classification": "INTERNAL",
+      "contentSha256": "a789bdd9a50cd02da23a8067c303672067170dc6793c075764ef4bb63d011bff",
+      "evidenceId": "evidence-payments-ledger-7594e61459b61f67",
+      "extractorName": "ontology-appliance-synthetic-profiler",
+      "extractorVersion": "1.0.0",
+      "locator": "data/synthetic/payments.jsonl#json-path=$.currency",
+      "normalizedCoordinates": {
+        "field": "currency",
+        "profilePointer": "/fields/currency/statistics"
+      },
+      "observedAt": "2026-06-19T08:45:00Z",
+      "policyTags": [
+        "bounded-profile",
+        "read-only",
+        "synthetic"
+      ],
+      "snapshotId": "payments-ledger@sha256:0439bfd4fd9c595042add6fa1f6cdcae557a88f566c1e50eac8739e1e7c76d86",
+      "sourceId": "payments-ledger",
+      "tenantId": "demo-bank"
+    },
+    {
+      "claim": {
+        "profileStatistics": {
+          "distinctCount": 3,
+          "maximumLength": 20,
+          "minimumLength": 20,
+          "nonNullCount": 3,
+          "nullCount": 0,
+          "nullRate": 0.0,
+          "uniquenessRatio": 1.0
+        }
+      },
+      "classification": "INTERNAL",
+      "contentSha256": "468b989bf6c97587a62faeb5f911a52d04950cc05a54e38efd5fafde57dbae94",
+      "evidenceId": "evidence-payments-ledger-a184172065e53ec1",
+      "extractorName": "ontology-appliance-synthetic-profiler",
+      "extractorVersion": "1.0.0",
+      "locator": "data/synthetic/payments.jsonl#json-path=$.booked_at",
+      "normalizedCoordinates": {
+        "field": "booked_at",
+        "profilePointer": "/fields/booked_at/statistics"
+      },
+      "observedAt": "2026-06-19T08:45:00Z",
+      "policyTags": [
+        "bounded-profile",
+        "read-only",
+        "synthetic"
+      ],
+      "snapshotId": "payments-ledger@sha256:0439bfd4fd9c595042add6fa1f6cdcae557a88f566c1e50eac8739e1e7c76d86",
+      "sourceId": "payments-ledger",
+      "tenantId": "demo-bank"
+    },
+    {
+      "claim": {
+        "includedInDeterministicSample": true
+      },
+      "classification": "INTERNAL",
+      "contentSha256": "63894e5134da3b426670f4037cddbb42c63700fe470f8644bf968eec910e7736",
+      "evidenceId": "evidence-payments-ledger-0ed8eb0f24f99be8",
+      "extractorName": "ontology-appliance-synthetic-profiler",
+      "extractorVersion": "1.0.0",
+      "locator": "data/synthetic/payments.jsonl#line=1",
+      "normalizedCoordinates": {
+        "line": 1,
+        "recordId": "PAY-5001"
+      },
+      "observedAt": "2026-06-19T08:45:00Z",
+      "policyTags": [
+        "bounded-sample",
+        "read-only",
+        "synthetic"
+      ],
+      "snapshotId": "payments-ledger@sha256:0439bfd4fd9c595042add6fa1f6cdcae557a88f566c1e50eac8739e1e7c76d86",
+      "sourceId": "payments-ledger",
+      "tenantId": "demo-bank"
+    },
+    {
+      "claim": {
+        "includedInDeterministicSample": true
+      },
+      "classification": "INTERNAL",
+      "contentSha256": "eddf7532205f74885d477054772f8bb7a27055066d3dbb842488250aafff7fb9",
+      "evidenceId": "evidence-payments-ledger-18bf8bff8c3f65b6",
+      "extractorName": "ontology-appliance-synthetic-profiler",
+      "extractorVersion": "1.0.0",
+      "locator": "data/synthetic/payments.jsonl#line=2",
+      "normalizedCoordinates": {
+        "line": 2,
+        "recordId": "PAY-5002"
+      },
+      "observedAt": "2026-06-19T08:45:00Z",
+      "policyTags": [
+        "bounded-sample",
+        "read-only",
+        "synthetic"
+      ],
+      "snapshotId": "payments-ledger@sha256:0439bfd4fd9c595042add6fa1f6cdcae557a88f566c1e50eac8739e1e7c76d86",
+      "sourceId": "payments-ledger",
+      "tenantId": "demo-bank"
+    },
+    {
+      "claim": {
+        "includedInDeterministicSample": true
+      },
+      "classification": "INTERNAL",
+      "contentSha256": "9315ec90a5c358acdc33f97ebe0bbd455d5c09a11e6f9d84c50295b68098fd04",
+      "evidenceId": "evidence-payments-ledger-d9fb074a51cc3a69",
+      "extractorName": "ontology-appliance-synthetic-profiler",
+      "extractorVersion": "1.0.0",
+      "locator": "data/synthetic/payments.jsonl#line=3",
+      "normalizedCoordinates": {
+        "line": 3,
+        "recordId": "PAY-5003"
+      },
+      "observedAt": "2026-06-19T08:45:00Z",
+      "policyTags": [
+        "bounded-sample",
+        "read-only",
+        "synthetic"
+      ],
+      "snapshotId": "payments-ledger@sha256:0439bfd4fd9c595042add6fa1f6cdcae557a88f566c1e50eac8739e1e7c76d86",
+      "sourceId": "payments-ledger",
+      "tenantId": "demo-bank"
+    },
+    {
+      "claim": {
+        "relationshipEvidence": {
+          "currencyCounts": {
+            "EUR": 2,
+            "USD": 1
+          },
+          "distinctDestinationAccountCount": 1,
+          "distinctSourceAccountCount": 2,
+          "sourceDestinationPairCounts": {
+            "ES120001->DE890001": 2,
+            "ES120002->DE890001": 1
+          }
+        }
+      },
+      "classification": "INTERNAL",
+      "contentSha256": "75280bbee382b2bd982a7e86e36b2b188efdb68ef6fe5cfd34d47943d1c7a2f7",
+      "evidenceId": "evidence-payments-ledger-ac9ef8306ada951a",
+      "extractorName": "ontology-appliance-synthetic-profiler",
+      "extractorVersion": "1.0.0",
+      "locator": "profiles/payments/profile.json#/relationshipEvidence",
+      "normalizedCoordinates": {
+        "profilePointer": "/relationshipEvidence"
+      },
+      "observedAt": "2026-06-19T08:45:00Z",
+      "policyTags": [
+        "read-only",
+        "relationship-profile",
+        "synthetic"
+      ],
+      "snapshotId": "payments-ledger@sha256:0439bfd4fd9c595042add6fa1f6cdcae557a88f566c1e50eac8739e1e7c76d86",
+      "sourceId": "payments-ledger",
+      "tenantId": "demo-bank"
+    }
+  ],
+  "extractorName": "ontology-appliance-synthetic-profiler",
+  "extractorVersion": "1.0.0",
+  "observedAt": "2026-06-19T08:45:00Z",
+  "schemaVersion": "1.0",
+  "snapshotId": "payments-ledger@sha256:0439bfd4fd9c595042add6fa1f6cdcae557a88f566c1e50eac8739e1e7c76d86",
+  "sourceContentSha256": "0439bfd4fd9c595042add6fa1f6cdcae557a88f566c1e50eac8739e1e7c76d86",
+  "sourceId": "payments-ledger",
+  "sourceLocator": "data/synthetic/payments.jsonl",
+  "tenantId": "demo-bank"
+}

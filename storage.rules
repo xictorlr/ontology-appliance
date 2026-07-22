@@ -1,0 +1,70 @@
+rules_version = '2';
+
+service firebase.storage {
+  match /b/{bucket}/o {
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function roles() {
+      return signedIn() && request.auth.token.roles is list
+        ? request.auth.token.roles
+        : [];
+    }
+
+    function belongsToTenant(tenantId) {
+      return signedIn()
+        && request.auth.token.tenant_id is string
+        && request.auth.token.tenant_id == tenantId;
+    }
+
+    function canUpload(tenantId) {
+      return belongsToTenant(tenantId)
+        && ('admin' in roles() || 'steward' in roles());
+    }
+
+    function supportedUpload() {
+      return request.resource.size < 20 * 1024 * 1024
+        && request.resource.contentType.matches(
+          '^(text/csv|text/plain|application/json|application/x-ndjson|application/pdf)$'
+        );
+    }
+
+    function safeObjectSegment(value) {
+      return value.matches('^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$')
+        && value != '.'
+        && value != '..';
+    }
+
+    // This is the only direct browser write path. Uploads are immutable and
+    // bound to the authenticated tenant and user via object metadata.
+    match /tenants/{tenantId}/uploads/{sourceId}/{fileName} {
+      allow create: if resource == null
+        && canUpload(tenantId)
+        && safeObjectSegment(sourceId)
+        && safeObjectSegment(fileName)
+        && supportedUpload()
+        && request.resource.metadata.keys().hasAll(['tenantId', 'uploadedBy'])
+        && request.resource.metadata.tenantId == tenantId
+        && request.resource.metadata.uploadedBy == request.auth.uid;
+      allow read: if false;
+      allow update, delete: if false;
+    }
+
+    match /tenants/{tenantId}/sources/{sourceId}/{fileName} {
+      allow read, write: if false;
+    }
+
+    match /tenants/{tenantId}/artifacts/{versionId}/{fileName} {
+      allow read, write: if false;
+    }
+
+    match /tenants/{tenantId}/exports/{exportId}/{fileName} {
+      allow read, write: if false;
+    }
+
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+  }
+}

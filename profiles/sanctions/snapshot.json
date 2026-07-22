@@ -1,0 +1,32 @@
+{
+  "accessMode": "read_only",
+  "content": {
+    "byteCount": 1656,
+    "recordCount": 1,
+    "sha256": "8cdd1cb5067a14aa427a98701b8f0187850a5d90dfa246384e688cc9bf261ef8",
+    "sourceAssets": [
+      {
+        "byteCount": 1406,
+        "mediaType": "application/vnd.oai.openapi",
+        "path": "data/contracts/sanctions.openapi.yaml",
+        "sha256": "4b1fd668895b57ee4640943ef16d53c761d091ac48901aefcb71e02593cf54b7"
+      },
+      {
+        "byteCount": 250,
+        "mediaType": "application/json",
+        "path": "data/synthetic/sanctions.json",
+        "sha256": "9307b98034dfc4d49952fad88cc445a37fd081452e6ac437f4302c98807cca72"
+      }
+    ]
+  },
+  "extractorName": "ontology-appliance-synthetic-profiler",
+  "extractorVersion": "1.0.0",
+  "observedAt": "2026-06-20T06:00:00Z",
+  "profileLocator": "profiles/sanctions/profile.json",
+  "schemaLocator": "contracts/sanctions.schema.json",
+  "schemaVersion": "1.0",
+  "snapshotId": "sanctions-api@sha256:8cdd1cb5067a14aa427a98701b8f0187850a5d90dfa246384e688cc9bf261ef8",
+  "sourceId": "sanctions-api",
+  "sourceLocator": "data/contracts/sanctions.openapi.yaml + data/synthetic/sanctions.json",
+  "tenantId": "demo-bank"
+}

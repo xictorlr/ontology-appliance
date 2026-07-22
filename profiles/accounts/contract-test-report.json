@@ -1,0 +1,61 @@
+{
+  "artifacts": [
+    {
+      "path": "data/contracts/core-accounts.connector.json",
+      "sha256": "45d6d4d3673bc47175e5e22f8082491dfffa4ec234f69893e46f7969d931ed63"
+    },
+    {
+      "path": "contracts/accounts.schema.json",
+      "sha256": "0523a0812e9f15c9e7cb7379c03d1df33ef1b759f8173da842a908f8b986e3f2"
+    },
+    {
+      "path": "profiles/accounts/snapshot.json",
+      "sha256": "22b98324266f414f26067fbc28e8584a98f67992085de749ee920e8bda60426c"
+    },
+    {
+      "path": "profiles/accounts/profile.json",
+      "sha256": "615d059ba4c1f249de3b611c9d449036a21633e189b65a3d385a4c870462dba2"
+    },
+    {
+      "path": "profiles/accounts/evidence-index.json",
+      "sha256": "f9ea648b324596f749f6e2f5fb55563299294dedd7c221b6be4bc51666854867"
+    }
+  ],
+  "checks": [
+    {
+      "detail": "The connector manifest fixes access_mode to read_only.",
+      "name": "read_only_access",
+      "passed": true
+    },
+    {
+      "detail": "The snapshot ID pins source content with SHA-256 5048c0b5a286afecb3b7bdcc81891b54bda12ab151e7097fcf81b3f1b5bb974a.",
+      "name": "content_addressed_snapshot",
+      "passed": true
+    },
+    {
+      "detail": "The deterministic sample contains 3 records and 241 bytes within policy bounds.",
+      "name": "bounded_sample",
+      "passed": true
+    },
+    {
+      "detail": "All 12 evidence records have stable repository-relative locators and content hashes.",
+      "name": "stable_evidence",
+      "passed": true
+    },
+    {
+      "detail": "No connector fixture contains a credential and no adapter capability permits writes.",
+      "name": "credential_and_write_guard",
+      "passed": true
+    }
+  ],
+  "connectorId": "core-accounts",
+  "contentSha256": "5048c0b5a286afecb3b7bdcc81891b54bda12ab151e7097fcf81b3f1b5bb974a",
+  "executedAt": "2026-06-17T06:32:00Z",
+  "extractorName": "ontology-appliance-synthetic-profiler",
+  "extractorVersion": "1.0.0",
+  "observedAt": "2026-06-17T06:32:00Z",
+  "schemaVersion": "1.0",
+  "snapshotId": "core-accounts@sha256:5048c0b5a286afecb3b7bdcc81891b54bda12ab151e7097fcf81b3f1b5bb974a",
+  "sourceLocator": "data/synthetic/accounts.csv",
+  "status": "PASSED"
+}

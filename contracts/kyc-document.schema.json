@@ -1,0 +1,52 @@
+{
+  "$id": "urn:ontology-appliance:demo-bank:schema:kyc-documents:8aa24ffe6183c52c49a93b026298164886548eb2860184203609ddd0aa038769",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "declaredOwnership": {
+      "maximum": 100,
+      "minimum": 0,
+      "type": "number",
+      "x-sourceLabel": "Declared ownership"
+    },
+    "legalEntity": {
+      "minLength": 1,
+      "type": "string",
+      "x-sourceLabel": "Legal entity"
+    },
+    "registeredCountry": {
+      "pattern": "^[A-Z]{2}$",
+      "type": "string",
+      "x-sourceLabel": "Registered country"
+    },
+    "reviewStatus": {
+      "minLength": 1,
+      "type": "string",
+      "x-sourceLabel": "Review status"
+    },
+    "ultimateBeneficialOwner": {
+      "minLength": 1,
+      "type": "string",
+      "x-sourceLabel": "Ultimate beneficial owner"
+    }
+  },
+  "required": [
+    "declaredOwnership",
+    "legalEntity",
+    "registeredCountry",
+    "reviewStatus",
+    "ultimateBeneficialOwner"
+  ],
+  "title": "Synthetic KYC document extraction schema",
+  "type": "object",
+  "x-ontology-appliance-evidence": {
+    "extractorName": "ontology-appliance-synthetic-profiler",
+    "extractorVersion": "1.0.0",
+    "observedAt": "2026-06-20T06:30:00Z",
+    "snapshotId": "kyc-documents@sha256:8aa24ffe6183c52c49a93b026298164886548eb2860184203609ddd0aa038769",
+    "sourceId": "kyc-documents",
+    "sourceLocator": "data/synthetic/kyc/LE-2001.pdf#page=1",
+    "sourceSha256": "8aa24ffe6183c52c49a93b026298164886548eb2860184203609ddd0aa038769",
+    "tenantId": "demo-bank"
+  }
+}

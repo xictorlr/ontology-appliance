@@ -1,0 +1,147 @@
+@prefix oa: <urn:ontology-appliance:vocab:> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+<urn:ontology-appliance:ontology:kyc-aml>
+    a owl:Ontology ;
+    rdfs:label "Ontology Appliance KYC/AML pilot ontology"@en ;
+    owl:versionInfo "2026.07.1" .
+
+oa:BusinessConcept a owl:Class ; rdfs:label "Business concept"@en .
+oa:Party a owl:Class ; rdfs:subClassOf oa:BusinessConcept ; skos:prefLabel "Party"@en ;
+    skos:definition "A person or organization known to the enterprise."@en .
+oa:LegalEntity a owl:Class ; rdfs:subClassOf oa:Party ; skos:prefLabel "Legal Entity"@en ;
+    skos:definition "An organization with a legally recognized identity."@en .
+oa:Account a owl:Class ; rdfs:subClassOf oa:BusinessConcept ; skos:prefLabel "Account"@en ;
+    skos:definition "A financial account maintained for a legal entity or person."@en .
+oa:Payment a owl:Class ; rdfs:subClassOf oa:BusinessConcept ; skos:prefLabel "Payment"@en ;
+    skos:definition "A transfer of monetary value between accounts."@en .
+oa:SanctionsEntry a owl:Class ; rdfs:subClassOf oa:BusinessConcept ; skos:prefLabel "Sanctions Entry"@en .
+oa:MappingProposal a owl:Class ; rdfs:label "Mapping proposal"@en .
+oa:EvidenceArtifact a owl:Class ; rdfs:label "Evidence artifact"@en .
+oa:DerivedRelation a owl:Class ; rdfs:label "Derived relation"@en .
+oa:CompetencyQuestion a owl:Class ; rdfs:label "Competency question"@en .
+oa:GenerationTrace a owl:Class ; rdfs:label "Generation trace"@en .
+oa:VerificationRun a owl:Class ; rdfs:label "Verification run"@en .
+oa:Person a owl:Class ; rdfs:subClassOf oa:Party ; skos:prefLabel "Person"@en .
+oa:Customer a owl:Class ; rdfs:subClassOf oa:Party ; skos:prefLabel "Customer"@en .
+oa:Identifier a owl:Class ; rdfs:subClassOf oa:BusinessConcept ; skos:prefLabel "Identifier"@en .
+oa:Address a owl:Class ; rdfs:subClassOf oa:BusinessConcept ; skos:prefLabel "Address"@en .
+oa:Country a owl:Class ; rdfs:subClassOf oa:BusinessConcept ; skos:prefLabel "Country"@en .
+oa:Jurisdiction a owl:Class ; rdfs:subClassOf oa:BusinessConcept ; skos:prefLabel "Jurisdiction"@en .
+oa:Currency a owl:Class ; rdfs:subClassOf oa:BusinessConcept ; skos:prefLabel "Currency"@en .
+oa:KycCase a owl:Class ; rdfs:subClassOf oa:BusinessConcept ; skos:prefLabel "KYC Case"@en .
+oa:EvidenceRecord a owl:Class ; rdfs:subClassOf oa:EvidenceArtifact ; skos:prefLabel "Evidence Record"@en .
+oa:ScreeningMatch a owl:Class ; rdfs:subClassOf oa:BusinessConcept ; skos:prefLabel "Screening Match"@en .
+oa:SanctionsProgram a owl:Class ; rdfs:subClassOf oa:BusinessConcept ; skos:prefLabel "Sanctions Program"@en .
+oa:OwnershipInterest a owl:Class ; rdfs:subClassOf oa:BusinessConcept ; skos:prefLabel "Ownership Interest"@en .
+oa:ControlRelation a owl:Class ; rdfs:subClassOf oa:BusinessConcept ; skos:prefLabel "Control Relation"@en .
+oa:SourceRecord a owl:Class ; rdfs:subClassOf oa:BusinessConcept ; skos:prefLabel "Source Record"@en .
+oa:TemporalMetadata a owl:Class ; rdfs:subClassOf oa:BusinessConcept ; skos:prefLabel "Temporal Metadata"@en .
+oa:CustomerRole a owl:Class ; rdfs:subClassOf oa:BusinessConcept ; skos:prefLabel "Customer Role"@en .
+
+oa:CustomerIdentifier a skos:Concept ; skos:prefLabel "Customer Identifier"@en ;
+    skos:altLabel "CIF number"@en, "Customer ID"@en ;
+    skos:definition "The stable identifier assigned to a customer by a source system."@en .
+oa:UltimateBeneficialOwner a skos:Concept ; skos:prefLabel "Ultimate Beneficial Owner"@en ;
+    skos:altLabel "UBO"@en ;
+    skos:definition "A natural person who ultimately owns or controls a legal entity."@en .
+oa:PartyIdentifier a skos:Concept ; skos:prefLabel "Party Identifier"@en .
+oa:AccountIdentifier a skos:Concept ; skos:prefLabel "Account Identifier"@en .
+oa:PaymentIdentifier a skos:Concept ; skos:prefLabel "Payment Identifier"@en .
+oa:KycCaseIdentifier a skos:Concept ; skos:prefLabel "KYC Case Identifier"@en .
+oa:SanctionsEntryIdentifier a skos:Concept ; skos:prefLabel "Sanctions Entry Identifier"@en .
+oa:NormalizedIdentifier a skos:Concept ; skos:prefLabel "Normalized Identifier"@en .
+oa:Name a skos:Concept ; skos:prefLabel "Name"@en .
+oa:CustomerName a skos:Concept ; skos:prefLabel "Customer Name"@en .
+oa:PartyType a skos:Concept ; skos:prefLabel "Party Type"@en .
+oa:CountryCode a skos:Concept ; skos:prefLabel "Country Code"@en .
+oa:CurrencyCode a skos:Concept ; skos:prefLabel "Currency Code"@en .
+oa:AccountStatus a skos:Concept ; skos:prefLabel "Account Status"@en .
+oa:LifecycleState a skos:Concept ; skos:prefLabel "Lifecycle State"@en .
+oa:RiskLevel a skos:Concept ; skos:prefLabel "Risk Level"@en .
+
+oa:hasAccount a owl:ObjectProperty ; rdfs:domain oa:LegalEntity ; rdfs:range oa:Account ; rdfs:label "has account"@en ;
+    owl:inverseOf oa:ownedBy .
+oa:ownedBy a owl:ObjectProperty ; rdfs:domain oa:Account ; rdfs:range oa:LegalEntity ; rdfs:label "owned by"@en .
+oa:beneficialOwnerOf a owl:ObjectProperty ; rdfs:domain oa:Party ; rdfs:range oa:LegalEntity ;
+    rdfs:label "beneficial owner of"@en ; owl:inverseOf oa:hasBeneficialOwner .
+oa:hasBeneficialOwner a owl:ObjectProperty ; rdfs:domain oa:LegalEntity ; rdfs:range oa:Party ;
+    rdfs:label "has beneficial owner"@en .
+oa:targetsParty a owl:ObjectProperty ; rdfs:domain oa:SanctionsEntry ; rdfs:range oa:Party ;
+    rdfs:label "targets party"@en .
+oa:fromAccount a owl:ObjectProperty ; rdfs:domain oa:Payment ; rdfs:range oa:Account ; rdfs:label "from account"@en .
+oa:toAccount a owl:ObjectProperty ; rdfs:domain oa:Payment ; rdfs:range oa:Account ; rdfs:label "to account"@en .
+oa:possibleDuplicateOf a owl:ObjectProperty, owl:SymmetricProperty ; rdfs:domain oa:Party ; rdfs:range oa:Party ;
+    rdfs:label "possible duplicate of"@en .
+oa:evidence a owl:ObjectProperty ; rdfs:range oa:EvidenceArtifact ; rdfs:label "supported by evidence"@en .
+oa:counterevidence a owl:ObjectProperty ; rdfs:domain oa:MappingProposal ; rdfs:range oa:EvidenceArtifact ;
+    rdfs:label "challenged by counterevidence"@en .
+oa:mapsToConcept a owl:ObjectProperty ; rdfs:domain oa:MappingProposal ; rdfs:label "maps to concept"@en .
+oa:dependsOn a owl:ObjectProperty ; rdfs:label "depends on"@en .
+oa:derivedRelation a owl:ObjectProperty ; rdfs:domain oa:MappingProposal ; rdfs:range oa:DerivedRelation .
+oa:generationTrace a owl:ObjectProperty ; rdfs:domain oa:MappingProposal ; rdfs:range oa:GenerationTrace .
+oa:verificationTrace a owl:ObjectProperty ; rdfs:domain oa:MappingProposal ; rdfs:range oa:VerificationRun .
+oa:hasIdentifier a owl:ObjectProperty ; rdfs:domain oa:Party ; rdfs:range oa:Identifier .
+oa:identifierOf a owl:ObjectProperty ; rdfs:domain oa:Identifier ; rdfs:range oa:Party ; owl:inverseOf oa:hasIdentifier .
+oa:locatedInJurisdiction a owl:ObjectProperty ; rdfs:range oa:Jurisdiction .
+oa:hasScreeningMatch a owl:ObjectProperty ; rdfs:domain oa:Party ; rdfs:range oa:ScreeningMatch .
+oa:matchesParty a owl:ObjectProperty ; rdfs:domain oa:ScreeningMatch ; rdfs:range oa:Party .
+oa:supportedByDocument a owl:ObjectProperty ; rdfs:range oa:EvidenceRecord .
+oa:representsSourceRecord a owl:ObjectProperty ; rdfs:range oa:SourceRecord .
+oa:hasOwnershipInterest a owl:ObjectProperty ; rdfs:domain oa:LegalEntity ; rdfs:range oa:OwnershipInterest .
+
+oa:accountNumber a owl:DatatypeProperty ; rdfs:domain oa:Account ; rdfs:range xsd:string .
+oa:amount a owl:DatatypeProperty ; rdfs:domain oa:Payment ; rdfs:range xsd:decimal .
+oa:currency a owl:DatatypeProperty ; rdfs:domain oa:Payment ; rdfs:range xsd:string .
+oa:sourceSystem a owl:DatatypeProperty ; rdfs:range xsd:string .
+oa:sourceRecordId a owl:DatatypeProperty ; rdfs:range xsd:string .
+oa:fieldName a owl:DatatypeProperty ; rdfs:domain oa:MappingProposal ; rdfs:range xsd:string .
+oa:mappingId a owl:DatatypeProperty ; rdfs:domain oa:MappingProposal ; rdfs:range xsd:string .
+oa:proposalStatus a owl:DatatypeProperty ; rdfs:domain oa:MappingProposal ; rdfs:range xsd:string .
+oa:counterexample a owl:DatatypeProperty ; rdfs:domain oa:MappingProposal ; rdfs:range xsd:string .
+oa:rationale a owl:DatatypeProperty ; rdfs:domain oa:MappingProposal ; rdfs:range xsd:string .
+oa:riskLevel a owl:DatatypeProperty ; rdfs:domain oa:MappingProposal ; rdfs:range xsd:string .
+oa:transformation a owl:DatatypeProperty ; rdfs:domain oa:MappingProposal ; rdfs:range xsd:string .
+oa:sourceSnapshotId a owl:DatatypeProperty ; rdfs:domain oa:MappingProposal ; rdfs:range xsd:string .
+oa:confidenceLexical a owl:DatatypeProperty ; rdfs:domain oa:MappingProposal ; rdfs:range xsd:decimal .
+oa:confidenceStructural a owl:DatatypeProperty ; rdfs:domain oa:MappingProposal ; rdfs:range xsd:decimal .
+oa:confidenceInstance a owl:DatatypeProperty ; rdfs:domain oa:MappingProposal ; rdfs:range xsd:decimal .
+oa:confidenceExternal a owl:DatatypeProperty ; rdfs:domain oa:MappingProposal ; rdfs:range xsd:decimal .
+oa:confidenceModel a owl:DatatypeProperty ; rdfs:domain oa:MappingProposal ; rdfs:range xsd:decimal .
+oa:confidenceEvidenceCoverage a owl:DatatypeProperty ; rdfs:domain oa:MappingProposal ; rdfs:range xsd:decimal .
+oa:confidenceProvenance a owl:DatatypeProperty ; rdfs:domain oa:MappingProposal ; rdfs:range xsd:decimal .
+oa:locator a owl:DatatypeProperty ; rdfs:domain oa:EvidenceArtifact ; rdfs:range xsd:string .
+oa:tenantId a owl:DatatypeProperty ; rdfs:range xsd:string .
+oa:sourceId a owl:DatatypeProperty ; rdfs:domain oa:EvidenceArtifact ; rdfs:range xsd:string .
+oa:snapshotId a owl:DatatypeProperty ; rdfs:domain oa:EvidenceArtifact ; rdfs:range xsd:string .
+oa:observedAt a owl:DatatypeProperty ; rdfs:domain oa:EvidenceArtifact ; rdfs:range xsd:dateTime .
+oa:extractorName a owl:DatatypeProperty ; rdfs:domain oa:EvidenceArtifact ; rdfs:range xsd:string .
+oa:extractorVersion a owl:DatatypeProperty ; rdfs:domain oa:EvidenceArtifact ; rdfs:range xsd:string .
+oa:contentSha256 a owl:DatatypeProperty ; rdfs:domain oa:EvidenceArtifact ; rdfs:range xsd:string .
+oa:classification a owl:DatatypeProperty ; rdfs:domain oa:EvidenceArtifact ; rdfs:range xsd:string .
+oa:claim a owl:DatatypeProperty ; rdfs:domain oa:EvidenceArtifact ; rdfs:range xsd:string .
+oa:generationMode a owl:DatatypeProperty ; rdfs:domain oa:GenerationTrace ; rdfs:range xsd:string .
+oa:generatorProvider a owl:DatatypeProperty ; rdfs:domain oa:GenerationTrace ; rdfs:range xsd:string .
+oa:generatorModel a owl:DatatypeProperty ; rdfs:domain oa:GenerationTrace ; rdfs:range xsd:string .
+oa:modelParticipated a owl:DatatypeProperty ; rdfs:domain oa:GenerationTrace ; rdfs:range xsd:boolean .
+oa:promptVersion a owl:DatatypeProperty ; rdfs:range xsd:string .
+oa:algorithmVersion a owl:DatatypeProperty ; rdfs:domain oa:GenerationTrace ; rdfs:range xsd:string .
+oa:deterministicInputHash a owl:DatatypeProperty ; rdfs:domain oa:GenerationTrace ; rdfs:range xsd:string .
+oa:verificationMode a owl:DatatypeProperty ; rdfs:domain oa:VerificationRun ; rdfs:range xsd:string .
+oa:verifierProvider a owl:DatatypeProperty ; rdfs:domain oa:VerificationRun ; rdfs:range xsd:string .
+oa:verifierModel a owl:DatatypeProperty ; rdfs:domain oa:VerificationRun ; rdfs:range xsd:string .
+oa:independentAgreementAvailable a owl:DatatypeProperty ; rdfs:domain oa:VerificationRun ; rdfs:range xsd:boolean .
+oa:verificationReasonCode a owl:DatatypeProperty ; rdfs:domain oa:VerificationRun ; rdfs:range xsd:string .
+oa:statusCode a owl:DatatypeProperty ; rdfs:range xsd:string .
+oa:recordTimestamp a owl:DatatypeProperty ; rdfs:range xsd:dateTime .
+oa:bookingTimestamp a owl:DatatypeProperty ; rdfs:domain oa:Payment ; rdfs:range xsd:dateTime .
+oa:listingTimestamp a owl:DatatypeProperty ; rdfs:domain oa:SanctionsEntry ; rdfs:range xsd:dateTime .
+oa:caseOpenedAt a owl:DatatypeProperty ; rdfs:domain oa:KycCase ; rdfs:range xsd:dateTime .
+oa:reviewStatus a owl:DatatypeProperty ; rdfs:range xsd:string .
+oa:ownershipPercentage a owl:DatatypeProperty ; rdfs:domain oa:OwnershipInterest ; rdfs:range xsd:decimal .
+oa:matchScore a owl:DatatypeProperty ; rdfs:domain oa:ScreeningMatch ; rdfs:range xsd:decimal .
+oa:transactionValue a owl:DatatypeProperty ; rdfs:domain oa:Payment ; rdfs:range xsd:decimal .

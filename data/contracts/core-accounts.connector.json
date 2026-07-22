@@ -1,0 +1,58 @@
+{
+  "access_mode": "read_only",
+  "capabilities": [
+    "schema",
+    "sample",
+    "profile",
+    "snapshot"
+  ],
+  "connector_id": "core-accounts",
+  "evidence": {
+    "hash_algorithm": "sha256",
+    "locator_template": "data/synthetic/accounts.csv#row={row}:field={field}"
+  },
+  "fields": [
+    {
+      "logical_type": "string",
+      "nullable": false,
+      "source_path": "account_id"
+    },
+    {
+      "logical_type": "string",
+      "nullable": false,
+      "source_path": "account_number"
+    },
+    {
+      "logical_type": "string",
+      "nullable": false,
+      "source_path": "owner_party_id"
+    },
+    {
+      "logical_type": "string",
+      "nullable": false,
+      "source_path": "status"
+    },
+    {
+      "logical_type": "string",
+      "nullable": false,
+      "source_path": "currency"
+    },
+    {
+      "logical_type": "datetime",
+      "nullable": false,
+      "source_path": "source_updated_at"
+    }
+  ],
+  "limits": {
+    "maximum_bytes": 65536,
+    "maximum_records": 100,
+    "timeout_seconds": 30
+  },
+  "schema_version": "1.0",
+  "source": {
+    "snapshot_strategy": "content_hash",
+    "uri": "data/synthetic/accounts.csv"
+  },
+  "source_type": "csv",
+  "tenant_id": "demo-bank"
+}

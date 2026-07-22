@@ -1,0 +1,21 @@
+env:
+  - variable: APP_ENV
+    value: local
+  - variable: DEFAULT_TENANT_ID
+    value: demo-bank
+  - variable: DEMO_TENANT_ID
+    value: demo-bank
+  - variable: NEXT_PUBLIC_FIREBASE_AUTO_INIT
+    value: "false"
+  - variable: NEXT_PUBLIC_DEMO_MODE
+    value: "true"
+  - variable: NEXT_PUBLIC_GOOGLE_SIGN_IN_ENABLED
+    value: "false"
+  - variable: SEMANTIC_GATEWAY_URL
+    value: http://127.0.0.1:8081
+  - variable: FIRESTORE_EMULATOR_HOST
+    value: 127.0.0.1:8080
+  - variable: FIREBASE_AUTH_EMULATOR_HOST
+    value: 127.0.0.1:9099
+  - variable: FIREBASE_STORAGE_EMULATOR_HOST
+    value: 127.0.0.1:9199

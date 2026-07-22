@@ -1,0 +1,63 @@
+{
+  "access_mode": "read_only",
+  "capabilities": [
+    "schema",
+    "sample",
+    "profile",
+    "snapshot"
+  ],
+  "connector_id": "crm-parties",
+  "evidence": {
+    "hash_algorithm": "sha256",
+    "locator_template": "data/synthetic/crm_parties.csv#row={row}:field={field}"
+  },
+  "fields": [
+    {
+      "logical_type": "string",
+      "nullable": false,
+      "source_path": "cif_no"
+    },
+    {
+      "logical_type": "string",
+      "nullable": false,
+      "source_path": "party_id"
+    },
+    {
+      "logical_type": "string",
+      "nullable": false,
+      "source_path": "party_type"
+    },
+    {
+      "logical_type": "string",
+      "nullable": false,
+      "source_path": "legal_name"
+    },
+    {
+      "logical_type": "string",
+      "nullable": false,
+      "source_path": "country"
+    },
+    {
+      "logical_type": "string",
+      "nullable": true,
+      "source_path": "ubo"
+    },
+    {
+      "logical_type": "datetime",
+      "nullable": false,
+      "source_path": "source_updated_at"
+    }
+  ],
+  "limits": {
+    "maximum_bytes": 65536,
+    "maximum_records": 100,
+    "timeout_seconds": 30
+  },
+  "schema_version": "1.0",
+  "source": {
+    "snapshot_strategy": "content_hash",
+    "uri": "data/synthetic/crm_parties.csv"
+  },
+  "source_type": "csv",
+  "tenant_id": "demo-bank"
+}

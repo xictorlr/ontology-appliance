@@ -1,0 +1,2418 @@
+@prefix oa: <urn:ontology-appliance:vocab:> .
+@prefix res: <urn:ontology-appliance:demo-bank:resource:> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+
+res:mapping-crm-cif a oa:MappingProposal ;
+    rdfs:label "CRM cif_no → Customer Identifier"@en ;
+    oa:mappingId "mapping-crm-cif" ;
+    oa:fieldName "cif_no" ;
+    oa:sourceSystem "CRM" ;
+    oa:mapsToConcept oa:CustomerIdentifier ;
+    oa:proposalStatus "HUMAN_REVIEW" ;
+    oa:riskLevel "medium" ;
+    oa:sourceSnapshotId "crm-parties@sha256:503d103ab015d2fb7720ba7e4aeed7f54e999426e22bc6e126fd663b79f5146a" ;
+    oa:transformation "identity(source_value); scope=CRM; do_not_infer_global_uniqueness" ;
+    oa:rationale "Name, uniqueness profile, and join behavior support Customer Identifier; model agreement is intentionally unavailable in mock-verifier mode."@en ;
+    oa:counterexample "Two historical merged records reuse CIF-0042, so uniqueness is not absolute."@en ;
+    oa:confidenceLexical "0.96"^^xsd:decimal ;
+    oa:confidenceStructural "0.92"^^xsd:decimal ;
+    oa:confidenceInstance "0.88"^^xsd:decimal ;
+    oa:confidenceExternal "0.00"^^xsd:decimal ;
+    oa:confidenceModel "0.00"^^xsd:decimal ;
+    oa:confidenceEvidenceCoverage "1.00"^^xsd:decimal ;
+    oa:confidenceProvenance "1.00"^^xsd:decimal ;
+    oa:evidence res:evidence-crm-schema-cif, res:evidence-crm-profile-cif ;
+    oa:counterevidence res:evidence-crm-cif-duplicate-0042 ;
+    oa:generationTrace res:generation-trace-crm-cif ;
+    oa:verificationTrace res:verification-run-crm-cif-mock .
+
+res:mapping-crm-ubo a oa:MappingProposal ;
+    rdfs:label "CRM ubo → Ultimate Beneficial Owner"@en ;
+    oa:mappingId "mapping-crm-ubo" ;
+    oa:fieldName "ubo" ;
+    oa:sourceSystem "CRM" ;
+    oa:mapsToConcept oa:UltimateBeneficialOwner ;
+    oa:derivedRelation res:relation-beneficial-owner ;
+    oa:proposalStatus "HUMAN_REVIEW" ;
+    oa:riskLevel "high" ;
+    oa:sourceSnapshotId "crm-parties@sha256:503d103ab015d2fb7720ba7e4aeed7f54e999426e22bc6e126fd663b79f5146a",
+        "kyc-le-2001@sha256:ab6ca88676c4f2091c09228d718cbccb9f6711df9c0727026a5aff820aec1787" ;
+    oa:transformation "resolve ubo party reference; assert beneficialOwnerOf only after human review" ;
+    oa:rationale "The field links a legal entity to its natural-person beneficial owner and is required by two sanctions traversals."@en ;
+    oa:confidenceLexical "0.99"^^xsd:decimal ;
+    oa:confidenceStructural "0.95"^^xsd:decimal ;
+    oa:confidenceInstance "0.90"^^xsd:decimal ;
+    oa:confidenceExternal "0.00"^^xsd:decimal ;
+    oa:confidenceModel "0.00"^^xsd:decimal ;
+    oa:confidenceEvidenceCoverage "1.00"^^xsd:decimal ;
+    oa:confidenceProvenance "1.00"^^xsd:decimal ;
+    oa:evidence res:evidence-crm-schema-ubo, res:evidence-kyc-document-1001 ;
+    oa:generationTrace res:generation-trace-crm-ubo ;
+    oa:verificationTrace res:verification-run-crm-ubo-mock .
+
+res:relation-beneficial-owner a oa:DerivedRelation ;
+    rdfs:label "Party beneficialOwnerOf LegalEntity"@en ;
+    oa:dependsOn res:mapping-crm-ubo .
+
+res:question-cq-001 a oa:CompetencyQuestion ;
+    rdfs:label "CQ-001 sanctioned ownership account traversal"@en ;
+    oa:dependsOn res:mapping-crm-ubo .
+
+res:question-cq-002 a oa:CompetencyQuestion ;
+   rdfs:label "CQ-002 outbound payments from affected accounts"@en ;
+   oa:dependsOn res:mapping-crm-ubo .
+
+res:mapping-crm-003 a oa:MappingProposal ;
+    rdfs:label "CRM party_id → PartyIdentifier"@en ;
+    oa:mappingId "mapping-crm-003" ;
+    oa:fieldName "party_id" ;
+    oa:sourceSystem "CRM" ;
+    oa:mapsToConcept oa:PartyIdentifier ;
+    oa:proposalStatus "HUMAN_REVIEW" ;
+    oa:riskLevel "medium" ;
+    oa:sourceSnapshotId "crm-parties@sha256:503d103ab015d2fb7720ba7e4aeed7f54e999426e22bc6e126fd663b79f5146a" ;
+    oa:transformation "identity(source_value)" ;
+    oa:rationale "CRM schema and bounded snapshot support this source-scoped candidate."@en ;
+    oa:counterexample "No contradiction was observed in the bounded fixture; production generalization remains unverified."@en ;
+    oa:confidenceLexical "0.90"^^xsd:decimal ;
+    oa:confidenceStructural "0.88"^^xsd:decimal ;
+    oa:confidenceInstance "0.85"^^xsd:decimal ;
+    oa:confidenceExternal "0.00"^^xsd:decimal ;
+    oa:confidenceModel "0.00"^^xsd:decimal ;
+    oa:confidenceEvidenceCoverage "0.80"^^xsd:decimal ;
+    oa:confidenceProvenance "1.00"^^xsd:decimal ;
+    oa:evidence res:evidence-crm-snapshot ;
+    oa:generationTrace res:generation-trace-crm-batch ;
+    oa:verificationTrace res:verification-run-crm-batch-mock .
+
+res:mapping-crm-004 a oa:MappingProposal ;
+    rdfs:label "CRM party_type → PartyType"@en ;
+    oa:mappingId "mapping-crm-004" ;
+    oa:fieldName "party_type" ;
+    oa:sourceSystem "CRM" ;
+    oa:mapsToConcept oa:PartyType ;
+    oa:proposalStatus "HUMAN_REVIEW" ;
+    oa:riskLevel "medium" ;
+    oa:sourceSnapshotId "crm-parties@sha256:503d103ab015d2fb7720ba7e4aeed7f54e999426e22bc6e126fd663b79f5146a" ;
+    oa:transformation "uppercase(source_value)" ;
+    oa:rationale "CRM schema and bounded snapshot support this source-scoped candidate."@en ;
+    oa:counterexample "No contradiction was observed in the bounded fixture; production generalization remains unverified."@en ;
+    oa:confidenceLexical "0.90"^^xsd:decimal ;
+    oa:confidenceStructural "0.88"^^xsd:decimal ;
+    oa:confidenceInstance "0.85"^^xsd:decimal ;
+    oa:confidenceExternal "0.00"^^xsd:decimal ;
+    oa:confidenceModel "0.00"^^xsd:decimal ;
+    oa:confidenceEvidenceCoverage "0.80"^^xsd:decimal ;
+    oa:confidenceProvenance "1.00"^^xsd:decimal ;
+    oa:evidence res:evidence-crm-snapshot ;
+    oa:generationTrace res:generation-trace-crm-batch ;
+    oa:verificationTrace res:verification-run-crm-batch-mock .
+
+res:mapping-crm-005 a oa:MappingProposal ;
+    rdfs:label "CRM legal_name → Name"@en ;
+    oa:mappingId "mapping-crm-005" ;
+    oa:fieldName "legal_name" ;
+    oa:sourceSystem "CRM" ;
+    oa:mapsToConcept oa:Name ;
+    oa:proposalStatus "HUMAN_REVIEW" ;
+    oa:riskLevel "medium" ;
+    oa:sourceSnapshotId "crm-parties@sha256:503d103ab015d2fb7720ba7e4aeed7f54e999426e22bc6e126fd663b79f5146a" ;
+    oa:transformation "trim(source_value)" ;
+    oa:rationale "CRM schema and bounded snapshot support this source-scoped candidate."@en ;
+    oa:counterexample "No contradiction was observed in the bounded fixture; production generalization remains unverified."@en ;
+    oa:confidenceLexical "0.90"^^xsd:decimal ;
+    oa:confidenceStructural "0.88"^^xsd:decimal ;
+    oa:confidenceInstance "0.85"^^xsd:decimal ;
+    oa:confidenceExternal "0.00"^^xsd:decimal ;
+    oa:confidenceModel "0.00"^^xsd:decimal ;
+    oa:confidenceEvidenceCoverage "0.80"^^xsd:decimal ;
+    oa:confidenceProvenance "1.00"^^xsd:decimal ;
+    oa:evidence res:evidence-crm-snapshot ;
+    oa:generationTrace res:generation-trace-crm-batch ;
+    oa:verificationTrace res:verification-run-crm-batch-mock .
+
+res:mapping-crm-006 a oa:MappingProposal ;
+    rdfs:label "CRM country → CountryCode"@en ;
+    oa:mappingId "mapping-crm-006" ;
+    oa:fieldName "country" ;
+    oa:sourceSystem "CRM" ;
+    oa:mapsToConcept oa:CountryCode ;
+    oa:proposalStatus "HUMAN_REVIEW" ;
+    oa:riskLevel "medium" ;
+    oa:sourceSnapshotId "crm-parties@sha256:503d103ab015d2fb7720ba7e4aeed7f54e999426e22bc6e126fd663b79f5146a" ;
+    oa:transformation "uppercase(source_value)" ;
+    oa:rationale "CRM schema and bounded snapshot support this source-scoped candidate."@en ;
+    oa:counterexample "No contradiction was observed in the bounded fixture; production generalization remains unverified."@en ;
+    oa:confidenceLexical "0.90"^^xsd:decimal ;
+    oa:confidenceStructural "0.88"^^xsd:decimal ;
+    oa:confidenceInstance "0.85"^^xsd:decimal ;
+    oa:confidenceExternal "0.00"^^xsd:decimal ;
+    oa:confidenceModel "0.00"^^xsd:decimal ;
+    oa:confidenceEvidenceCoverage "0.80"^^xsd:decimal ;
+    oa:confidenceProvenance "1.00"^^xsd:decimal ;
+    oa:evidence res:evidence-crm-snapshot ;
+    oa:generationTrace res:generation-trace-crm-batch ;
+    oa:verificationTrace res:verification-run-crm-batch-mock .
+
+res:mapping-crm-007 a oa:MappingProposal ;
+    rdfs:label "CRM source_updated_at → recordTimestamp"@en ;
+    oa:mappingId "mapping-crm-007" ;
+    oa:fieldName "source_updated_at" ;
+    oa:sourceSystem "CRM" ;
+    oa:mapsToConcept oa:recordTimestamp ;
+    oa:proposalStatus "HUMAN_REVIEW" ;
+    oa:riskLevel "medium" ;
+    oa:sourceSnapshotId "crm-parties@sha256:503d103ab015d2fb7720ba7e4aeed7f54e999426e22bc6e126fd663b79f5146a" ;
+    oa:transformation "parse_iso8601(source_value)" ;
+    oa:rationale "CRM schema and bounded snapshot support this source-scoped candidate."@en ;
+    oa:counterexample "No contradiction was observed in the bounded fixture; production generalization remains unverified."@en ;
+    oa:confidenceLexical "0.90"^^xsd:decimal ;
+    oa:confidenceStructural "0.88"^^xsd:decimal ;
+    oa:confidenceInstance "0.85"^^xsd:decimal ;
+    oa:confidenceExternal "0.00"^^xsd:decimal ;
+    oa:confidenceModel "0.00"^^xsd:decimal ;
+    oa:confidenceEvidenceCoverage "0.80"^^xsd:decimal ;
+    oa:confidenceProvenance "1.00"^^xsd:decimal ;
+    oa:evidence res:evidence-crm-snapshot ;
+    oa:generationTrace res:generation-trace-crm-batch ;
+    oa:verificationTrace res:verification-run-crm-batch-mock .
+
+res:mapping-crm-008 a oa:MappingProposal ;
+    rdfs:label "CRM party_type → Person"@en ;
+    oa:mappingId "mapping-crm-008" ;
+    oa:fieldName "party_type" ;
+    oa:sourceSystem "CRM" ;
+    oa:mapsToConcept oa:Person ;
+    oa:proposalStatus "HUMAN_REVIEW" ;
+    oa:riskLevel "medium" ;
+    oa:sourceSnapshotId "crm-parties@sha256:503d103ab015d2fb7720ba7e4aeed7f54e999426e22bc6e126fd663b79f5146a" ;
+    oa:transformation "filter source_value equals PERSON" ;
+    oa:rationale "CRM schema and bounded snapshot support this source-scoped candidate."@en ;
+    oa:counterexample "No contradiction was observed in the bounded fixture; production generalization remains unverified."@en ;
+    oa:confidenceLexical "0.90"^^xsd:decimal ;
+    oa:confidenceStructural "0.88"^^xsd:decimal ;
+    oa:confidenceInstance "0.85"^^xsd:decimal ;
+    oa:confidenceExternal "0.00"^^xsd:decimal ;
+    oa:confidenceModel "0.00"^^xsd:decimal ;
+    oa:confidenceEvidenceCoverage "0.80"^^xsd:decimal ;
+    oa:confidenceProvenance "1.00"^^xsd:decimal ;
+    oa:evidence res:evidence-crm-snapshot ;
+    oa:generationTrace res:generation-trace-crm-batch ;
+    oa:verificationTrace res:verification-run-crm-batch-mock .
+
+res:mapping-crm-009 a oa:MappingProposal ;
+    rdfs:label "CRM party_type → LegalEntity"@en ;
+    oa:mappingId "mapping-crm-009" ;
+    oa:fieldName "party_type" ;
+    oa:sourceSystem "CRM" ;
+    oa:mapsToConcept oa:LegalEntity ;
+    oa:proposalStatus "HUMAN_REVIEW" ;
+    oa:riskLevel "medium" ;
+    oa:sourceSnapshotId "crm-parties@sha256:503d103ab015d2fb7720ba7e4aeed7f54e999426e22bc6e126fd663b79f5146a" ;
+    oa:transformation "filter source_value equals LEGAL_ENTITY" ;
+    oa:rationale "CRM schema and bounded snapshot support this source-scoped candidate."@en ;
+    oa:counterexample "No contradiction was observed in the bounded fixture; production generalization remains unverified."@en ;
+    oa:confidenceLexical "0.90"^^xsd:decimal ;
+    oa:confidenceStructural "0.88"^^xsd:decimal ;
+    oa:confidenceInstance "0.85"^^xsd:decimal ;
+    oa:confidenceExternal "0.00"^^xsd:decimal ;
+    oa:confidenceModel "0.00"^^xsd:decimal ;
+    oa:confidenceEvidenceCoverage "0.80"^^xsd:decimal ;
+    oa:confidenceProvenance "1.00"^^xsd:decimal ;
+    oa:evidence res:evidence-crm-snapshot ;
+    oa:generationTrace res:generation-trace-crm-batch ;
+    oa:verificationTrace res:verification-run-crm-batch-mock .
+
+res:mapping-crm-010 a oa:MappingProposal ;
+    rdfs:label "CRM country → Jurisdiction"@en ;
+    oa:mappingId "mapping-crm-010" ;
+    oa:fieldName "country" ;
+    oa:sourceSystem "CRM" ;
+    oa:mapsToConcept oa:Jurisdiction ;
+    oa:proposalStatus "HUMAN_REVIEW" ;
+    oa:riskLevel "medium" ;
+    oa:sourceSnapshotId "crm-parties@sha256:503d103ab015d2fb7720ba7e4aeed7f54e999426e22bc6e126fd663b79f5146a" ;
+    oa:transformation "resolve ISO country code to jurisdiction" ;
+    oa:rationale "CRM schema and bounded snapshot support this source-scoped candidate."@en ;
+    oa:counterexample "No contradiction was observed in the bounded fixture; production generalization remains unverified."@en ;
+    oa:confidenceLexical "0.90"^^xsd:decimal ;
+    oa:confidenceStructural "0.88"^^xsd:decimal ;
+    oa:confidenceInstance "0.85"^^xsd:decimal ;
+    oa:confidenceExternal "0.00"^^xsd:decimal ;
+    oa:confidenceModel "0.00"^^xsd:decimal ;
+    oa:confidenceEvidenceCoverage "0.80"^^xsd:decimal ;
+    oa:confidenceProvenance "1.00"^^xsd:decimal ;
+    oa:evidence res:evidence-crm-snapshot ;
+    oa:generationTrace res:generation-trace-crm-batch ;
+    oa:verificationTrace res:verification-run-crm-batch-mock .
+
+res:mapping-crm-011 a oa:MappingProposal ;
+    rdfs:label "CRM ubo → hasBeneficialOwner"@en ;
+    oa:mappingId "mapping-crm-011" ;
+    oa:fieldName "ubo" ;
+    oa:sourceSystem "CRM" ;
+    oa:mapsToConcept oa:hasBeneficialOwner ;
+    oa:proposalStatus "HUMAN_REVIEW" ;
+    oa:riskLevel "medium" ;
+    oa:sourceSnapshotId "crm-parties@sha256:503d103ab015d2fb7720ba7e4aeed7f54e999426e22bc6e126fd663b79f5146a" ;
+    oa:transformation "resolve CRM party reference" ;
+    oa:rationale "CRM schema and bounded snapshot support this source-scoped candidate."@en ;
+    oa:counterexample "No contradiction was observed in the bounded fixture; production generalization remains unverified."@en ;
+    oa:confidenceLexical "0.90"^^xsd:decimal ;
+    oa:confidenceStructural "0.88"^^xsd:decimal ;
+    oa:confidenceInstance "0.85"^^xsd:decimal ;
+    oa:confidenceExternal "0.00"^^xsd:decimal ;
+    oa:confidenceModel "0.00"^^xsd:decimal ;
+    oa:confidenceEvidenceCoverage "0.80"^^xsd:decimal ;
+    oa:confidenceProvenance "1.00"^^xsd:decimal ;
+    oa:evidence res:evidence-crm-snapshot ;
+    oa:generationTrace res:generation-trace-crm-batch ;
+    oa:verificationTrace res:verification-run-crm-batch-mock .
+
+res:mapping-crm-012 a oa:MappingProposal ;
+    rdfs:label "CRM party_id → sourceRecordId"@en ;
+    oa:mappingId "mapping-crm-012" ;
+    oa:fieldName "party_id" ;
+    oa:sourceSystem "CRM" ;
+    oa:mapsToConcept oa:sourceRecordId ;
+    oa:proposalStatus "HUMAN_REVIEW" ;
+    oa:riskLevel "medium" ;
+    oa:sourceSnapshotId "crm-parties@sha256:503d103ab015d2fb7720ba7e4aeed7f54e999426e22bc6e126fd663b79f5146a" ;
+    oa:transformation "identity(source_value)" ;
+    oa:rationale "CRM schema and bounded snapshot support this source-scoped candidate."@en ;
+    oa:counterexample "No contradiction was observed in the bounded fixture; production generalization remains unverified."@en ;
+    oa:confidenceLexical "0.90"^^xsd:decimal ;
+    oa:confidenceStructural "0.88"^^xsd:decimal ;
+    oa:confidenceInstance "0.85"^^xsd:decimal ;
+    oa:confidenceExternal "0.00"^^xsd:decimal ;
+    oa:confidenceModel "0.00"^^xsd:decimal ;
+    oa:confidenceEvidenceCoverage "0.80"^^xsd:decimal ;
+    oa:confidenceProvenance "1.00"^^xsd:decimal ;
+    oa:evidence res:evidence-crm-snapshot ;
+    oa:generationTrace res:generation-trace-crm-batch ;
+    oa:verificationTrace res:verification-run-crm-batch-mock .
+
+res:mapping-crm-013 a oa:MappingProposal ;
+    rdfs:label "CRM legal_name → CustomerName"@en ;
+    oa:mappingId "mapping-crm-013" ;
+    oa:fieldName "legal_name" ;
+    oa:sourceSystem "CRM" ;
+    oa:mapsToConcept oa:CustomerName ;
+    oa:proposalStatus "HUMAN_REVIEW" ;
+    oa:riskLevel "medium" ;
+    oa:sourceSnapshotId "crm-parties@sha256:503d103ab015d2fb7720ba7e4aeed7f54e999426e22bc6e126fd663b79f5146a" ;
+    oa:transformation "trim(source_value)" ;
+    oa:rationale "CRM schema and bounded snapshot support this source-scoped candidate."@en ;
+    oa:counterexample "No contradiction was observed in the bounded fixture; production generalization remains unverified."@en ;
+    oa:confidenceLexical "0.90"^^xsd:decimal ;
+    oa:confidenceStructural "0.88"^^xsd:decimal ;
+    oa:confidenceInstance "0.85"^^xsd:decimal ;
+    oa:confidenceExternal "0.00"^^xsd:decimal ;
+    oa:confidenceModel "0.00"^^xsd:decimal ;
+    oa:confidenceEvidenceCoverage "0.80"^^xsd:decimal ;
+    oa:confidenceProvenance "1.00"^^xsd:decimal ;
+    oa:evidence res:evidence-crm-snapshot ;
+    oa:generationTrace res:generation-trace-crm-batch ;
+    oa:verificationTrace res:verification-run-crm-batch-mock .
+
+res:mapping-crm-014 a oa:MappingProposal ;
+    rdfs:label "CRM cif_no → Identifier"@en ;
+    oa:mappingId "mapping-crm-014" ;
+    oa:fieldName "cif_no" ;
+    oa:sourceSystem "CRM" ;
+    oa:mapsToConcept oa:Identifier ;
+    oa:proposalStatus "HUMAN_REVIEW" ;
+    oa:riskLevel "medium" ;
+    oa:sourceSnapshotId "crm-parties@sha256:503d103ab015d2fb7720ba7e4aeed7f54e999426e22bc6e126fd663b79f5146a" ;
+    oa:transformation "construct source-scoped identifier" ;
+    oa:rationale "CRM schema and bounded snapshot support this source-scoped candidate."@en ;
+    oa:counterexample "No contradiction was observed in the bounded fixture; production generalization remains unverified."@en ;
+    oa:confidenceLexical "0.90"^^xsd:decimal ;
+    oa:confidenceStructural "0.88"^^xsd:decimal ;
+    oa:confidenceInstance "0.85"^^xsd:decimal ;
+    oa:confidenceExternal "0.00"^^xsd:decimal ;
+    oa:confidenceModel "0.00"^^xsd:decimal ;
+    oa:confidenceEvidenceCoverage "0.80"^^xsd:decimal ;
+    oa:confidenceProvenance "1.00"^^xsd:decimal ;
+    oa:evidence res:evidence-crm-snapshot ;
+    oa:generationTrace res:generation-trace-crm-batch ;
+    oa:verificationTrace res:verification-run-crm-batch-mock .
+
+res:mapping-crm-015 a oa:MappingProposal ;
+    rdfs:label "CRM source_updated_at → TemporalMetadata"@en ;
+    oa:mappingId "mapping-crm-015" ;
+    oa:fieldName "source_updated_at" ;
+    oa:sourceSystem "CRM" ;
+    oa:mapsToConcept oa:TemporalMetadata ;
+    oa:proposalStatus "HUMAN_REVIEW" ;
+    oa:riskLevel "medium" ;
+    oa:sourceSnapshotId "crm-parties@sha256:503d103ab015d2fb7720ba7e4aeed7f54e999426e22bc6e126fd663b79f5146a" ;
+    oa:transformation "attach source recency metadata" ;
+    oa:rationale "CRM schema and bounded snapshot support this source-scoped candidate."@en ;
+    oa:counterexample "No contradiction was observed in the bounded fixture; production generalization remains unverified."@en ;
+    oa:confidenceLexical "0.90"^^xsd:decimal ;
+    oa:confidenceStructural "0.88"^^xsd:decimal ;
+    oa:confidenceInstance "0.85"^^xsd:decimal ;
+    oa:confidenceExternal "0.00"^^xsd:decimal ;
+    oa:confidenceModel "0.00"^^xsd:decimal ;
+    oa:confidenceEvidenceCoverage "0.80"^^xsd:decimal ;
+    oa:confidenceProvenance "1.00"^^xsd:decimal ;
+    oa:evidence res:evidence-crm-snapshot ;
+    oa:generationTrace res:generation-trace-crm-batch ;
+    oa:verificationTrace res:verification-run-crm-batch-mock .
+
+res:mapping-crm-016 a oa:MappingProposal ;
+    rdfs:label "CRM party_id → Party"@en ;
+    oa:mappingId "mapping-crm-016" ;
+    oa:fieldName "party_id" ;
+    oa:sourceSystem "CRM" ;
+    oa:mapsToConcept oa:Party ;
+    oa:proposalStatus "HUMAN_REVIEW" ;
+    oa:riskLevel "medium" ;
+    oa:sourceSnapshotId "crm-parties@sha256:503d103ab015d2fb7720ba7e4aeed7f54e999426e22bc6e126fd663b79f5146a" ;
+    oa:transformation "resolve governed party node" ;
+    oa:rationale "CRM schema and bounded snapshot support this source-scoped candidate."@en ;
+    oa:counterexample "No contradiction was observed in the bounded fixture; production generalization remains unverified."@en ;
+    oa:confidenceLexical "0.90"^^xsd:decimal ;
+    oa:confidenceStructural "0.88"^^xsd:decimal ;
+    oa:confidenceInstance "0.85"^^xsd:decimal ;
+    oa:confidenceExternal "0.00"^^xsd:decimal ;
+    oa:confidenceModel "0.00"^^xsd:decimal ;
+    oa:confidenceEvidenceCoverage "0.80"^^xsd:decimal ;
+    oa:confidenceProvenance "1.00"^^xsd:decimal ;
+    oa:evidence res:evidence-crm-snapshot ;
+    oa:generationTrace res:generation-trace-crm-batch ;
+    oa:verificationTrace res:verification-run-crm-batch-mock .
+
+res:mapping-crm-017 a oa:MappingProposal ;
+    rdfs:label "CRM ubo → OwnershipInterest"@en ;
+    oa:mappingId "mapping-crm-017" ;
+    oa:fieldName "ubo" ;
+    oa:sourceSystem "CRM" ;
+    oa:mapsToConcept oa:OwnershipInterest ;
+    oa:proposalStatus "HUMAN_REVIEW" ;
+    oa:riskLevel "medium" ;
+    oa:sourceSnapshotId "crm-parties@sha256:503d103ab015d2fb7720ba7e4aeed7f54e999426e22bc6e126fd663b79f5146a" ;
+    oa:transformation "construct ownership candidate" ;
+    oa:rationale "CRM schema and bounded snapshot support this source-scoped candidate."@en ;
+    oa:counterexample "No contradiction was observed in the bounded fixture; production generalization remains unverified."@en ;
+    oa:confidenceLexical "0.90"^^xsd:decimal ;
+    oa:confidenceStructural "0.88"^^xsd:decimal ;
+    oa:confidenceInstance "0.85"^^xsd:decimal ;
+    oa:confidenceExternal "0.00"^^xsd:decimal ;
+    oa:confidenceModel "0.00"^^xsd:decimal ;
+    oa:confidenceEvidenceCoverage "0.80"^^xsd:decimal ;
+    oa:confidenceProvenance "1.00"^^xsd:decimal ;
+    oa:evidence res:evidence-crm-snapshot ;
+    oa:generationTrace res:generation-trace-crm-batch ;
+    oa:verificationTrace res:verification-run-crm-batch-mock .
+
+res:mapping-crm-018 a oa:MappingProposal ;
+    rdfs:label "CRM country → Country"@en ;
+    oa:mappingId "mapping-crm-018" ;
+    oa:fieldName "country" ;
+    oa:sourceSystem "CRM" ;
+    oa:mapsToConcept oa:Country ;
+    oa:proposalStatus "HUMAN_REVIEW" ;
+    oa:riskLevel "medium" ;
+    oa:sourceSnapshotId "crm-parties@sha256:503d103ab015d2fb7720ba7e4aeed7f54e999426e22bc6e126fd663b79f5146a" ;
+    oa:transformation "resolve ISO country node" ;
+    oa:rationale "CRM schema and bounded snapshot support this source-scoped candidate."@en ;
+    oa:counterexample "No contradiction was observed in the bounded fixture; production generalization remains unverified."@en ;
+    oa:confidenceLexical "0.90"^^xsd:decimal ;
+    oa:confidenceStructural "0.88"^^xsd:decimal ;
+    oa:confidenceInstance "0.85"^^xsd:decimal ;
+    oa:confidenceExternal "0.00"^^xsd:decimal ;
+    oa:confidenceModel "0.00"^^xsd:decimal ;
+    oa:confidenceEvidenceCoverage "0.80"^^xsd:decimal ;
+    oa:confidenceProvenance "1.00"^^xsd:decimal ;
+    oa:evidence res:evidence-crm-snapshot ;
+    oa:generationTrace res:generation-trace-crm-batch ;
+    oa:verificationTrace res:verification-run-crm-batch-mock .
+
+res:mapping-crm-019 a oa:MappingProposal ;
+    rdfs:label "CRM cif_no → NormalizedIdentifier"@en ;
+    oa:mappingId "mapping-crm-019" ;
+    oa:fieldName "cif_no" ;
+    oa:sourceSystem "CRM" ;
+    oa:mapsToConcept oa:NormalizedIdentifier ;
+    oa:proposalStatus "HUMAN_REVIEW" ;
+    oa:riskLevel "medium" ;
+    oa:sourceSnapshotId "crm-parties@sha256:503d103ab015d2fb7720ba7e4aeed7f54e999426e22bc6e126fd663b79f5146a" ;
+    oa:transformation "uppercase and trim source value" ;
+    oa:rationale "CRM schema and bounded snapshot support this source-scoped candidate."@en ;
+    oa:counterexample "No contradiction was observed in the bounded fixture; production generalization remains unverified."@en ;
+    oa:confidenceLexical "0.90"^^xsd:decimal ;
+    oa:confidenceStructural "0.88"^^xsd:decimal ;
+    oa:confidenceInstance "0.85"^^xsd:decimal ;
+    oa:confidenceExternal "0.00"^^xsd:decimal ;
+    oa:confidenceModel "0.00"^^xsd:decimal ;
+    oa:confidenceEvidenceCoverage "0.80"^^xsd:decimal ;
+    oa:confidenceProvenance "1.00"^^xsd:decimal ;
+    oa:evidence res:evidence-crm-snapshot ;
+    oa:generationTrace res:generation-trace-crm-batch ;
+    oa:verificationTrace res:verification-run-crm-batch-mock .
+
+res:mapping-crm-020 a oa:MappingProposal ;
+    rdfs:label "CRM party_type → CustomerRole"@en ;
+    oa:mappingId "mapping-crm-020" ;
+    oa:fieldName "party_type" ;
+    oa:sourceSystem "CRM" ;
+    oa:mapsToConcept oa:CustomerRole ;
+    oa:proposalStatus "HUMAN_REVIEW" ;
+    oa:riskLevel "medium" ;
+    oa:sourceSnapshotId "crm-parties@sha256:503d103ab015d2fb7720ba7e4aeed7f54e999426e22bc6e126fd663b79f5146a" ;
+    oa:transformation "classify party role without identity merge" ;
+    oa:rationale "CRM schema and bounded snapshot support this source-scoped candidate."@en ;
+    oa:counterexample "No contradiction was observed in the bounded fixture; production generalization remains unverified."@en ;
+    oa:confidenceLexical "0.90"^^xsd:decimal ;
+    oa:confidenceStructural "0.88"^^xsd:decimal ;
+    oa:confidenceInstance "0.85"^^xsd:decimal ;
+    oa:confidenceExternal "0.00"^^xsd:decimal ;
+    oa:confidenceModel "0.00"^^xsd:decimal ;
+    oa:confidenceEvidenceCoverage "0.80"^^xsd:decimal ;
+    oa:confidenceProvenance "1.00"^^xsd:decimal ;
+    oa:evidence res:evidence-crm-snapshot ;
+    oa:generationTrace res:generation-trace-crm-batch ;
+    oa:verificationTrace res:verification-run-crm-batch-mock .
+
+res:mapping-crm-021 a oa:MappingProposal ;
+    rdfs:label "CRM ubo → ControlRelation"@en ;
+    oa:mappingId "mapping-crm-021" ;
+    oa:fieldName "ubo" ;
+    oa:sourceSystem "CRM" ;
+    oa:mapsToConcept oa:ControlRelation ;
+    oa:proposalStatus "HUMAN_REVIEW" ;
+    oa:riskLevel "medium" ;
+    oa:sourceSnapshotId "crm-parties@sha256:503d103ab015d2fb7720ba7e4aeed7f54e999426e22bc6e126fd663b79f5146a" ;
+    oa:transformation "propose control relation after human review" ;
+    oa:rationale "CRM schema and bounded snapshot support this source-scoped candidate."@en ;
+    oa:counterexample "No contradiction was observed in the bounded fixture; production generalization remains unverified."@en ;
+    oa:confidenceLexical "0.90"^^xsd:decimal ;
+    oa:confidenceStructural "0.88"^^xsd:decimal ;
+    oa:confidenceInstance "0.85"^^xsd:decimal ;
+    oa:confidenceExternal "0.00"^^xsd:decimal ;
+    oa:confidenceModel "0.00"^^xsd:decimal ;
+    oa:confidenceEvidenceCoverage "0.80"^^xsd:decimal ;
+    oa:confidenceProvenance "1.00"^^xsd:decimal ;
+    oa:evidence res:evidence-crm-snapshot ;
+    oa:generationTrace res:generation-trace-crm-batch ;
+    oa:verificationTrace res:verification-run-crm-batch-mock .
+
+res:mapping-crm-022 a oa:MappingProposal ;
+    rdfs:label "CRM party_id → SourceRecord"@en ;
+    oa:mappingId "mapping-crm-022" ;
+    oa:fieldName "party_id" ;
+    oa:sourceSystem "CRM" ;
+    oa:mapsToConcept oa:SourceRecord ;
+    oa:proposalStatus "HUMAN_REVIEW" ;
+    oa:riskLevel "medium" ;
+    oa:sourceSnapshotId "crm-parties@sha256:503d103ab015d2fb7720ba7e4aeed7f54e999426e22bc6e126fd663b79f5146a" ;
+    oa:transformation "construct source-record node" ;
+    oa:rationale "CRM schema and bounded snapshot support this source-scoped candidate."@en ;
+    oa:counterexample "No contradiction was observed in the bounded fixture; production generalization remains unverified."@en ;
+    oa:confidenceLexical "0.90"^^xsd:decimal ;
+    oa:confidenceStructural "0.88"^^xsd:decimal ;
+    oa:confidenceInstance "0.85"^^xsd:decimal ;
+    oa:confidenceExternal "0.00"^^xsd:decimal ;
+    oa:confidenceModel "0.00"^^xsd:decimal ;
+    oa:confidenceEvidenceCoverage "0.80"^^xsd:decimal ;
+    oa:confidenceProvenance "1.00"^^xsd:decimal ;
+    oa:evidence res:evidence-crm-snapshot ;
+    oa:generationTrace res:generation-trace-crm-batch ;
+    oa:verificationTrace res:verification-run-crm-batch-mock .
+
+res:mapping-crm-023 a oa:MappingProposal ;
+    rdfs:label "CRM legal_name → Customer"@en ;
+    oa:mappingId "mapping-crm-023" ;
+    oa:fieldName "legal_name" ;
+    oa:sourceSystem "CRM" ;
+    oa:mapsToConcept oa:Customer ;
+    oa:proposalStatus "HUMAN_REVIEW" ;
+    oa:riskLevel "medium" ;
+    oa:sourceSnapshotId "crm-parties@sha256:503d103ab015d2fb7720ba7e4aeed7f54e999426e22bc6e126fd663b79f5146a" ;
+    oa:transformation "attach label to customer candidate" ;
+    oa:rationale "CRM schema and bounded snapshot support this source-scoped candidate."@en ;
+    oa:counterexample "No contradiction was observed in the bounded fixture; production generalization remains unverified."@en ;
+    oa:confidenceLexical "0.90"^^xsd:decimal ;
+    oa:confidenceStructural "0.88"^^xsd:decimal ;
+    oa:confidenceInstance "0.85"^^xsd:decimal ;
+    oa:confidenceExternal "0.00"^^xsd:decimal ;
+    oa:confidenceModel "0.00"^^xsd:decimal ;
+    oa:confidenceEvidenceCoverage "0.80"^^xsd:decimal ;
+    oa:confidenceProvenance "1.00"^^xsd:decimal ;
+    oa:evidence res:evidence-crm-snapshot ;
+    oa:generationTrace res:generation-trace-crm-batch ;
+    oa:verificationTrace res:verification-run-crm-batch-mock .
+
+res:mapping-crm-024 a oa:MappingProposal ;
+    rdfs:label "CRM source_updated_at → representsSourceRecord"@en ;
+    oa:mappingId "mapping-crm-024" ;
+    oa:fieldName "source_updated_at" ;
+    oa:sourceSystem "CRM" ;
+    oa:mapsToConcept oa:representsSourceRecord ;
+    oa:proposalStatus "HUMAN_REVIEW" ;
+    oa:riskLevel "medium" ;
+    oa:sourceSnapshotId "crm-parties@sha256:503d103ab015d2fb7720ba7e4aeed7f54e999426e22bc6e126fd663b79f5146a" ;
+    oa:transformation "link temporal metadata to source record" ;
+    oa:rationale "CRM schema and bounded snapshot support this source-scoped candidate."@en ;
+    oa:counterexample "No contradiction was observed in the bounded fixture; production generalization remains unverified."@en ;
+    oa:confidenceLexical "0.90"^^xsd:decimal ;
+    oa:confidenceStructural "0.88"^^xsd:decimal ;
+    oa:confidenceInstance "0.85"^^xsd:decimal ;
+    oa:confidenceExternal "0.00"^^xsd:decimal ;
+    oa:confidenceModel "0.00"^^xsd:decimal ;
+    oa:confidenceEvidenceCoverage "0.80"^^xsd:decimal ;
+    oa:confidenceProvenance "1.00"^^xsd:decimal ;
+    oa:evidence res:evidence-crm-snapshot ;
+    oa:generationTrace res:generation-trace-crm-batch ;
+    oa:verificationTrace res:verification-run-crm-batch-mock .
+
+res:mapping-crm-025 a oa:MappingProposal ;
+    rdfs:label "CRM country → locatedInJurisdiction"@en ;
+    oa:mappingId "mapping-crm-025" ;
+    oa:fieldName "country" ;
+    oa:sourceSystem "CRM" ;
+    oa:mapsToConcept oa:locatedInJurisdiction ;
+    oa:proposalStatus "HUMAN_REVIEW" ;
+    oa:riskLevel "medium" ;
+    oa:sourceSnapshotId "crm-parties@sha256:503d103ab015d2fb7720ba7e4aeed7f54e999426e22bc6e126fd663b79f5146a" ;
+    oa:transformation "link party to governed jurisdiction" ;
+    oa:rationale "CRM schema and bounded snapshot support this source-scoped candidate."@en ;
+    oa:counterexample "No contradiction was observed in the bounded fixture; production generalization remains unverified."@en ;
+    oa:confidenceLexical "0.90"^^xsd:decimal ;
+    oa:confidenceStructural "0.88"^^xsd:decimal ;
+    oa:confidenceInstance "0.85"^^xsd:decimal ;
+    oa:confidenceExternal "0.00"^^xsd:decimal ;
+    oa:confidenceModel "0.00"^^xsd:decimal ;
+    oa:confidenceEvidenceCoverage "0.80"^^xsd:decimal ;
+    oa:confidenceProvenance "1.00"^^xsd:decimal ;
+    oa:evidence res:evidence-crm-snapshot ;
+    oa:generationTrace res:generation-trace-crm-batch ;
+    oa:verificationTrace res:verification-run-crm-batch-mock .
+
+res:mapping-accounts-001 a oa:MappingProposal ;
+    rdfs:label "CORE_BANKING account_id → AccountIdentifier"@en ;
+    oa:mappingId "mapping-accounts-001" ;
+    oa:fieldName "account_id" ;
+    oa:sourceSystem "CORE_BANKING" ;
+    oa:mapsToConcept oa:AccountIdentifier ;
+    oa:proposalStatus "HUMAN_REVIEW" ;
+    oa:riskLevel "low" ;
+    oa:sourceSnapshotId "core-accounts@sha256:5048c0b5a286afecb3b7bdcc81891b54bda12ab151e7097fcf81b3f1b5bb974a" ;
+    oa:transformation "identity(source_value)" ;
+    oa:rationale "Core-banking schema and bounded account rows support this candidate."@en ;
+    oa:counterexample "No contradiction was observed in the bounded fixture; production generalization remains unverified."@en ;
+    oa:confidenceLexical "0.92"^^xsd:decimal ;
+    oa:confidenceStructural "0.90"^^xsd:decimal ;
+    oa:confidenceInstance "0.95"^^xsd:decimal ;
+    oa:confidenceExternal "0.00"^^xsd:decimal ;
+    oa:confidenceModel "0.00"^^xsd:decimal ;
+    oa:confidenceEvidenceCoverage "0.85"^^xsd:decimal ;
+    oa:confidenceProvenance "1.00"^^xsd:decimal ;
+    oa:evidence res:evidence-accounts-snapshot ;
+    oa:generationTrace res:generation-trace-accounts-batch ;
+    oa:verificationTrace res:verification-run-accounts-batch-mock .
+
+res:mapping-accounts-002 a oa:MappingProposal ;
+    rdfs:label "CORE_BANKING account_id → sourceRecordId"@en ;
+    oa:mappingId "mapping-accounts-002" ;
+    oa:fieldName "account_id" ;
+    oa:sourceSystem "CORE_BANKING" ;
+    oa:mapsToConcept oa:sourceRecordId ;
+    oa:proposalStatus "HUMAN_REVIEW" ;
+    oa:riskLevel "low" ;
+    oa:sourceSnapshotId "core-accounts@sha256:5048c0b5a286afecb3b7bdcc81891b54bda12ab151e7097fcf81b3f1b5bb974a" ;
+    oa:transformation "identity(source_value)" ;
+    oa:rationale "Core-banking schema and bounded account rows support this candidate."@en ;
+    oa:counterexample "No contradiction was observed in the bounded fixture; production generalization remains unverified."@en ;
+    oa:confidenceLexical "0.92"^^xsd:decimal ;
+    oa:confidenceStructural "0.90"^^xsd:decimal ;
+    oa:confidenceInstance "0.95"^^xsd:decimal ;
+    oa:confidenceExternal "0.00"^^xsd:decimal ;
+    oa:confidenceModel "0.00"^^xsd:decimal ;
+    oa:confidenceEvidenceCoverage "0.85"^^xsd:decimal ;
+    oa:confidenceProvenance "1.00"^^xsd:decimal ;
+    oa:evidence res:evidence-accounts-snapshot ;
+    oa:generationTrace res:generation-trace-accounts-batch ;
+    oa:verificationTrace res:verification-run-accounts-batch-mock .
+
+res:mapping-accounts-003 a oa:MappingProposal ;
+    rdfs:label "CORE_BANKING account_id → Account"@en ;
+    oa:mappingId "mapping-accounts-003" ;
+    oa:fieldName "account_id" ;
+    oa:sourceSystem "CORE_BANKING" ;
+    oa:mapsToConcept oa:Account ;
+    oa:proposalStatus "HUMAN_REVIEW" ;
+    oa:riskLevel "low" ;
+    oa:sourceSnapshotId "core-accounts@sha256:5048c0b5a286afecb3b7bdcc81891b54bda12ab151e7097fcf81b3f1b5bb974a" ;
+    oa:transformation "construct governed account node" ;
+    oa:rationale "Core-banking schema and bounded account rows support this candidate."@en ;
+    oa:counterexample "No contradiction was observed in the bounded fixture; production generalization remains unverified."@en ;
+    oa:confidenceLexical "0.92"^^xsd:decimal ;
+    oa:confidenceStructural "0.90"^^xsd:decimal ;
+    oa:confidenceInstance "0.95"^^xsd:decimal ;
+    oa:confidenceExternal "0.00"^^xsd:decimal ;
+    oa:confidenceModel "0.00"^^xsd:decimal ;
+    oa:confidenceEvidenceCoverage "0.85"^^xsd:decimal ;
+    oa:confidenceProvenance "1.00"^^xsd:decimal ;
+    oa:evidence res:evidence-accounts-snapshot ;
+    oa:generationTrace res:generation-trace-accounts-batch ;
+    oa:verificationTrace res:verification-run-accounts-batch-mock .
+
+res:mapping-accounts-004 a oa:MappingProposal ;
+    rdfs:label "CORE_BANKING account_id → SourceRecord"@en ;
+    oa:mappingId "mapping-accounts-004" ;
+    oa:fieldName "account_id" ;
+    oa:sourceSystem "CORE_BANKING" ;
+    oa:mapsToConcept oa:SourceRecord ;
+    oa:proposalStatus "HUMAN_REVIEW" ;
+    oa:riskLevel "low" ;
+    oa:sourceSnapshotId "core-accounts@sha256:5048c0b5a286afecb3b7bdcc81891b54bda12ab151e7097fcf81b3f1b5bb974a" ;
+    oa:transformation "construct source-record node" ;
+    oa:rationale "Core-banking schema and bounded account rows support this candidate."@en ;
+    oa:counterexample "No contradiction was observed in the bounded fixture; production generalization remains unverified."@en ;
+    oa:confidenceLexical "0.92"^^xsd:decimal ;
+    oa:confidenceStructural "0.90"^^xsd:decimal ;
+    oa:confidenceInstance "0.95"^^xsd:decimal ;
+    oa:confidenceExternal "0.00"^^xsd:decimal ;
+    oa:confidenceModel "0.00"^^xsd:decimal ;
+    oa:confidenceEvidenceCoverage "0.85"^^xsd:decimal ;
+    oa:confidenceProvenance "1.00"^^xsd:decimal ;
+    oa:evidence res:evidence-accounts-snapshot ;
+    oa:generationTrace res:generation-trace-accounts-batch ;
+    oa:verificationTrace res:verification-run-accounts-batch-mock .
+
+res:mapping-accounts-005 a oa:MappingProposal ;
+    rdfs:label "CORE_BANKING account_number → accountNumber"@en ;
+    oa:mappingId "mapping-accounts-005" ;
+    oa:fieldName "account_number" ;
+    oa:sourceSystem "CORE_BANKING" ;
+    oa:mapsToConcept oa:accountNumber ;
+    oa:proposalStatus "HUMAN_REVIEW" ;
+    oa:riskLevel "low" ;
+    oa:sourceSnapshotId "core-accounts@sha256:5048c0b5a286afecb3b7bdcc81891b54bda12ab151e7097fcf81b3f1b5bb974a" ;
+    oa:transformation "identity(source_value)" ;
+    oa:rationale "Core-banking schema and bounded account rows support this candidate."@en ;
+    oa:counterexample "No contradiction was observed in the bounded fixture; production generalization remains unverified."@en ;
+    oa:confidenceLexical "0.92"^^xsd:decimal ;
+    oa:confidenceStructural "0.90"^^xsd:decimal ;
+    oa:confidenceInstance "0.95"^^xsd:decimal ;
+    oa:confidenceExternal "0.00"^^xsd:decimal ;
+    oa:confidenceModel "0.00"^^xsd:decimal ;
+    oa:confidenceEvidenceCoverage "0.85"^^xsd:decimal ;
+    oa:confidenceProvenance "1.00"^^xsd:decimal ;
+    oa:evidence res:evidence-accounts-snapshot ;
+    oa:generationTrace res:generation-trace-accounts-batch ;
+    oa:verificationTrace res:verification-run-accounts-batch-mock .
+
+res:mapping-accounts-006 a oa:MappingProposal ;
+    rdfs:label "CORE_BANKING account_number → Identifier"@en ;
+    oa:mappingId "mapping-accounts-006" ;
+    oa:fieldName "account_number" ;
+    oa:sourceSystem "CORE_BANKING" ;
+    oa:mapsToConcept oa:Identifier ;
+    oa:proposalStatus "HUMAN_REVIEW" ;
+    oa:riskLevel "low" ;
+    oa:sourceSnapshotId "core-accounts@sha256:5048c0b5a286afecb3b7bdcc81891b54bda12ab151e7097fcf81b3f1b5bb974a" ;
+    oa:transformation "construct account identifier" ;
+    oa:rationale "Core-banking schema and bounded account rows support this candidate."@en ;
+    oa:counterexample "No contradiction was observed in the bounded fixture; production generalization remains unverified."@en ;
+    oa:confidenceLexical "0.92"^^xsd:decimal ;
+    oa:confidenceStructural "0.90"^^xsd:decimal ;
+    oa:confidenceInstance "0.95"^^xsd:decimal ;
+    oa:confidenceExternal "0.00"^^xsd:decimal ;
+    oa:confidenceModel "0.00"^^xsd:decimal ;
+    oa:confidenceEvidenceCoverage "0.85"^^xsd:decimal ;
+    oa:confidenceProvenance "1.00"^^xsd:decimal ;
+    oa:evidence res:evidence-accounts-snapshot ;
+    oa:generationTrace res:generation-trace-accounts-batch ;
+    oa:verificationTrace res:verification-run-accounts-batch-mock .
+
+res:mapping-accounts-007 a oa:MappingProposal ;
+    rdfs:label "CORE_BANKING account_number → NormalizedIdentifier"@en ;
+    oa:mappingId "mapping-accounts-007" ;
+    oa:fieldName "account_number" ;
+    oa:sourceSystem "CORE_BANKING" ;
+    oa:mapsToConcept oa:NormalizedIdentifier ;
+    oa:proposalStatus "HUMAN_REVIEW" ;
+    oa:riskLevel "low" ;
+    oa:sourceSnapshotId "core-accounts@sha256:5048c0b5a286afecb3b7bdcc81891b54bda12ab151e7097fcf81b3f1b5bb974a" ;
+    oa:transformation "uppercase and trim source value" ;
+    oa:rationale "Core-banking schema and bounded account rows support this candidate."@en ;
+    oa:counterexample "No contradiction was observed in the bounded fixture; production generalization remains unverified."@en ;
+    oa:confidenceLexical "0.92"^^xsd:decimal ;
+    oa:confidenceStructural "0.90"^^xsd:decimal ;
+    oa:confidenceInstance "0.95"^^xsd:decimal ;
+    oa:confidenceExternal "0.00"^^xsd:decimal ;
+    oa:confidenceModel "0.00"^^xsd:decimal ;
+    oa:confidenceEvidenceCoverage "0.85"^^xsd:decimal ;
+    oa:confidenceProvenance "1.00"^^xsd:decimal ;
+    oa:evidence res:evidence-accounts-snapshot ;
+    oa:generationTrace res:generation-trace-accounts-batch ;
+    oa:verificationTrace res:verification-run-accounts-batch-mock .
+
+res:mapping-accounts-008 a oa:MappingProposal ;
+    rdfs:label "CORE_BANKING owner_party_id → PartyIdentifier"@en ;
+    oa:mappingId "mapping-accounts-008" ;
+    oa:fieldName "owner_party_id" ;
+    oa:sourceSystem "CORE_BANKING" ;
+    oa:mapsToConcept oa:PartyIdentifier ;
+    oa:proposalStatus "HUMAN_REVIEW" ;
+    oa:riskLevel "low" ;
+    oa:sourceSnapshotId "core-accounts@sha256:5048c0b5a286afecb3b7bdcc81891b54bda12ab151e7097fcf81b3f1b5bb974a" ;
+    oa:transformation "identity(source_value)" ;
+    oa:rationale "Core-banking schema and bounded account rows support this candidate."@en ;
+    oa:counterexample "No contradiction was observed in the bounded fixture; production generalization remains unverified."@en ;
+    oa:confidenceLexical "0.92"^^xsd:decimal ;
+    oa:confidenceStructural "0.90"^^xsd:decimal ;
+    oa:confidenceInstance "0.95"^^xsd:decimal ;
+    oa:confidenceExternal "0.00"^^xsd:decimal ;
+    oa:confidenceModel "0.00"^^xsd:decimal ;
+    oa:confidenceEvidenceCoverage "0.85"^^xsd:decimal ;
+    oa:confidenceProvenance "1.00"^^xsd:decimal ;
+    oa:evidence res:evidence-accounts-snapshot ;
+    oa:generationTrace res:generation-trace-accounts-batch ;
+    oa:verificationTrace res:verification-run-accounts-batch-mock .
+
+res:mapping-accounts-009 a oa:MappingProposal ;
+    rdfs:label "CORE_BANKING owner_party_id → ownedBy"@en ;
+    oa:mappingId "mapping-accounts-009" ;
+    oa:fieldName "owner_party_id" ;
+    oa:sourceSystem "CORE_BANKING" ;
+    oa:mapsToConcept oa:ownedBy ;
+    oa:proposalStatus "HUMAN_REVIEW" ;
+    oa:riskLevel "low" ;
+    oa:sourceSnapshotId "core-accounts@sha256:5048c0b5a286afecb3b7bdcc81891b54bda12ab151e7097fcf81b3f1b5bb974a" ;
+    oa:transformation "resolve owner party reference" ;
+    oa:rationale "Core-banking schema and bounded account rows support this candidate."@en ;
+    oa:counterexample "No contradiction was observed in the bounded fixture; production generalization remains unverified."@en ;
+    oa:confidenceLexical "0.92"^^xsd:decimal ;
+    oa:confidenceStructural "0.90"^^xsd:decimal ;
+    oa:confidenceInstance "0.95"^^xsd:decimal ;
+    oa:confidenceExternal "0.00"^^xsd:decimal ;
+    oa:confidenceModel "0.00"^^xsd:decimal ;
+    oa:confidenceEvidenceCoverage "0.85"^^xsd:decimal ;
+    oa:confidenceProvenance "1.00"^^xsd:decimal ;
+    oa:evidence res:evidence-accounts-snapshot ;
+    oa:generationTrace res:generation-trace-accounts-batch ;
+    oa:verificationTrace res:verification-run-accounts-batch-mock .
+
+res:mapping-accounts-010 a oa:MappingProposal ;
+    rdfs:label "CORE_BANKING owner_party_id → CustomerRole"@en ;
+    oa:mappingId "mapping-accounts-010" ;
+    oa:fieldName "owner_party_id" ;
+    oa:sourceSystem "CORE_BANKING" ;
+    oa:mapsToConcept oa:CustomerRole ;
+    oa:proposalStatus "HUMAN_REVIEW" ;
+    oa:riskLevel "low" ;
+    oa:sourceSnapshotId "core-accounts@sha256:5048c0b5a286afecb3b7bdcc81891b54bda12ab151e7097fcf81b3f1b5bb974a" ;
+    oa:transformation "construct account-holder role" ;
+    oa:rationale "Core-banking schema and bounded account rows support this candidate."@en ;
+    oa:counterexample "No contradiction was observed in the bounded fixture; production generalization remains unverified."@en ;
+    oa:confidenceLexical "0.92"^^xsd:decimal ;
+    oa:confidenceStructural "0.90"^^xsd:decimal ;
+    oa:confidenceInstance "0.95"^^xsd:decimal ;
+    oa:confidenceExternal "0.00"^^xsd:decimal ;
+    oa:confidenceModel "0.00"^^xsd:decimal ;
+    oa:confidenceEvidenceCoverage "0.85"^^xsd:decimal ;
+    oa:confidenceProvenance "1.00"^^xsd:decimal ;
+    oa:evidence res:evidence-accounts-snapshot ;
+    oa:generationTrace res:generation-trace-accounts-batch ;
+    oa:verificationTrace res:verification-run-accounts-batch-mock .
+
+res:mapping-accounts-011 a oa:MappingProposal ;
+    rdfs:label "CORE_BANKING owner_party_id → Party"@en ;
+    oa:mappingId "mapping-accounts-011" ;
+    oa:fieldName "owner_party_id" ;
+    oa:sourceSystem "CORE_BANKING" ;
+    oa:mapsToConcept oa:Party ;
+    oa:proposalStatus "HUMAN_REVIEW" ;
+    oa:riskLevel "low" ;
+    oa:sourceSnapshotId "core-accounts@sha256:5048c0b5a286afecb3b7bdcc81891b54bda12ab151e7097fcf81b3f1b5bb974a" ;
+    oa:transformation "resolve governed party node" ;
+    oa:rationale "Core-banking schema and bounded account rows support this candidate."@en ;
+    oa:counterexample "No contradiction was observed in the bounded fixture; production generalization remains unverified."@en ;
+    oa:confidenceLexical "0.92"^^xsd:decimal ;
+    oa:confidenceStructural "0.90"^^xsd:decimal ;
+    oa:confidenceInstance "0.95"^^xsd:decimal ;
+    oa:confidenceExternal "0.00"^^xsd:decimal ;
+    oa:confidenceModel "0.00"^^xsd:decimal ;
+    oa:confidenceEvidenceCoverage "0.85"^^xsd:decimal ;
+    oa:confidenceProvenance "1.00"^^xsd:decimal ;
+    oa:evidence res:evidence-accounts-snapshot ;
+    oa:generationTrace res:generation-trace-accounts-batch ;
+    oa:verificationTrace res:verification-run-accounts-batch-mock .
+
+res:mapping-accounts-012 a oa:MappingProposal ;
+    rdfs:label "CORE_BANKING status → AccountStatus"@en ;
+    oa:mappingId "mapping-accounts-012" ;
+    oa:fieldName "status" ;
+    oa:sourceSystem "CORE_BANKING" ;
+    oa:mapsToConcept oa:AccountStatus ;
+    oa:proposalStatus "HUMAN_REVIEW" ;
+    oa:riskLevel "low" ;
+    oa:sourceSnapshotId "core-accounts@sha256:5048c0b5a286afecb3b7bdcc81891b54bda12ab151e7097fcf81b3f1b5bb974a" ;
+    oa:transformation "uppercase(source_value)" ;
+    oa:rationale "Core-banking schema and bounded account rows support this candidate."@en ;
+    oa:counterexample "No contradiction was observed in the bounded fixture; production generalization remains unverified."@en ;
+    oa:confidenceLexical "0.92"^^xsd:decimal ;
+    oa:confidenceStructural "0.90"^^xsd:decimal ;
+    oa:confidenceInstance "0.95"^^xsd:decimal ;
+    oa:confidenceExternal "0.00"^^xsd:decimal ;
+    oa:confidenceModel "0.00"^^xsd:decimal ;
+    oa:confidenceEvidenceCoverage "0.85"^^xsd:decimal ;
+    oa:confidenceProvenance "1.00"^^xsd:decimal ;
+    oa:evidence res:evidence-accounts-snapshot ;
+    oa:generationTrace res:generation-trace-accounts-batch ;
+    oa:verificationTrace res:verification-run-accounts-batch-mock .
+
+res:mapping-accounts-013 a oa:MappingProposal ;
+    rdfs:label "CORE_BANKING status → statusCode"@en ;
+    oa:mappingId "mapping-accounts-013" ;
+    oa:fieldName "status" ;
+    oa:sourceSystem "CORE_BANKING" ;
+    oa:mapsToConcept oa:statusCode ;
+    oa:proposalStatus "HUMAN_REVIEW" ;
+    oa:riskLevel "low" ;
+    oa:sourceSnapshotId "core-accounts@sha256:5048c0b5a286afecb3b7bdcc81891b54bda12ab151e7097fcf81b3f1b5bb974a" ;
+    oa:transformation "uppercase(source_value)" ;
+    oa:rationale "Core-banking schema and bounded account rows support this candidate."@en ;
+    oa:counterexample "No contradiction was observed in the bounded fixture; production generalization remains unverified."@en ;
+    oa:confidenceLexical "0.92"^^xsd:decimal ;
+    oa:confidenceStructural "0.90"^^xsd:decimal ;
+    oa:confidenceInstance "0.95"^^xsd:decimal ;
+    oa:confidenceExternal "0.00"^^xsd:decimal ;
+    oa:confidenceModel "0.00"^^xsd:decimal ;
+    oa:confidenceEvidenceCoverage "0.85"^^xsd:decimal ;
+    oa:confidenceProvenance "1.00"^^xsd:decimal ;
+    oa:evidence res:evidence-accounts-snapshot ;
+    oa:generationTrace res:generation-trace-accounts-batch ;
+    oa:verificationTrace res:verification-run-accounts-batch-mock .
+
+res:mapping-accounts-014 a oa:MappingProposal ;
+    rdfs:label "CORE_BANKING status → LifecycleState"@en ;
+    oa:mappingId "mapping-accounts-014" ;
+    oa:fieldName "status" ;
+    oa:sourceSystem "CORE_BANKING" ;
+    oa:mapsToConcept oa:LifecycleState ;
+    oa:proposalStatus "HUMAN_REVIEW" ;
+    oa:riskLevel "low" ;
+    oa:sourceSnapshotId "core-accounts@sha256:5048c0b5a286afecb3b7bdcc81891b54bda12ab151e7097fcf81b3f1b5bb974a" ;
+    oa:transformation "classify account lifecycle state" ;
+    oa:rationale "Core-banking schema and bounded account rows support this candidate."@en ;
+    oa:counterexample "No contradiction was observed in the bounded fixture; production generalization remains unverified."@en ;
+    oa:confidenceLexical "0.92"^^xsd:decimal ;
+    oa:confidenceStructural "0.90"^^xsd:decimal ;
+    oa:confidenceInstance "0.95"^^xsd:decimal ;
+    oa:confidenceExternal "0.00"^^xsd:decimal ;
+    oa:confidenceModel "0.00"^^xsd:decimal ;
+    oa:confidenceEvidenceCoverage "0.85"^^xsd:decimal ;
+    oa:confidenceProvenance "1.00"^^xsd:decimal ;
+    oa:evidence res:evidence-accounts-snapshot ;
+    oa:generationTrace res:generation-trace-accounts-batch ;
+    oa:verificationTrace res:verification-run-accounts-batch-mock .
+
+res:mapping-accounts-015 a oa:MappingProposal ;
+    rdfs:label "CORE_BANKING currency → CurrencyCode"@en ;
+    oa:mappingId "mapping-accounts-015" ;
+    oa:fieldName "currency" ;
+    oa:sourceSystem "CORE_BANKING" ;
+    oa:mapsToConcept oa:CurrencyCode ;
+    oa:proposalStatus "HUMAN_REVIEW" ;
+    oa:riskLevel "low" ;
+    oa:sourceSnapshotId "core-accounts@sha256:5048c0b5a286afecb3b7bdcc81891b54bda12ab151e7097fcf81b3f1b5bb974a" ;
+    oa:transformation "uppercase(source_value)" ;
+    oa:rationale "Core-banking schema and bounded account rows support this candidate."@en ;
+    oa:counterexample "No contradiction was observed in the bounded fixture; production generalization remains unverified."@en ;
+    oa:confidenceLexical "0.92"^^xsd:decimal ;
+    oa:confidenceStructural "0.90"^^xsd:decimal ;
+    oa:confidenceInstance "0.95"^^xsd:decimal ;
+    oa:confidenceExternal "0.00"^^xsd:decimal ;
+    oa:confidenceModel "0.00"^^xsd:decimal ;
+    oa:confidenceEvidenceCoverage "0.85"^^xsd:decimal ;
+    oa:confidenceProvenance "1.00"^^xsd:decimal ;
+    oa:evidence res:evidence-accounts-snapshot ;
+    oa:generationTrace res:generation-trace-accounts-batch ;
+    oa:verificationTrace res:verification-run-accounts-batch-mock .
+
+res:mapping-accounts-016 a oa:MappingProposal ;
+    rdfs:label "CORE_BANKING currency → Currency"@en ;
+    oa:mappingId "mapping-accounts-016" ;
+    oa:fieldName "currency" ;
+    oa:sourceSystem "CORE_BANKING" ;
+    oa:mapsToConcept oa:Currency ;
+    oa:proposalStatus "HUMAN_REVIEW" ;
+    oa:riskLevel "low" ;
+    oa:sourceSnapshotId "core-accounts@sha256:5048c0b5a286afecb3b7bdcc81891b54bda12ab151e7097fcf81b3f1b5bb974a" ;
+    oa:transformation "resolve ISO currency node" ;
+    oa:rationale "Core-banking schema and bounded account rows support this candidate."@en ;
+    oa:counterexample "No contradiction was observed in the bounded fixture; production generalization remains unverified."@en ;
+    oa:confidenceLexical "0.92"^^xsd:decimal ;
+    oa:confidenceStructural "0.90"^^xsd:decimal ;
+    oa:confidenceInstance "0.95"^^xsd:decimal ;
+    oa:confidenceExternal "0.00"^^xsd:decimal ;
+    oa:confidenceModel "0.00"^^xsd:decimal ;
+    oa:confidenceEvidenceCoverage "0.85"^^xsd:decimal ;
+    oa:confidenceProvenance "1.00"^^xsd:decimal ;
+    oa:evidence res:evidence-accounts-snapshot ;
+    oa:generationTrace res:generation-trace-accounts-batch ;
+    oa:verificationTrace res:verification-run-accounts-batch-mock .
+
+res:mapping-accounts-017 a oa:MappingProposal ;
+    rdfs:label "CORE_BANKING source_updated_at → recordTimestamp"@en ;
+    oa:mappingId "mapping-accounts-017" ;
+    oa:fieldName "source_updated_at" ;
+    oa:sourceSystem "CORE_BANKING" ;
+    oa:mapsToConcept oa:recordTimestamp ;
+    oa:proposalStatus "HUMAN_REVIEW" ;
+    oa:riskLevel "low" ;
+    oa:sourceSnapshotId "core-accounts@sha256:5048c0b5a286afecb3b7bdcc81891b54bda12ab151e7097fcf81b3f1b5bb974a" ;
+    oa:transformation "parse_iso8601(source_value)" ;
+    oa:rationale "Core-banking schema and bounded account rows support this candidate."@en ;
+    oa:counterexample "No contradiction was observed in the bounded fixture; production generalization remains unverified."@en ;
+    oa:confidenceLexical "0.92"^^xsd:decimal ;
+    oa:confidenceStructural "0.90"^^xsd:decimal ;
+    oa:confidenceInstance "0.95"^^xsd:decimal ;
+    oa:confidenceExternal "0.00"^^xsd:decimal ;
+    oa:confidenceModel "0.00"^^xsd:decimal ;
+    oa:confidenceEvidenceCoverage "0.85"^^xsd:decimal ;
+    oa:confidenceProvenance "1.00"^^xsd:decimal ;
+    oa:evidence res:evidence-accounts-snapshot ;
+    oa:generationTrace res:generation-trace-accounts-batch ;
+    oa:verificationTrace res:verification-run-accounts-batch-mock .
+
+res:mapping-accounts-018 a oa:MappingProposal ;
+    rdfs:label "CORE_BANKING source_updated_at → TemporalMetadata"@en ;
+    oa:mappingId "mapping-accounts-018" ;
+    oa:fieldName "source_updated_at" ;
+    oa:sourceSystem "CORE_BANKING" ;
+    oa:mapsToConcept oa:TemporalMetadata ;
+    oa:proposalStatus "HUMAN_REVIEW" ;
+    oa:riskLevel "low" ;
+    oa:sourceSnapshotId "core-accounts@sha256:5048c0b5a286afecb3b7bdcc81891b54bda12ab151e7097fcf81b3f1b5bb974a" ;
+    oa:transformation "attach source recency metadata" ;
+    oa:rationale "Core-banking schema and bounded account rows support this candidate."@en ;
+    oa:counterexample "No contradiction was observed in the bounded fixture; production generalization remains unverified."@en ;
+    oa:confidenceLexical "0.92"^^xsd:decimal ;
+    oa:confidenceStructural "0.90"^^xsd:decimal ;
+    oa:confidenceInstance "0.95"^^xsd:decimal ;
+    oa:confidenceExternal "0.00"^^xsd:decimal ;
+    oa:confidenceModel "0.00"^^xsd:decimal ;
+    oa:confidenceEvidenceCoverage "0.85"^^xsd:decimal ;
+    oa:confidenceProvenance "1.00"^^xsd:decimal ;
+    oa:evidence res:evidence-accounts-snapshot ;
+    oa:generationTrace res:generation-trace-accounts-batch ;
+    oa:verificationTrace res:verification-run-accounts-batch-mock .
+
+res:mapping-accounts-019 a oa:MappingProposal ;
+    rdfs:label "CORE_BANKING owner_party_id → representsSourceRecord"@en ;
+    oa:mappingId "mapping-accounts-019" ;
+    oa:fieldName "owner_party_id" ;
+    oa:sourceSystem "CORE_BANKING" ;
+    oa:mapsToConcept oa:representsSourceRecord ;
+    oa:proposalStatus "HUMAN_REVIEW" ;
+    oa:riskLevel "low" ;
+    oa:sourceSnapshotId "core-accounts@sha256:5048c0b5a286afecb3b7bdcc81891b54bda12ab151e7097fcf81b3f1b5bb974a" ;
+    oa:transformation "link ownership assertion to source record" ;
+    oa:rationale "Core-banking schema and bounded account rows support this candidate."@en ;
+    oa:counterexample "No contradiction was observed in the bounded fixture; production generalization remains unverified."@en ;
+    oa:confidenceLexical "0.92"^^xsd:decimal ;
+    oa:confidenceStructural "0.90"^^xsd:decimal ;
+    oa:confidenceInstance "0.95"^^xsd:decimal ;
+    oa:confidenceExternal "0.00"^^xsd:decimal ;
+    oa:confidenceModel "0.00"^^xsd:decimal ;
+    oa:confidenceEvidenceCoverage "0.85"^^xsd:decimal ;
+    oa:confidenceProvenance "1.00"^^xsd:decimal ;
+    oa:evidence res:evidence-accounts-snapshot ;
+    oa:generationTrace res:generation-trace-accounts-batch ;
+    oa:verificationTrace res:verification-run-accounts-batch-mock .
+
+res:mapping-accounts-020 a oa:MappingProposal ;
+    rdfs:label "CORE_BANKING account_number → hasIdentifier"@en ;
+    oa:mappingId "mapping-accounts-020" ;
+    oa:fieldName "account_number" ;
+    oa:sourceSystem "CORE_BANKING" ;
+    oa:mapsToConcept oa:hasIdentifier ;
+    oa:proposalStatus "HUMAN_REVIEW" ;
+    oa:riskLevel "low" ;
+    oa:sourceSnapshotId "core-accounts@sha256:5048c0b5a286afecb3b7bdcc81891b54bda12ab151e7097fcf81b3f1b5bb974a" ;
+    oa:transformation "link account to its source-scoped identifier" ;
+    oa:rationale "Core-banking schema and bounded account rows support this candidate."@en ;
+    oa:counterexample "No contradiction was observed in the bounded fixture; production generalization remains unverified."@en ;
+    oa:confidenceLexical "0.92"^^xsd:decimal ;
+    oa:confidenceStructural "0.90"^^xsd:decimal ;
+    oa:confidenceInstance "0.95"^^xsd:decimal ;
+    oa:confidenceExternal "0.00"^^xsd:decimal ;
+    oa:confidenceModel "0.00"^^xsd:decimal ;
+    oa:confidenceEvidenceCoverage "0.85"^^xsd:decimal ;
+    oa:confidenceProvenance "1.00"^^xsd:decimal ;
+    oa:evidence res:evidence-accounts-snapshot ;
+    oa:generationTrace res:generation-trace-accounts-batch ;
+    oa:verificationTrace res:verification-run-accounts-batch-mock .
+
+res:mapping-payments-001 a oa:MappingProposal ;
+    rdfs:label "PAYMENTS payment_id → PaymentIdentifier"@en ;
+    oa:mappingId "mapping-payments-001" ;
+    oa:fieldName "payment_id" ;
+    oa:sourceSystem "PAYMENTS" ;
+    oa:mapsToConcept oa:PaymentIdentifier ;
+    oa:proposalStatus "HUMAN_REVIEW" ;
+    oa:riskLevel "low" ;
+    oa:sourceSnapshotId "payments@sha256:0439bfd4fd9c595042add6fa1f6cdcae557a88f566c1e50eac8739e1e7c76d86" ;
+    oa:transformation "identity(source_value)" ;
+    oa:rationale "Payments schema and bounded JSONL records support this candidate."@en ;
+    oa:counterexample "No contradiction was observed in the bounded fixture; production generalization remains unverified."@en ;
+    oa:confidenceLexical "0.93"^^xsd:decimal ;
+    oa:confidenceStructural "0.92"^^xsd:decimal ;
+    oa:confidenceInstance "0.96"^^xsd:decimal ;
+    oa:confidenceExternal "0.00"^^xsd:decimal ;
+    oa:confidenceModel "0.00"^^xsd:decimal ;
+    oa:confidenceEvidenceCoverage "0.85"^^xsd:decimal ;
+    oa:confidenceProvenance "1.00"^^xsd:decimal ;
+    oa:evidence res:evidence-payments-snapshot ;
+    oa:generationTrace res:generation-trace-payments-batch ;
+    oa:verificationTrace res:verification-run-payments-batch-mock .
+
+res:mapping-payments-002 a oa:MappingProposal ;
+    rdfs:label "PAYMENTS payment_id → sourceRecordId"@en ;
+    oa:mappingId "mapping-payments-002" ;
+    oa:fieldName "payment_id" ;
+    oa:sourceSystem "PAYMENTS" ;
+    oa:mapsToConcept oa:sourceRecordId ;
+    oa:proposalStatus "HUMAN_REVIEW" ;
+    oa:riskLevel "low" ;
+    oa:sourceSnapshotId "payments@sha256:0439bfd4fd9c595042add6fa1f6cdcae557a88f566c1e50eac8739e1e7c76d86" ;
+    oa:transformation "identity(source_value)" ;
+    oa:rationale "Payments schema and bounded JSONL records support this candidate."@en ;
+    oa:counterexample "No contradiction was observed in the bounded fixture; production generalization remains unverified."@en ;
+    oa:confidenceLexical "0.93"^^xsd:decimal ;
+    oa:confidenceStructural "0.92"^^xsd:decimal ;
+    oa:confidenceInstance "0.96"^^xsd:decimal ;
+    oa:confidenceExternal "0.00"^^xsd:decimal ;
+    oa:confidenceModel "0.00"^^xsd:decimal ;
+    oa:confidenceEvidenceCoverage "0.85"^^xsd:decimal ;
+    oa:confidenceProvenance "1.00"^^xsd:decimal ;
+    oa:evidence res:evidence-payments-snapshot ;
+    oa:generationTrace res:generation-trace-payments-batch ;
+    oa:verificationTrace res:verification-run-payments-batch-mock .
+
+res:mapping-payments-003 a oa:MappingProposal ;
+    rdfs:label "PAYMENTS payment_id → Payment"@en ;
+    oa:mappingId "mapping-payments-003" ;
+    oa:fieldName "payment_id" ;
+    oa:sourceSystem "PAYMENTS" ;
+    oa:mapsToConcept oa:Payment ;
+    oa:proposalStatus "HUMAN_REVIEW" ;
+    oa:riskLevel "low" ;
+    oa:sourceSnapshotId "payments@sha256:0439bfd4fd9c595042add6fa1f6cdcae557a88f566c1e50eac8739e1e7c76d86" ;
+    oa:transformation "construct governed payment node" ;
+    oa:rationale "Payments schema and bounded JSONL records support this candidate."@en ;
+    oa:counterexample "No contradiction was observed in the bounded fixture; production generalization remains unverified."@en ;
+    oa:confidenceLexical "0.93"^^xsd:decimal ;
+    oa:confidenceStructural "0.92"^^xsd:decimal ;
+    oa:confidenceInstance "0.96"^^xsd:decimal ;
+    oa:confidenceExternal "0.00"^^xsd:decimal ;
+    oa:confidenceModel "0.00"^^xsd:decimal ;
+    oa:confidenceEvidenceCoverage "0.85"^^xsd:decimal ;
+    oa:confidenceProvenance "1.00"^^xsd:decimal ;
+    oa:evidence res:evidence-payments-snapshot ;
+    oa:generationTrace res:generation-trace-payments-batch ;
+    oa:verificationTrace res:verification-run-payments-batch-mock .
+
+res:mapping-payments-004 a oa:MappingProposal ;
+    rdfs:label "PAYMENTS payment_id → SourceRecord"@en ;
+    oa:mappingId "mapping-payments-004" ;
+    oa:fieldName "payment_id" ;
+    oa:sourceSystem "PAYMENTS" ;
+    oa:mapsToConcept oa:SourceRecord ;
+    oa:proposalStatus "HUMAN_REVIEW" ;
+    oa:riskLevel "low" ;
+    oa:sourceSnapshotId "payments@sha256:0439bfd4fd9c595042add6fa1f6cdcae557a88f566c1e50eac8739e1e7c76d86" ;
+    oa:transformation "construct source-record node" ;
+    oa:rationale "Payments schema and bounded JSONL records support this candidate."@en ;
+    oa:counterexample "No contradiction was observed in the bounded fixture; production generalization remains unverified."@en ;
+    oa:confidenceLexical "0.93"^^xsd:decimal ;
+    oa:confidenceStructural "0.92"^^xsd:decimal ;
+    oa:confidenceInstance "0.96"^^xsd:decimal ;
+    oa:confidenceExternal "0.00"^^xsd:decimal ;
+    oa:confidenceModel "0.00"^^xsd:decimal ;
+    oa:confidenceEvidenceCoverage "0.85"^^xsd:decimal ;
+    oa:confidenceProvenance "1.00"^^xsd:decimal ;
+    oa:evidence res:evidence-payments-snapshot ;
+    oa:generationTrace res:generation-trace-payments-batch ;
+    oa:verificationTrace res:verification-run-payments-batch-mock .
+
+res:mapping-payments-005 a oa:MappingProposal ;
+    rdfs:label "PAYMENTS from_account → accountNumber"@en ;
+    oa:mappingId "mapping-payments-005" ;
+    oa:fieldName "from_account" ;
+    oa:sourceSystem "PAYMENTS" ;
+    oa:mapsToConcept oa:accountNumber ;
+    oa:proposalStatus "HUMAN_REVIEW" ;
+    oa:riskLevel "low" ;
+    oa:sourceSnapshotId "payments@sha256:0439bfd4fd9c595042add6fa1f6cdcae557a88f566c1e50eac8739e1e7c76d86" ;
+    oa:transformation "identity(source_value)" ;
+    oa:rationale "Payments schema and bounded JSONL records support this candidate."@en ;
+    oa:counterexample "No contradiction was observed in the bounded fixture; production generalization remains unverified."@en ;
+    oa:confidenceLexical "0.93"^^xsd:decimal ;
+    oa:confidenceStructural "0.92"^^xsd:decimal ;
+    oa:confidenceInstance "0.96"^^xsd:decimal ;
+    oa:confidenceExternal "0.00"^^xsd:decimal ;
+    oa:confidenceModel "0.00"^^xsd:decimal ;
+    oa:confidenceEvidenceCoverage "0.85"^^xsd:decimal ;
+    oa:confidenceProvenance "1.00"^^xsd:decimal ;
+    oa:evidence res:evidence-payments-snapshot ;
+    oa:generationTrace res:generation-trace-payments-batch ;
+    oa:verificationTrace res:verification-run-payments-batch-mock .
+
+res:mapping-payments-006 a oa:MappingProposal ;
+    rdfs:label "PAYMENTS from_account → fromAccount"@en ;
+    oa:mappingId "mapping-payments-006" ;
+    oa:fieldName "from_account" ;
+    oa:sourceSystem "PAYMENTS" ;
+    oa:mapsToConcept oa:fromAccount ;
+    oa:proposalStatus "HUMAN_REVIEW" ;
+    oa:riskLevel "low" ;
+    oa:sourceSnapshotId "payments@sha256:0439bfd4fd9c595042add6fa1f6cdcae557a88f566c1e50eac8739e1e7c76d86" ;
+    oa:transformation "resolve debited account reference" ;
+    oa:rationale "Payments schema and bounded JSONL records support this candidate."@en ;
+    oa:counterexample "No contradiction was observed in the bounded fixture; production generalization remains unverified."@en ;
+    oa:confidenceLexical "0.93"^^xsd:decimal ;
+    oa:confidenceStructural "0.92"^^xsd:decimal ;
+    oa:confidenceInstance "0.96"^^xsd:decimal ;
+    oa:confidenceExternal "0.00"^^xsd:decimal ;
+    oa:confidenceModel "0.00"^^xsd:decimal ;
+    oa:confidenceEvidenceCoverage "0.85"^^xsd:decimal ;
+    oa:confidenceProvenance "1.00"^^xsd:decimal ;
+    oa:evidence res:evidence-payments-snapshot ;
+    oa:generationTrace res:generation-trace-payments-batch ;
+    oa:verificationTrace res:verification-run-payments-batch-mock .
+
+res:mapping-payments-007 a oa:MappingProposal ;
+    rdfs:label "PAYMENTS from_account → Account"@en ;
+    oa:mappingId "mapping-payments-007" ;
+    oa:fieldName "from_account" ;
+    oa:sourceSystem "PAYMENTS" ;
+    oa:mapsToConcept oa:Account ;
+    oa:proposalStatus "HUMAN_REVIEW" ;
+    oa:riskLevel "low" ;
+    oa:sourceSnapshotId "payments@sha256:0439bfd4fd9c595042add6fa1f6cdcae557a88f566c1e50eac8739e1e7c76d86" ;
+    oa:transformation "resolve governed account node" ;
+    oa:rationale "Payments schema and bounded JSONL records support this candidate."@en ;
+    oa:counterexample "No contradiction was observed in the bounded fixture; production generalization remains unverified."@en ;
+    oa:confidenceLexical "0.93"^^xsd:decimal ;
+    oa:confidenceStructural "0.92"^^xsd:decimal ;
+    oa:confidenceInstance "0.96"^^xsd:decimal ;
+    oa:confidenceExternal "0.00"^^xsd:decimal ;
+    oa:confidenceModel "0.00"^^xsd:decimal ;
+    oa:confidenceEvidenceCoverage "0.85"^^xsd:decimal ;
+    oa:confidenceProvenance "1.00"^^xsd:decimal ;
+    oa:evidence res:evidence-payments-snapshot ;
+    oa:generationTrace res:generation-trace-payments-batch ;
+    oa:verificationTrace res:verification-run-payments-batch-mock .
+
+res:mapping-payments-008 a oa:MappingProposal ;
+    rdfs:label "PAYMENTS from_account → hasIdentifier"@en ;
+    oa:mappingId "mapping-payments-008" ;
+    oa:fieldName "from_account" ;
+    oa:sourceSystem "PAYMENTS" ;
+    oa:mapsToConcept oa:hasIdentifier ;
+    oa:proposalStatus "HUMAN_REVIEW" ;
+    oa:riskLevel "low" ;
+    oa:sourceSnapshotId "payments@sha256:0439bfd4fd9c595042add6fa1f6cdcae557a88f566c1e50eac8739e1e7c76d86" ;
+    oa:transformation "link source account reference to identifier" ;
+    oa:rationale "Payments schema and bounded JSONL records support this candidate."@en ;
+    oa:counterexample "No contradiction was observed in the bounded fixture; production generalization remains unverified."@en ;
+    oa:confidenceLexical "0.93"^^xsd:decimal ;
+    oa:confidenceStructural "0.92"^^xsd:decimal ;
+    oa:confidenceInstance "0.96"^^xsd:decimal ;
+    oa:confidenceExternal "0.00"^^xsd:decimal ;
+    oa:confidenceModel "0.00"^^xsd:decimal ;
+    oa:confidenceEvidenceCoverage "0.85"^^xsd:decimal ;
+    oa:confidenceProvenance "1.00"^^xsd:decimal ;
+    oa:evidence res:evidence-payments-snapshot ;
+    oa:generationTrace res:generation-trace-payments-batch ;
+    oa:verificationTrace res:verification-run-payments-batch-mock .
+
+res:mapping-payments-009 a oa:MappingProposal ;
+    rdfs:label "PAYMENTS to_account → accountNumber"@en ;
+    oa:mappingId "mapping-payments-009" ;
+    oa:fieldName "to_account" ;
+    oa:sourceSystem "PAYMENTS" ;
+    oa:mapsToConcept oa:accountNumber ;
+    oa:proposalStatus "HUMAN_REVIEW" ;
+    oa:riskLevel "low" ;
+    oa:sourceSnapshotId "payments@sha256:0439bfd4fd9c595042add6fa1f6cdcae557a88f566c1e50eac8739e1e7c76d86" ;
+    oa:transformation "identity(source_value)" ;
+    oa:rationale "Payments schema and bounded JSONL records support this candidate."@en ;
+    oa:counterexample "No contradiction was observed in the bounded fixture; production generalization remains unverified."@en ;
+    oa:confidenceLexical "0.93"^^xsd:decimal ;
+    oa:confidenceStructural "0.92"^^xsd:decimal ;
+    oa:confidenceInstance "0.96"^^xsd:decimal ;
+    oa:confidenceExternal "0.00"^^xsd:decimal ;
+    oa:confidenceModel "0.00"^^xsd:decimal ;
+    oa:confidenceEvidenceCoverage "0.85"^^xsd:decimal ;
+    oa:confidenceProvenance "1.00"^^xsd:decimal ;
+    oa:evidence res:evidence-payments-snapshot ;
+    oa:generationTrace res:generation-trace-payments-batch ;
+    oa:verificationTrace res:verification-run-payments-batch-mock .
+
+res:mapping-payments-010 a oa:MappingProposal ;
+    rdfs:label "PAYMENTS to_account → toAccount"@en ;
+    oa:mappingId "mapping-payments-010" ;
+    oa:fieldName "to_account" ;
+    oa:sourceSystem "PAYMENTS" ;
+    oa:mapsToConcept oa:toAccount ;
+    oa:proposalStatus "HUMAN_REVIEW" ;
+    oa:riskLevel "low" ;
+    oa:sourceSnapshotId "payments@sha256:0439bfd4fd9c595042add6fa1f6cdcae557a88f566c1e50eac8739e1e7c76d86" ;
+    oa:transformation "resolve credited account reference" ;
+    oa:rationale "Payments schema and bounded JSONL records support this candidate."@en ;
+    oa:counterexample "No contradiction was observed in the bounded fixture; production generalization remains unverified."@en ;
+    oa:confidenceLexical "0.93"^^xsd:decimal ;
+    oa:confidenceStructural "0.92"^^xsd:decimal ;
+    oa:confidenceInstance "0.96"^^xsd:decimal ;
+    oa:confidenceExternal "0.00"^^xsd:decimal ;
+    oa:confidenceModel "0.00"^^xsd:decimal ;
+    oa:confidenceEvidenceCoverage "0.85"^^xsd:decimal ;
+    oa:confidenceProvenance "1.00"^^xsd:decimal ;
+    oa:evidence res:evidence-payments-snapshot ;
+    oa:generationTrace res:generation-trace-payments-batch ;
+    oa:verificationTrace res:verification-run-payments-batch-mock .
+
+res:mapping-payments-011 a oa:MappingProposal ;
+    rdfs:label "PAYMENTS to_account → Account"@en ;
+    oa:mappingId "mapping-payments-011" ;
+    oa:fieldName "to_account" ;
+    oa:sourceSystem "PAYMENTS" ;
+    oa:mapsToConcept oa:Account ;
+    oa:proposalStatus "HUMAN_REVIEW" ;
+    oa:riskLevel "low" ;
+    oa:sourceSnapshotId "payments@sha256:0439bfd4fd9c595042add6fa1f6cdcae557a88f566c1e50eac8739e1e7c76d86" ;
+    oa:transformation "resolve governed account node" ;
+    oa:rationale "Payments schema and bounded JSONL records support this candidate."@en ;
+    oa:counterexample "No contradiction was observed in the bounded fixture; production generalization remains unverified."@en ;
+    oa:confidenceLexical "0.93"^^xsd:decimal ;
+    oa:confidenceStructural "0.92"^^xsd:decimal ;
+    oa:confidenceInstance "0.96"^^xsd:decimal ;
+    oa:confidenceExternal "0.00"^^xsd:decimal ;
+    oa:confidenceModel "0.00"^^xsd:decimal ;
+    oa:confidenceEvidenceCoverage "0.85"^^xsd:decimal ;
+    oa:confidenceProvenance "1.00"^^xsd:decimal ;
+    oa:evidence res:evidence-payments-snapshot ;
+    oa:generationTrace res:generation-trace-payments-batch ;
+    oa:verificationTrace res:verification-run-payments-batch-mock .
+
+res:mapping-payments-012 a oa:MappingProposal ;
+    rdfs:label "PAYMENTS to_account → hasIdentifier"@en ;
+    oa:mappingId "mapping-payments-012" ;
+    oa:fieldName "to_account" ;
+    oa:sourceSystem "PAYMENTS" ;
+    oa:mapsToConcept oa:hasIdentifier ;
+    oa:proposalStatus "HUMAN_REVIEW" ;
+    oa:riskLevel "low" ;
+    oa:sourceSnapshotId "payments@sha256:0439bfd4fd9c595042add6fa1f6cdcae557a88f566c1e50eac8739e1e7c76d86" ;
+    oa:transformation "link target account reference to identifier" ;
+    oa:rationale "Payments schema and bounded JSONL records support this candidate."@en ;
+    oa:counterexample "No contradiction was observed in the bounded fixture; production generalization remains unverified."@en ;
+    oa:confidenceLexical "0.93"^^xsd:decimal ;
+    oa:confidenceStructural "0.92"^^xsd:decimal ;
+    oa:confidenceInstance "0.96"^^xsd:decimal ;
+    oa:confidenceExternal "0.00"^^xsd:decimal ;
+    oa:confidenceModel "0.00"^^xsd:decimal ;
+    oa:confidenceEvidenceCoverage "0.85"^^xsd:decimal ;
+    oa:confidenceProvenance "1.00"^^xsd:decimal ;
+    oa:evidence res:evidence-payments-snapshot ;
+    oa:generationTrace res:generation-trace-payments-batch ;
+    oa:verificationTrace res:verification-run-payments-batch-mock .
+
+res:mapping-payments-013 a oa:MappingProposal ;
+    rdfs:label "PAYMENTS amount → amount"@en ;
+    oa:mappingId "mapping-payments-013" ;
+    oa:fieldName "amount" ;
+    oa:sourceSystem "PAYMENTS" ;
+    oa:mapsToConcept oa:amount ;
+    oa:proposalStatus "HUMAN_REVIEW" ;
+    oa:riskLevel "low" ;
+    oa:sourceSnapshotId "payments@sha256:0439bfd4fd9c595042add6fa1f6cdcae557a88f566c1e50eac8739e1e7c76d86" ;
+    oa:transformation "parse_decimal(source_value)" ;
+    oa:rationale "Payments schema and bounded JSONL records support this candidate."@en ;
+    oa:counterexample "No contradiction was observed in the bounded fixture; production generalization remains unverified."@en ;
+    oa:confidenceLexical "0.93"^^xsd:decimal ;
+    oa:confidenceStructural "0.92"^^xsd:decimal ;
+    oa:confidenceInstance "0.96"^^xsd:decimal ;
+    oa:confidenceExternal "0.00"^^xsd:decimal ;
+    oa:confidenceModel "0.00"^^xsd:decimal ;
+    oa:confidenceEvidenceCoverage "0.85"^^xsd:decimal ;
+    oa:confidenceProvenance "1.00"^^xsd:decimal ;
+    oa:evidence res:evidence-payments-snapshot ;
+    oa:generationTrace res:generation-trace-payments-batch ;
+    oa:verificationTrace res:verification-run-payments-batch-mock .
+
+res:mapping-payments-014 a oa:MappingProposal ;
+    rdfs:label "PAYMENTS amount → transactionValue"@en ;
+    oa:mappingId "mapping-payments-014" ;
+    oa:fieldName "amount" ;
+    oa:sourceSystem "PAYMENTS" ;
+    oa:mapsToConcept oa:transactionValue ;
+    oa:proposalStatus "HUMAN_REVIEW" ;
+    oa:riskLevel "low" ;
+    oa:sourceSnapshotId "payments@sha256:0439bfd4fd9c595042add6fa1f6cdcae557a88f566c1e50eac8739e1e7c76d86" ;
+    oa:transformation "parse_decimal(source_value)" ;
+    oa:rationale "Payments schema and bounded JSONL records support this candidate."@en ;
+    oa:counterexample "No contradiction was observed in the bounded fixture; production generalization remains unverified."@en ;
+    oa:confidenceLexical "0.93"^^xsd:decimal ;
+    oa:confidenceStructural "0.92"^^xsd:decimal ;
+    oa:confidenceInstance "0.96"^^xsd:decimal ;
+    oa:confidenceExternal "0.00"^^xsd:decimal ;
+    oa:confidenceModel "0.00"^^xsd:decimal ;
+    oa:confidenceEvidenceCoverage "0.85"^^xsd:decimal ;
+    oa:confidenceProvenance "1.00"^^xsd:decimal ;
+    oa:evidence res:evidence-payments-snapshot ;
+    oa:generationTrace res:generation-trace-payments-batch ;
+    oa:verificationTrace res:verification-run-payments-batch-mock .
+
+res:mapping-payments-015 a oa:MappingProposal ;
+    rdfs:label "PAYMENTS amount → Payment"@en ;
+    oa:mappingId "mapping-payments-015" ;
+    oa:fieldName "amount" ;
+    oa:sourceSystem "PAYMENTS" ;
+    oa:mapsToConcept oa:Payment ;
+    oa:proposalStatus "HUMAN_REVIEW" ;
+    oa:riskLevel "low" ;
+    oa:sourceSnapshotId "payments@sha256:0439bfd4fd9c595042add6fa1f6cdcae557a88f566c1e50eac8739e1e7c76d86" ;
+    oa:transformation "attach normalized monetary value to payment" ;
+    oa:rationale "Payments schema and bounded JSONL records support this candidate."@en ;
+    oa:counterexample "No contradiction was observed in the bounded fixture; production generalization remains unverified."@en ;
+    oa:confidenceLexical "0.93"^^xsd:decimal ;
+    oa:confidenceStructural "0.92"^^xsd:decimal ;
+    oa:confidenceInstance "0.96"^^xsd:decimal ;
+    oa:confidenceExternal "0.00"^^xsd:decimal ;
+    oa:confidenceModel "0.00"^^xsd:decimal ;
+    oa:confidenceEvidenceCoverage "0.85"^^xsd:decimal ;
+    oa:confidenceProvenance "1.00"^^xsd:decimal ;
+    oa:evidence res:evidence-payments-snapshot ;
+    oa:generationTrace res:generation-trace-payments-batch ;
+    oa:verificationTrace res:verification-run-payments-batch-mock .
+
+res:mapping-payments-016 a oa:MappingProposal ;
+    rdfs:label "PAYMENTS currency → CurrencyCode"@en ;
+    oa:mappingId "mapping-payments-016" ;
+    oa:fieldName "currency" ;
+    oa:sourceSystem "PAYMENTS" ;
+    oa:mapsToConcept oa:CurrencyCode ;
+    oa:proposalStatus "HUMAN_REVIEW" ;
+    oa:riskLevel "low" ;
+    oa:sourceSnapshotId "payments@sha256:0439bfd4fd9c595042add6fa1f6cdcae557a88f566c1e50eac8739e1e7c76d86" ;
+    oa:transformation "uppercase(source_value)" ;
+    oa:rationale "Payments schema and bounded JSONL records support this candidate."@en ;
+    oa:counterexample "No contradiction was observed in the bounded fixture; production generalization remains unverified."@en ;
+    oa:confidenceLexical "0.93"^^xsd:decimal ;
+    oa:confidenceStructural "0.92"^^xsd:decimal ;
+    oa:confidenceInstance "0.96"^^xsd:decimal ;
+    oa:confidenceExternal "0.00"^^xsd:decimal ;
+    oa:confidenceModel "0.00"^^xsd:decimal ;
+    oa:confidenceEvidenceCoverage "0.85"^^xsd:decimal ;
+    oa:confidenceProvenance "1.00"^^xsd:decimal ;
+    oa:evidence res:evidence-payments-snapshot ;
+    oa:generationTrace res:generation-trace-payments-batch ;
+    oa:verificationTrace res:verification-run-payments-batch-mock .
+
+res:mapping-payments-017 a oa:MappingProposal ;
+    rdfs:label "PAYMENTS currency → Currency"@en ;
+    oa:mappingId "mapping-payments-017" ;
+    oa:fieldName "currency" ;
+    oa:sourceSystem "PAYMENTS" ;
+    oa:mapsToConcept oa:Currency ;
+    oa:proposalStatus "HUMAN_REVIEW" ;
+    oa:riskLevel "low" ;
+    oa:sourceSnapshotId "payments@sha256:0439bfd4fd9c595042add6fa1f6cdcae557a88f566c1e50eac8739e1e7c76d86" ;
+    oa:transformation "resolve ISO currency node" ;
+    oa:rationale "Payments schema and bounded JSONL records support this candidate."@en ;
+    oa:counterexample "No contradiction was observed in the bounded fixture; production generalization remains unverified."@en ;
+    oa:confidenceLexical "0.93"^^xsd:decimal ;
+    oa:confidenceStructural "0.92"^^xsd:decimal ;
+    oa:confidenceInstance "0.96"^^xsd:decimal ;
+    oa:confidenceExternal "0.00"^^xsd:decimal ;
+    oa:confidenceModel "0.00"^^xsd:decimal ;
+    oa:confidenceEvidenceCoverage "0.85"^^xsd:decimal ;
+    oa:confidenceProvenance "1.00"^^xsd:decimal ;
+    oa:evidence res:evidence-payments-snapshot ;
+    oa:generationTrace res:generation-trace-payments-batch ;
+    oa:verificationTrace res:verification-run-payments-batch-mock .
+
+res:mapping-payments-018 a oa:MappingProposal ;
+    rdfs:label "PAYMENTS booked_at → bookingTimestamp"@en ;
+    oa:mappingId "mapping-payments-018" ;
+    oa:fieldName "booked_at" ;
+    oa:sourceSystem "PAYMENTS" ;
+    oa:mapsToConcept oa:bookingTimestamp ;
+    oa:proposalStatus "HUMAN_REVIEW" ;
+    oa:riskLevel "low" ;
+    oa:sourceSnapshotId "payments@sha256:0439bfd4fd9c595042add6fa1f6cdcae557a88f566c1e50eac8739e1e7c76d86" ;
+    oa:transformation "parse_iso8601(source_value)" ;
+    oa:rationale "Payments schema and bounded JSONL records support this candidate."@en ;
+    oa:counterexample "No contradiction was observed in the bounded fixture; production generalization remains unverified."@en ;
+    oa:confidenceLexical "0.93"^^xsd:decimal ;
+    oa:confidenceStructural "0.92"^^xsd:decimal ;
+    oa:confidenceInstance "0.96"^^xsd:decimal ;
+    oa:confidenceExternal "0.00"^^xsd:decimal ;
+    oa:confidenceModel "0.00"^^xsd:decimal ;
+    oa:confidenceEvidenceCoverage "0.85"^^xsd:decimal ;
+    oa:confidenceProvenance "1.00"^^xsd:decimal ;
+    oa:evidence res:evidence-payments-snapshot ;
+    oa:generationTrace res:generation-trace-payments-batch ;
+    oa:verificationTrace res:verification-run-payments-batch-mock .
+
+res:mapping-payments-019 a oa:MappingProposal ;
+    rdfs:label "PAYMENTS booked_at → TemporalMetadata"@en ;
+    oa:mappingId "mapping-payments-019" ;
+    oa:fieldName "booked_at" ;
+    oa:sourceSystem "PAYMENTS" ;
+    oa:mapsToConcept oa:TemporalMetadata ;
+    oa:proposalStatus "HUMAN_REVIEW" ;
+    oa:riskLevel "low" ;
+    oa:sourceSnapshotId "payments@sha256:0439bfd4fd9c595042add6fa1f6cdcae557a88f566c1e50eac8739e1e7c76d86" ;
+    oa:transformation "attach booking temporal metadata" ;
+    oa:rationale "Payments schema and bounded JSONL records support this candidate."@en ;
+    oa:counterexample "No contradiction was observed in the bounded fixture; production generalization remains unverified."@en ;
+    oa:confidenceLexical "0.93"^^xsd:decimal ;
+    oa:confidenceStructural "0.92"^^xsd:decimal ;
+    oa:confidenceInstance "0.96"^^xsd:decimal ;
+    oa:confidenceExternal "0.00"^^xsd:decimal ;
+    oa:confidenceModel "0.00"^^xsd:decimal ;
+    oa:confidenceEvidenceCoverage "0.85"^^xsd:decimal ;
+    oa:confidenceProvenance "1.00"^^xsd:decimal ;
+    oa:evidence res:evidence-payments-snapshot ;
+    oa:generationTrace res:generation-trace-payments-batch ;
+    oa:verificationTrace res:verification-run-payments-batch-mock .
+
+res:mapping-payments-020 a oa:MappingProposal ;
+    rdfs:label "PAYMENTS booked_at → recordTimestamp"@en ;
+    oa:mappingId "mapping-payments-020" ;
+    oa:fieldName "booked_at" ;
+    oa:sourceSystem "PAYMENTS" ;
+    oa:mapsToConcept oa:recordTimestamp ;
+    oa:proposalStatus "HUMAN_REVIEW" ;
+    oa:riskLevel "low" ;
+    oa:sourceSnapshotId "payments@sha256:0439bfd4fd9c595042add6fa1f6cdcae557a88f566c1e50eac8739e1e7c76d86" ;
+    oa:transformation "parse_iso8601(source_value)" ;
+    oa:rationale "Payments schema and bounded JSONL records support this candidate."@en ;
+    oa:counterexample "No contradiction was observed in the bounded fixture; production generalization remains unverified."@en ;
+    oa:confidenceLexical "0.93"^^xsd:decimal ;
+    oa:confidenceStructural "0.92"^^xsd:decimal ;
+    oa:confidenceInstance "0.96"^^xsd:decimal ;
+    oa:confidenceExternal "0.00"^^xsd:decimal ;
+    oa:confidenceModel "0.00"^^xsd:decimal ;
+    oa:confidenceEvidenceCoverage "0.85"^^xsd:decimal ;
+    oa:confidenceProvenance "1.00"^^xsd:decimal ;
+    oa:evidence res:evidence-payments-snapshot ;
+    oa:generationTrace res:generation-trace-payments-batch ;
+    oa:verificationTrace res:verification-run-payments-batch-mock .
+
+res:mapping-aml-001 a oa:MappingProposal ;
+    rdfs:label "AML_CASES case_id → KycCaseIdentifier"@en ;
+    oa:mappingId "mapping-aml-001" ;
+    oa:fieldName "case_id" ;
+    oa:sourceSystem "AML_CASES" ;
+    oa:mapsToConcept oa:KycCaseIdentifier ;
+    oa:proposalStatus "HUMAN_REVIEW" ;
+    oa:riskLevel "high" ;
+    oa:sourceSnapshotId "aml-cases@sha256:7fce6a969a484aa2a1222c1f45a382a3f9f9f9d5d4f44b97b5dbcd9b562981cb" ;
+    oa:transformation "identity(source_value)" ;
+    oa:rationale "AML schema and bounded cases support the candidate; compliance review remains mandatory."@en ;
+    oa:counterexample "No contradiction was observed in the bounded fixture; production generalization remains unverified."@en ;
+    oa:confidenceLexical "0.90"^^xsd:decimal ;
+    oa:confidenceStructural "0.88"^^xsd:decimal ;
+    oa:confidenceInstance "0.90"^^xsd:decimal ;
+    oa:confidenceExternal "0.00"^^xsd:decimal ;
+    oa:confidenceModel "0.00"^^xsd:decimal ;
+    oa:confidenceEvidenceCoverage "0.85"^^xsd:decimal ;
+    oa:confidenceProvenance "1.00"^^xsd:decimal ;
+    oa:evidence res:evidence-aml-snapshot ;
+    oa:generationTrace res:generation-trace-aml-batch ;
+    oa:verificationTrace res:verification-run-aml-batch-mock .
+
+res:mapping-aml-002 a oa:MappingProposal ;
+    rdfs:label "AML_CASES case_id → sourceRecordId"@en ;
+    oa:mappingId "mapping-aml-002" ;
+    oa:fieldName "case_id" ;
+    oa:sourceSystem "AML_CASES" ;
+    oa:mapsToConcept oa:sourceRecordId ;
+    oa:proposalStatus "HUMAN_REVIEW" ;
+    oa:riskLevel "high" ;
+    oa:sourceSnapshotId "aml-cases@sha256:7fce6a969a484aa2a1222c1f45a382a3f9f9f9d5d4f44b97b5dbcd9b562981cb" ;
+    oa:transformation "identity(source_value)" ;
+    oa:rationale "AML schema and bounded cases support the candidate; compliance review remains mandatory."@en ;
+    oa:counterexample "No contradiction was observed in the bounded fixture; production generalization remains unverified."@en ;
+    oa:confidenceLexical "0.90"^^xsd:decimal ;
+    oa:confidenceStructural "0.88"^^xsd:decimal ;
+    oa:confidenceInstance "0.90"^^xsd:decimal ;
+    oa:confidenceExternal "0.00"^^xsd:decimal ;
+    oa:confidenceModel "0.00"^^xsd:decimal ;
+    oa:confidenceEvidenceCoverage "0.85"^^xsd:decimal ;
+    oa:confidenceProvenance "1.00"^^xsd:decimal ;
+    oa:evidence res:evidence-aml-snapshot ;
+    oa:generationTrace res:generation-trace-aml-batch ;
+    oa:verificationTrace res:verification-run-aml-batch-mock .
+
+res:mapping-aml-003 a oa:MappingProposal ;
+    rdfs:label "AML_CASES case_id → KycCase"@en ;
+    oa:mappingId "mapping-aml-003" ;
+    oa:fieldName "case_id" ;
+    oa:sourceSystem "AML_CASES" ;
+    oa:mapsToConcept oa:KycCase ;
+    oa:proposalStatus "HUMAN_REVIEW" ;
+    oa:riskLevel "high" ;
+    oa:sourceSnapshotId "aml-cases@sha256:7fce6a969a484aa2a1222c1f45a382a3f9f9f9d5d4f44b97b5dbcd9b562981cb" ;
+    oa:transformation "construct governed KYC case node" ;
+    oa:rationale "AML schema and bounded cases support the candidate; compliance review remains mandatory."@en ;
+    oa:counterexample "No contradiction was observed in the bounded fixture; production generalization remains unverified."@en ;
+    oa:confidenceLexical "0.90"^^xsd:decimal ;
+    oa:confidenceStructural "0.88"^^xsd:decimal ;
+    oa:confidenceInstance "0.90"^^xsd:decimal ;
+    oa:confidenceExternal "0.00"^^xsd:decimal ;
+    oa:confidenceModel "0.00"^^xsd:decimal ;
+    oa:confidenceEvidenceCoverage "0.85"^^xsd:decimal ;
+    oa:confidenceProvenance "1.00"^^xsd:decimal ;
+    oa:evidence res:evidence-aml-snapshot ;
+    oa:generationTrace res:generation-trace-aml-batch ;
+    oa:verificationTrace res:verification-run-aml-batch-mock .
+
+res:mapping-aml-004 a oa:MappingProposal ;
+    rdfs:label "AML_CASES party_name → Name"@en ;
+    oa:mappingId "mapping-aml-004" ;
+    oa:fieldName "party_name" ;
+    oa:sourceSystem "AML_CASES" ;
+    oa:mapsToConcept oa:Name ;
+    oa:proposalStatus "HUMAN_REVIEW" ;
+    oa:riskLevel "high" ;
+    oa:sourceSnapshotId "aml-cases@sha256:7fce6a969a484aa2a1222c1f45a382a3f9f9f9d5d4f44b97b5dbcd9b562981cb" ;
+    oa:transformation "trim(source_value)" ;
+    oa:rationale "AML schema and bounded cases support the candidate; compliance review remains mandatory."@en ;
+    oa:counterexample "No contradiction was observed in the bounded fixture; production generalization remains unverified."@en ;
+    oa:confidenceLexical "0.90"^^xsd:decimal ;
+    oa:confidenceStructural "0.88"^^xsd:decimal ;
+    oa:confidenceInstance "0.90"^^xsd:decimal ;
+    oa:confidenceExternal "0.00"^^xsd:decimal ;
+    oa:confidenceModel "0.00"^^xsd:decimal ;
+    oa:confidenceEvidenceCoverage "0.85"^^xsd:decimal ;
+    oa:confidenceProvenance "1.00"^^xsd:decimal ;
+    oa:evidence res:evidence-aml-snapshot ;
+    oa:generationTrace res:generation-trace-aml-batch ;
+    oa:verificationTrace res:verification-run-aml-batch-mock .
+
+res:mapping-aml-005 a oa:MappingProposal ;
+    rdfs:label "AML_CASES party_name → CustomerName"@en ;
+    oa:mappingId "mapping-aml-005" ;
+    oa:fieldName "party_name" ;
+    oa:sourceSystem "AML_CASES" ;
+    oa:mapsToConcept oa:CustomerName ;
+    oa:proposalStatus "HUMAN_REVIEW" ;
+    oa:riskLevel "high" ;
+    oa:sourceSnapshotId "aml-cases@sha256:7fce6a969a484aa2a1222c1f45a382a3f9f9f9d5d4f44b97b5dbcd9b562981cb" ;
+    oa:transformation "normalize whitespace" ;
+    oa:rationale "AML schema and bounded cases support the candidate; compliance review remains mandatory."@en ;
+    oa:counterexample "No contradiction was observed in the bounded fixture; production generalization remains unverified."@en ;
+    oa:confidenceLexical "0.90"^^xsd:decimal ;
+    oa:confidenceStructural "0.88"^^xsd:decimal ;
+    oa:confidenceInstance "0.90"^^xsd:decimal ;
+    oa:confidenceExternal "0.00"^^xsd:decimal ;
+    oa:confidenceModel "0.00"^^xsd:decimal ;
+    oa:confidenceEvidenceCoverage "0.85"^^xsd:decimal ;
+    oa:confidenceProvenance "1.00"^^xsd:decimal ;
+    oa:evidence res:evidence-aml-snapshot ;
+    oa:generationTrace res:generation-trace-aml-batch ;
+    oa:verificationTrace res:verification-run-aml-batch-mock .
+
+res:mapping-aml-006 a oa:MappingProposal ;
+    rdfs:label "AML_CASES party_name → Party"@en ;
+    oa:mappingId "mapping-aml-006" ;
+    oa:fieldName "party_name" ;
+    oa:sourceSystem "AML_CASES" ;
+    oa:mapsToConcept oa:Party ;
+    oa:proposalStatus "HUMAN_REVIEW" ;
+    oa:riskLevel "high" ;
+    oa:sourceSnapshotId "aml-cases@sha256:7fce6a969a484aa2a1222c1f45a382a3f9f9f9d5d4f44b97b5dbcd9b562981cb" ;
+    oa:transformation "resolve party candidate without automatic merge" ;
+    oa:rationale "AML schema and bounded cases support the candidate; compliance review remains mandatory."@en ;
+    oa:counterexample "No contradiction was observed in the bounded fixture; production generalization remains unverified."@en ;
+    oa:confidenceLexical "0.90"^^xsd:decimal ;
+    oa:confidenceStructural "0.88"^^xsd:decimal ;
+    oa:confidenceInstance "0.90"^^xsd:decimal ;
+    oa:confidenceExternal "0.00"^^xsd:decimal ;
+    oa:confidenceModel "0.00"^^xsd:decimal ;
+    oa:confidenceEvidenceCoverage "0.85"^^xsd:decimal ;
+    oa:confidenceProvenance "1.00"^^xsd:decimal ;
+    oa:evidence res:evidence-aml-snapshot ;
+    oa:generationTrace res:generation-trace-aml-batch ;
+    oa:verificationTrace res:verification-run-aml-batch-mock .
+
+res:mapping-aml-007 a oa:MappingProposal ;
+    rdfs:label "AML_CASES country → CountryCode"@en ;
+    oa:mappingId "mapping-aml-007" ;
+    oa:fieldName "country" ;
+    oa:sourceSystem "AML_CASES" ;
+    oa:mapsToConcept oa:CountryCode ;
+    oa:proposalStatus "HUMAN_REVIEW" ;
+    oa:riskLevel "high" ;
+    oa:sourceSnapshotId "aml-cases@sha256:7fce6a969a484aa2a1222c1f45a382a3f9f9f9d5d4f44b97b5dbcd9b562981cb" ;
+    oa:transformation "uppercase(source_value)" ;
+    oa:rationale "AML schema and bounded cases support the candidate; compliance review remains mandatory."@en ;
+    oa:counterexample "No contradiction was observed in the bounded fixture; production generalization remains unverified."@en ;
+    oa:confidenceLexical "0.90"^^xsd:decimal ;
+    oa:confidenceStructural "0.88"^^xsd:decimal ;
+    oa:confidenceInstance "0.90"^^xsd:decimal ;
+    oa:confidenceExternal "0.00"^^xsd:decimal ;
+    oa:confidenceModel "0.00"^^xsd:decimal ;
+    oa:confidenceEvidenceCoverage "0.85"^^xsd:decimal ;
+    oa:confidenceProvenance "1.00"^^xsd:decimal ;
+    oa:evidence res:evidence-aml-snapshot ;
+    oa:generationTrace res:generation-trace-aml-batch ;
+    oa:verificationTrace res:verification-run-aml-batch-mock .
+
+res:mapping-aml-008 a oa:MappingProposal ;
+    rdfs:label "AML_CASES country → Jurisdiction"@en ;
+    oa:mappingId "mapping-aml-008" ;
+    oa:fieldName "country" ;
+    oa:sourceSystem "AML_CASES" ;
+    oa:mapsToConcept oa:Jurisdiction ;
+    oa:proposalStatus "HUMAN_REVIEW" ;
+    oa:riskLevel "high" ;
+    oa:sourceSnapshotId "aml-cases@sha256:7fce6a969a484aa2a1222c1f45a382a3f9f9f9d5d4f44b97b5dbcd9b562981cb" ;
+    oa:transformation "resolve ISO country code to jurisdiction" ;
+    oa:rationale "AML schema and bounded cases support the candidate; compliance review remains mandatory."@en ;
+    oa:counterexample "No contradiction was observed in the bounded fixture; production generalization remains unverified."@en ;
+    oa:confidenceLexical "0.90"^^xsd:decimal ;
+    oa:confidenceStructural "0.88"^^xsd:decimal ;
+    oa:confidenceInstance "0.90"^^xsd:decimal ;
+    oa:confidenceExternal "0.00"^^xsd:decimal ;
+    oa:confidenceModel "0.00"^^xsd:decimal ;
+    oa:confidenceEvidenceCoverage "0.85"^^xsd:decimal ;
+    oa:confidenceProvenance "1.00"^^xsd:decimal ;
+    oa:evidence res:evidence-aml-snapshot ;
+    oa:generationTrace res:generation-trace-aml-batch ;
+    oa:verificationTrace res:verification-run-aml-batch-mock .
+
+res:mapping-aml-009 a oa:MappingProposal ;
+    rdfs:label "AML_CASES matched_party_id → PartyIdentifier"@en ;
+    oa:mappingId "mapping-aml-009" ;
+    oa:fieldName "matched_party_id" ;
+    oa:sourceSystem "AML_CASES" ;
+    oa:mapsToConcept oa:PartyIdentifier ;
+    oa:proposalStatus "HUMAN_REVIEW" ;
+    oa:riskLevel "high" ;
+    oa:sourceSnapshotId "aml-cases@sha256:7fce6a969a484aa2a1222c1f45a382a3f9f9f9d5d4f44b97b5dbcd9b562981cb" ;
+    oa:transformation "identity(source_value)" ;
+    oa:rationale "AML schema and bounded cases support the candidate; compliance review remains mandatory."@en ;
+    oa:counterexample "No contradiction was observed in the bounded fixture; production generalization remains unverified."@en ;
+    oa:confidenceLexical "0.90"^^xsd:decimal ;
+    oa:confidenceStructural "0.88"^^xsd:decimal ;
+    oa:confidenceInstance "0.90"^^xsd:decimal ;
+    oa:confidenceExternal "0.00"^^xsd:decimal ;
+    oa:confidenceModel "0.00"^^xsd:decimal ;
+    oa:confidenceEvidenceCoverage "0.85"^^xsd:decimal ;
+    oa:confidenceProvenance "1.00"^^xsd:decimal ;
+    oa:evidence res:evidence-aml-snapshot ;
+    oa:generationTrace res:generation-trace-aml-batch ;
+    oa:verificationTrace res:verification-run-aml-batch-mock .
+
+res:mapping-aml-010 a oa:MappingProposal ;
+    rdfs:label "AML_CASES matched_party_id → ScreeningMatch"@en ;
+    oa:mappingId "mapping-aml-010" ;
+    oa:fieldName "matched_party_id" ;
+    oa:sourceSystem "AML_CASES" ;
+    oa:mapsToConcept oa:ScreeningMatch ;
+    oa:proposalStatus "HUMAN_REVIEW" ;
+    oa:riskLevel "high" ;
+    oa:sourceSnapshotId "aml-cases@sha256:7fce6a969a484aa2a1222c1f45a382a3f9f9f9d5d4f44b97b5dbcd9b562981cb" ;
+    oa:transformation "construct screening-match candidate" ;
+    oa:rationale "AML schema and bounded cases support the candidate; compliance review remains mandatory."@en ;
+    oa:counterexample "No contradiction was observed in the bounded fixture; production generalization remains unverified."@en ;
+    oa:confidenceLexical "0.90"^^xsd:decimal ;
+    oa:confidenceStructural "0.88"^^xsd:decimal ;
+    oa:confidenceInstance "0.90"^^xsd:decimal ;
+    oa:confidenceExternal "0.00"^^xsd:decimal ;
+    oa:confidenceModel "0.00"^^xsd:decimal ;
+    oa:confidenceEvidenceCoverage "0.85"^^xsd:decimal ;
+    oa:confidenceProvenance "1.00"^^xsd:decimal ;
+    oa:evidence res:evidence-aml-snapshot ;
+    oa:generationTrace res:generation-trace-aml-batch ;
+    oa:verificationTrace res:verification-run-aml-batch-mock .
+
+res:mapping-aml-011 a oa:MappingProposal ;
+    rdfs:label "AML_CASES matched_party_id → matchesParty"@en ;
+    oa:mappingId "mapping-aml-011" ;
+    oa:fieldName "matched_party_id" ;
+    oa:sourceSystem "AML_CASES" ;
+    oa:mapsToConcept oa:matchesParty ;
+    oa:proposalStatus "HUMAN_REVIEW" ;
+    oa:riskLevel "high" ;
+    oa:sourceSnapshotId "aml-cases@sha256:7fce6a969a484aa2a1222c1f45a382a3f9f9f9d5d4f44b97b5dbcd9b562981cb" ;
+    oa:transformation "link screening match to party candidate" ;
+    oa:rationale "AML schema and bounded cases support the candidate; compliance review remains mandatory."@en ;
+    oa:counterexample "No contradiction was observed in the bounded fixture; production generalization remains unverified."@en ;
+    oa:confidenceLexical "0.90"^^xsd:decimal ;
+    oa:confidenceStructural "0.88"^^xsd:decimal ;
+    oa:confidenceInstance "0.90"^^xsd:decimal ;
+    oa:confidenceExternal "0.00"^^xsd:decimal ;
+    oa:confidenceModel "0.00"^^xsd:decimal ;
+    oa:confidenceEvidenceCoverage "0.85"^^xsd:decimal ;
+    oa:confidenceProvenance "1.00"^^xsd:decimal ;
+    oa:evidence res:evidence-aml-snapshot ;
+    oa:generationTrace res:generation-trace-aml-batch ;
+    oa:verificationTrace res:verification-run-aml-batch-mock .
+
+res:mapping-aml-012 a oa:MappingProposal ;
+    rdfs:label "AML_CASES match_features → matchScore"@en ;
+    oa:mappingId "mapping-aml-012" ;
+    oa:fieldName "match_features" ;
+    oa:sourceSystem "AML_CASES" ;
+    oa:mapsToConcept oa:matchScore ;
+    oa:proposalStatus "HUMAN_REVIEW" ;
+    oa:riskLevel "high" ;
+    oa:sourceSnapshotId "aml-cases@sha256:7fce6a969a484aa2a1222c1f45a382a3f9f9f9d5d4f44b97b5dbcd9b562981cb" ;
+    oa:transformation "parse bounded feature scores" ;
+    oa:rationale "AML schema and bounded cases support the candidate; compliance review remains mandatory."@en ;
+    oa:counterexample "No contradiction was observed in the bounded fixture; production generalization remains unverified."@en ;
+    oa:confidenceLexical "0.90"^^xsd:decimal ;
+    oa:confidenceStructural "0.88"^^xsd:decimal ;
+    oa:confidenceInstance "0.90"^^xsd:decimal ;
+    oa:confidenceExternal "0.00"^^xsd:decimal ;
+    oa:confidenceModel "0.00"^^xsd:decimal ;
+    oa:confidenceEvidenceCoverage "0.85"^^xsd:decimal ;
+    oa:confidenceProvenance "1.00"^^xsd:decimal ;
+    oa:evidence res:evidence-aml-snapshot ;
+    oa:generationTrace res:generation-trace-aml-batch ;
+    oa:verificationTrace res:verification-run-aml-batch-mock .
+
+res:mapping-aml-013 a oa:MappingProposal ;
+    rdfs:label "AML_CASES match_features → EvidenceRecord"@en ;
+    oa:mappingId "mapping-aml-013" ;
+    oa:fieldName "match_features" ;
+    oa:sourceSystem "AML_CASES" ;
+    oa:mapsToConcept oa:EvidenceRecord ;
+    oa:proposalStatus "HUMAN_REVIEW" ;
+    oa:riskLevel "high" ;
+    oa:sourceSnapshotId "aml-cases@sha256:7fce6a969a484aa2a1222c1f45a382a3f9f9f9d5d4f44b97b5dbcd9b562981cb" ;
+    oa:transformation "preserve feature evidence record" ;
+    oa:rationale "AML schema and bounded cases support the candidate; compliance review remains mandatory."@en ;
+    oa:counterexample "No contradiction was observed in the bounded fixture; production generalization remains unverified."@en ;
+    oa:confidenceLexical "0.90"^^xsd:decimal ;
+    oa:confidenceStructural "0.88"^^xsd:decimal ;
+    oa:confidenceInstance "0.90"^^xsd:decimal ;
+    oa:confidenceExternal "0.00"^^xsd:decimal ;
+    oa:confidenceModel "0.00"^^xsd:decimal ;
+    oa:confidenceEvidenceCoverage "0.85"^^xsd:decimal ;
+    oa:confidenceProvenance "1.00"^^xsd:decimal ;
+    oa:evidence res:evidence-aml-snapshot ;
+    oa:generationTrace res:generation-trace-aml-batch ;
+    oa:verificationTrace res:verification-run-aml-batch-mock .
+
+res:mapping-aml-014 a oa:MappingProposal ;
+    rdfs:label "AML_CASES risk_level → RiskLevel"@en ;
+    oa:mappingId "mapping-aml-014" ;
+    oa:fieldName "risk_level" ;
+    oa:sourceSystem "AML_CASES" ;
+    oa:mapsToConcept oa:RiskLevel ;
+    oa:proposalStatus "HUMAN_REVIEW" ;
+    oa:riskLevel "high" ;
+    oa:sourceSnapshotId "aml-cases@sha256:7fce6a969a484aa2a1222c1f45a382a3f9f9f9d5d4f44b97b5dbcd9b562981cb" ;
+    oa:transformation "uppercase(source_value)" ;
+    oa:rationale "AML schema and bounded cases support the candidate; compliance review remains mandatory."@en ;
+    oa:counterexample "No contradiction was observed in the bounded fixture; production generalization remains unverified."@en ;
+    oa:confidenceLexical "0.90"^^xsd:decimal ;
+    oa:confidenceStructural "0.88"^^xsd:decimal ;
+    oa:confidenceInstance "0.90"^^xsd:decimal ;
+    oa:confidenceExternal "0.00"^^xsd:decimal ;
+    oa:confidenceModel "0.00"^^xsd:decimal ;
+    oa:confidenceEvidenceCoverage "0.85"^^xsd:decimal ;
+    oa:confidenceProvenance "1.00"^^xsd:decimal ;
+    oa:evidence res:evidence-aml-snapshot ;
+    oa:generationTrace res:generation-trace-aml-batch ;
+    oa:verificationTrace res:verification-run-aml-batch-mock .
+
+res:mapping-aml-015 a oa:MappingProposal ;
+    rdfs:label "AML_CASES opened_at → caseOpenedAt"@en ;
+    oa:mappingId "mapping-aml-015" ;
+    oa:fieldName "opened_at" ;
+    oa:sourceSystem "AML_CASES" ;
+    oa:mapsToConcept oa:caseOpenedAt ;
+    oa:proposalStatus "HUMAN_REVIEW" ;
+    oa:riskLevel "high" ;
+    oa:sourceSnapshotId "aml-cases@sha256:7fce6a969a484aa2a1222c1f45a382a3f9f9f9d5d4f44b97b5dbcd9b562981cb" ;
+    oa:transformation "parse_iso8601(source_value)" ;
+    oa:rationale "AML schema and bounded cases support the candidate; compliance review remains mandatory."@en ;
+    oa:counterexample "No contradiction was observed in the bounded fixture; production generalization remains unverified."@en ;
+    oa:confidenceLexical "0.90"^^xsd:decimal ;
+    oa:confidenceStructural "0.88"^^xsd:decimal ;
+    oa:confidenceInstance "0.90"^^xsd:decimal ;
+    oa:confidenceExternal "0.00"^^xsd:decimal ;
+    oa:confidenceModel "0.00"^^xsd:decimal ;
+    oa:confidenceEvidenceCoverage "0.85"^^xsd:decimal ;
+    oa:confidenceProvenance "1.00"^^xsd:decimal ;
+    oa:evidence res:evidence-aml-snapshot ;
+    oa:generationTrace res:generation-trace-aml-batch ;
+    oa:verificationTrace res:verification-run-aml-batch-mock .
+
+res:mapping-sanctions-001 a oa:MappingProposal ;
+    rdfs:label "SANCTIONS id → SanctionsEntryIdentifier"@en ;
+    oa:mappingId "mapping-sanctions-001" ;
+    oa:fieldName "id" ;
+    oa:sourceSystem "SANCTIONS" ;
+    oa:mapsToConcept oa:SanctionsEntryIdentifier ;
+    oa:proposalStatus "HUMAN_REVIEW" ;
+    oa:riskLevel "high" ;
+    oa:sourceSnapshotId "sanctions-mock@sha256:9307b98034dfc4d49952fad88cc445a37fd081452e6ac437f4302c98807cca72" ;
+    oa:transformation "identity(source_value)" ;
+    oa:rationale "Sanctions schema and pinned mock record support the candidate; human review remains mandatory."@en ;
+    oa:counterexample "No contradiction was observed in the bounded fixture; production generalization remains unverified."@en ;
+    oa:confidenceLexical "0.92"^^xsd:decimal ;
+    oa:confidenceStructural "0.90"^^xsd:decimal ;
+    oa:confidenceInstance "0.90"^^xsd:decimal ;
+    oa:confidenceExternal "0.00"^^xsd:decimal ;
+    oa:confidenceModel "0.00"^^xsd:decimal ;
+    oa:confidenceEvidenceCoverage "0.90"^^xsd:decimal ;
+    oa:confidenceProvenance "1.00"^^xsd:decimal ;
+    oa:evidence res:evidence-sanctions-snapshot ;
+    oa:generationTrace res:generation-trace-sanctions-batch ;
+    oa:verificationTrace res:verification-run-sanctions-batch-mock .
+
+res:mapping-sanctions-002 a oa:MappingProposal ;
+    rdfs:label "SANCTIONS id → sourceRecordId"@en ;
+    oa:mappingId "mapping-sanctions-002" ;
+    oa:fieldName "id" ;
+    oa:sourceSystem "SANCTIONS" ;
+    oa:mapsToConcept oa:sourceRecordId ;
+    oa:proposalStatus "HUMAN_REVIEW" ;
+    oa:riskLevel "high" ;
+    oa:sourceSnapshotId "sanctions-mock@sha256:9307b98034dfc4d49952fad88cc445a37fd081452e6ac437f4302c98807cca72" ;
+    oa:transformation "identity(source_value)" ;
+    oa:rationale "Sanctions schema and pinned mock record support the candidate; human review remains mandatory."@en ;
+    oa:counterexample "No contradiction was observed in the bounded fixture; production generalization remains unverified."@en ;
+    oa:confidenceLexical "0.92"^^xsd:decimal ;
+    oa:confidenceStructural "0.90"^^xsd:decimal ;
+    oa:confidenceInstance "0.90"^^xsd:decimal ;
+    oa:confidenceExternal "0.00"^^xsd:decimal ;
+    oa:confidenceModel "0.00"^^xsd:decimal ;
+    oa:confidenceEvidenceCoverage "0.90"^^xsd:decimal ;
+    oa:confidenceProvenance "1.00"^^xsd:decimal ;
+    oa:evidence res:evidence-sanctions-snapshot ;
+    oa:generationTrace res:generation-trace-sanctions-batch ;
+    oa:verificationTrace res:verification-run-sanctions-batch-mock .
+
+res:mapping-sanctions-003 a oa:MappingProposal ;
+    rdfs:label "SANCTIONS id → SanctionsEntry"@en ;
+    oa:mappingId "mapping-sanctions-003" ;
+    oa:fieldName "id" ;
+    oa:sourceSystem "SANCTIONS" ;
+    oa:mapsToConcept oa:SanctionsEntry ;
+    oa:proposalStatus "HUMAN_REVIEW" ;
+    oa:riskLevel "high" ;
+    oa:sourceSnapshotId "sanctions-mock@sha256:9307b98034dfc4d49952fad88cc445a37fd081452e6ac437f4302c98807cca72" ;
+    oa:transformation "construct governed sanctions entry" ;
+    oa:rationale "Sanctions schema and pinned mock record support the candidate; human review remains mandatory."@en ;
+    oa:counterexample "No contradiction was observed in the bounded fixture; production generalization remains unverified."@en ;
+    oa:confidenceLexical "0.92"^^xsd:decimal ;
+    oa:confidenceStructural "0.90"^^xsd:decimal ;
+    oa:confidenceInstance "0.90"^^xsd:decimal ;
+    oa:confidenceExternal "0.00"^^xsd:decimal ;
+    oa:confidenceModel "0.00"^^xsd:decimal ;
+    oa:confidenceEvidenceCoverage "0.90"^^xsd:decimal ;
+    oa:confidenceProvenance "1.00"^^xsd:decimal ;
+    oa:evidence res:evidence-sanctions-snapshot ;
+    oa:generationTrace res:generation-trace-sanctions-batch ;
+    oa:verificationTrace res:verification-run-sanctions-batch-mock .
+
+res:mapping-sanctions-004 a oa:MappingProposal ;
+    rdfs:label "SANCTIONS name → Name"@en ;
+    oa:mappingId "mapping-sanctions-004" ;
+    oa:fieldName "name" ;
+    oa:sourceSystem "SANCTIONS" ;
+    oa:mapsToConcept oa:Name ;
+    oa:proposalStatus "HUMAN_REVIEW" ;
+    oa:riskLevel "high" ;
+    oa:sourceSnapshotId "sanctions-mock@sha256:9307b98034dfc4d49952fad88cc445a37fd081452e6ac437f4302c98807cca72" ;
+    oa:transformation "trim(source_value)" ;
+    oa:rationale "Sanctions schema and pinned mock record support the candidate; human review remains mandatory."@en ;
+    oa:counterexample "No contradiction was observed in the bounded fixture; production generalization remains unverified."@en ;
+    oa:confidenceLexical "0.92"^^xsd:decimal ;
+    oa:confidenceStructural "0.90"^^xsd:decimal ;
+    oa:confidenceInstance "0.90"^^xsd:decimal ;
+    oa:confidenceExternal "0.00"^^xsd:decimal ;
+    oa:confidenceModel "0.00"^^xsd:decimal ;
+    oa:confidenceEvidenceCoverage "0.90"^^xsd:decimal ;
+    oa:confidenceProvenance "1.00"^^xsd:decimal ;
+    oa:evidence res:evidence-sanctions-snapshot ;
+    oa:generationTrace res:generation-trace-sanctions-batch ;
+    oa:verificationTrace res:verification-run-sanctions-batch-mock .
+
+res:mapping-sanctions-005 a oa:MappingProposal ;
+    rdfs:label "SANCTIONS name → Party"@en ;
+    oa:mappingId "mapping-sanctions-005" ;
+    oa:fieldName "name" ;
+    oa:sourceSystem "SANCTIONS" ;
+    oa:mapsToConcept oa:Party ;
+    oa:proposalStatus "HUMAN_REVIEW" ;
+    oa:riskLevel "high" ;
+    oa:sourceSnapshotId "sanctions-mock@sha256:9307b98034dfc4d49952fad88cc445a37fd081452e6ac437f4302c98807cca72" ;
+    oa:transformation "resolve sanctioned party candidate" ;
+    oa:rationale "Sanctions schema and pinned mock record support the candidate; human review remains mandatory."@en ;
+    oa:counterexample "No contradiction was observed in the bounded fixture; production generalization remains unverified."@en ;
+    oa:confidenceLexical "0.92"^^xsd:decimal ;
+    oa:confidenceStructural "0.90"^^xsd:decimal ;
+    oa:confidenceInstance "0.90"^^xsd:decimal ;
+    oa:confidenceExternal "0.00"^^xsd:decimal ;
+    oa:confidenceModel "0.00"^^xsd:decimal ;
+    oa:confidenceEvidenceCoverage "0.90"^^xsd:decimal ;
+    oa:confidenceProvenance "1.00"^^xsd:decimal ;
+    oa:evidence res:evidence-sanctions-snapshot ;
+    oa:generationTrace res:generation-trace-sanctions-batch ;
+    oa:verificationTrace res:verification-run-sanctions-batch-mock .
+
+res:mapping-sanctions-006 a oa:MappingProposal ;
+    rdfs:label "SANCTIONS countries → CountryCode"@en ;
+    oa:mappingId "mapping-sanctions-006" ;
+    oa:fieldName "countries" ;
+    oa:sourceSystem "SANCTIONS" ;
+    oa:mapsToConcept oa:CountryCode ;
+    oa:proposalStatus "HUMAN_REVIEW" ;
+    oa:riskLevel "high" ;
+    oa:sourceSnapshotId "sanctions-mock@sha256:9307b98034dfc4d49952fad88cc445a37fd081452e6ac437f4302c98807cca72" ;
+    oa:transformation "explode and uppercase array values" ;
+    oa:rationale "Sanctions schema and pinned mock record support the candidate; human review remains mandatory."@en ;
+    oa:counterexample "No contradiction was observed in the bounded fixture; production generalization remains unverified."@en ;
+    oa:confidenceLexical "0.92"^^xsd:decimal ;
+    oa:confidenceStructural "0.90"^^xsd:decimal ;
+    oa:confidenceInstance "0.90"^^xsd:decimal ;
+    oa:confidenceExternal "0.00"^^xsd:decimal ;
+    oa:confidenceModel "0.00"^^xsd:decimal ;
+    oa:confidenceEvidenceCoverage "0.90"^^xsd:decimal ;
+    oa:confidenceProvenance "1.00"^^xsd:decimal ;
+    oa:evidence res:evidence-sanctions-snapshot ;
+    oa:generationTrace res:generation-trace-sanctions-batch ;
+    oa:verificationTrace res:verification-run-sanctions-batch-mock .
+
+res:mapping-sanctions-007 a oa:MappingProposal ;
+    rdfs:label "SANCTIONS countries → Jurisdiction"@en ;
+    oa:mappingId "mapping-sanctions-007" ;
+    oa:fieldName "countries" ;
+    oa:sourceSystem "SANCTIONS" ;
+    oa:mapsToConcept oa:Jurisdiction ;
+    oa:proposalStatus "HUMAN_REVIEW" ;
+    oa:riskLevel "high" ;
+    oa:sourceSnapshotId "sanctions-mock@sha256:9307b98034dfc4d49952fad88cc445a37fd081452e6ac437f4302c98807cca72" ;
+    oa:transformation "resolve each country code to jurisdiction" ;
+    oa:rationale "Sanctions schema and pinned mock record support the candidate; human review remains mandatory."@en ;
+    oa:counterexample "No contradiction was observed in the bounded fixture; production generalization remains unverified."@en ;
+    oa:confidenceLexical "0.92"^^xsd:decimal ;
+    oa:confidenceStructural "0.90"^^xsd:decimal ;
+    oa:confidenceInstance "0.90"^^xsd:decimal ;
+    oa:confidenceExternal "0.00"^^xsd:decimal ;
+    oa:confidenceModel "0.00"^^xsd:decimal ;
+    oa:confidenceEvidenceCoverage "0.90"^^xsd:decimal ;
+    oa:confidenceProvenance "1.00"^^xsd:decimal ;
+    oa:evidence res:evidence-sanctions-snapshot ;
+    oa:generationTrace res:generation-trace-sanctions-batch ;
+    oa:verificationTrace res:verification-run-sanctions-batch-mock .
+
+res:mapping-sanctions-008 a oa:MappingProposal ;
+    rdfs:label "SANCTIONS listedAt → listingTimestamp"@en ;
+    oa:mappingId "mapping-sanctions-008" ;
+    oa:fieldName "listedAt" ;
+    oa:sourceSystem "SANCTIONS" ;
+    oa:mapsToConcept oa:listingTimestamp ;
+    oa:proposalStatus "HUMAN_REVIEW" ;
+    oa:riskLevel "high" ;
+    oa:sourceSnapshotId "sanctions-mock@sha256:9307b98034dfc4d49952fad88cc445a37fd081452e6ac437f4302c98807cca72" ;
+    oa:transformation "parse_iso8601_date(source_value)" ;
+    oa:rationale "Sanctions schema and pinned mock record support the candidate; human review remains mandatory."@en ;
+    oa:counterexample "No contradiction was observed in the bounded fixture; production generalization remains unverified."@en ;
+    oa:confidenceLexical "0.92"^^xsd:decimal ;
+    oa:confidenceStructural "0.90"^^xsd:decimal ;
+    oa:confidenceInstance "0.90"^^xsd:decimal ;
+    oa:confidenceExternal "0.00"^^xsd:decimal ;
+    oa:confidenceModel "0.00"^^xsd:decimal ;
+    oa:confidenceEvidenceCoverage "0.90"^^xsd:decimal ;
+    oa:confidenceProvenance "1.00"^^xsd:decimal ;
+    oa:evidence res:evidence-sanctions-snapshot ;
+    oa:generationTrace res:generation-trace-sanctions-batch ;
+    oa:verificationTrace res:verification-run-sanctions-batch-mock .
+
+res:mapping-sanctions-009 a oa:MappingProposal ;
+    rdfs:label "SANCTIONS program → SanctionsProgram"@en ;
+    oa:mappingId "mapping-sanctions-009" ;
+    oa:fieldName "program" ;
+    oa:sourceSystem "SANCTIONS" ;
+    oa:mapsToConcept oa:SanctionsProgram ;
+    oa:proposalStatus "HUMAN_REVIEW" ;
+    oa:riskLevel "high" ;
+    oa:sourceSnapshotId "sanctions-mock@sha256:9307b98034dfc4d49952fad88cc445a37fd081452e6ac437f4302c98807cca72" ;
+    oa:transformation "resolve governed sanctions program" ;
+    oa:rationale "Sanctions schema and pinned mock record support the candidate; human review remains mandatory."@en ;
+    oa:counterexample "No contradiction was observed in the bounded fixture; production generalization remains unverified."@en ;
+    oa:confidenceLexical "0.92"^^xsd:decimal ;
+    oa:confidenceStructural "0.90"^^xsd:decimal ;
+    oa:confidenceInstance "0.90"^^xsd:decimal ;
+    oa:confidenceExternal "0.00"^^xsd:decimal ;
+    oa:confidenceModel "0.00"^^xsd:decimal ;
+    oa:confidenceEvidenceCoverage "0.90"^^xsd:decimal ;
+    oa:confidenceProvenance "1.00"^^xsd:decimal ;
+    oa:evidence res:evidence-sanctions-snapshot ;
+    oa:generationTrace res:generation-trace-sanctions-batch ;
+    oa:verificationTrace res:verification-run-sanctions-batch-mock .
+
+res:mapping-sanctions-010 a oa:MappingProposal ;
+    rdfs:label "SANCTIONS matchedPartyId → PartyIdentifier"@en ;
+    oa:mappingId "mapping-sanctions-010" ;
+    oa:fieldName "matchedPartyId" ;
+    oa:sourceSystem "SANCTIONS" ;
+    oa:mapsToConcept oa:PartyIdentifier ;
+    oa:proposalStatus "HUMAN_REVIEW" ;
+    oa:riskLevel "high" ;
+    oa:sourceSnapshotId "sanctions-mock@sha256:9307b98034dfc4d49952fad88cc445a37fd081452e6ac437f4302c98807cca72" ;
+    oa:transformation "identity(source_value)" ;
+    oa:rationale "Sanctions schema and pinned mock record support the candidate; human review remains mandatory."@en ;
+    oa:counterexample "No contradiction was observed in the bounded fixture; production generalization remains unverified."@en ;
+    oa:confidenceLexical "0.92"^^xsd:decimal ;
+    oa:confidenceStructural "0.90"^^xsd:decimal ;
+    oa:confidenceInstance "0.90"^^xsd:decimal ;
+    oa:confidenceExternal "0.00"^^xsd:decimal ;
+    oa:confidenceModel "0.00"^^xsd:decimal ;
+    oa:confidenceEvidenceCoverage "0.90"^^xsd:decimal ;
+    oa:confidenceProvenance "1.00"^^xsd:decimal ;
+    oa:evidence res:evidence-sanctions-snapshot ;
+    oa:generationTrace res:generation-trace-sanctions-batch ;
+    oa:verificationTrace res:verification-run-sanctions-batch-mock .
+
+res:mapping-kyc-001 a oa:MappingProposal ;
+    rdfs:label "KYC_DOCUMENTS legal_entity → LegalEntity"@en ;
+    oa:mappingId "mapping-kyc-001" ;
+    oa:fieldName "legal_entity" ;
+    oa:sourceSystem "KYC_DOCUMENTS" ;
+    oa:mapsToConcept oa:LegalEntity ;
+    oa:proposalStatus "HUMAN_REVIEW" ;
+    oa:riskLevel "high" ;
+    oa:sourceSnapshotId "kyc-le-2001@sha256:ab6ca88676c4f2091c09228d718cbccb9f6711df9c0727026a5aff820aec1787" ;
+    oa:transformation "extract governed legal-entity candidate" ;
+    oa:rationale "The pinned synthetic KYC document span supports the extracted candidate; document review remains mandatory."@en ;
+    oa:counterexample "No contradiction was observed in the bounded fixture; production generalization remains unverified."@en ;
+    oa:confidenceLexical "0.88"^^xsd:decimal ;
+    oa:confidenceStructural "0.85"^^xsd:decimal ;
+    oa:confidenceInstance "0.80"^^xsd:decimal ;
+    oa:confidenceExternal "0.00"^^xsd:decimal ;
+    oa:confidenceModel "0.00"^^xsd:decimal ;
+    oa:confidenceEvidenceCoverage "0.80"^^xsd:decimal ;
+    oa:confidenceProvenance "1.00"^^xsd:decimal ;
+    oa:evidence res:evidence-kyc-document-1001 ;
+    oa:generationTrace res:generation-trace-kyc-batch ;
+    oa:verificationTrace res:verification-run-kyc-batch-mock .
+
+res:mapping-crm-ubo oa:counterevidence res:evidence-crm-bounded-limitation .
+res:mapping-crm-003 oa:counterevidence res:evidence-crm-bounded-limitation .
+res:mapping-crm-004 oa:counterevidence res:evidence-crm-bounded-limitation .
+res:mapping-crm-005 oa:counterevidence res:evidence-crm-bounded-limitation .
+res:mapping-crm-006 oa:counterevidence res:evidence-crm-bounded-limitation .
+res:mapping-crm-007 oa:counterevidence res:evidence-crm-bounded-limitation .
+res:mapping-crm-008 oa:counterevidence res:evidence-crm-bounded-limitation .
+res:mapping-crm-009 oa:counterevidence res:evidence-crm-bounded-limitation .
+res:mapping-crm-010 oa:counterevidence res:evidence-crm-bounded-limitation .
+res:mapping-crm-011 oa:counterevidence res:evidence-crm-bounded-limitation .
+res:mapping-crm-012 oa:counterevidence res:evidence-crm-bounded-limitation .
+res:mapping-crm-013 oa:counterevidence res:evidence-crm-bounded-limitation .
+res:mapping-crm-014 oa:counterevidence res:evidence-crm-bounded-limitation .
+res:mapping-crm-015 oa:counterevidence res:evidence-crm-bounded-limitation .
+res:mapping-crm-016 oa:counterevidence res:evidence-crm-bounded-limitation .
+res:mapping-crm-017 oa:counterevidence res:evidence-crm-bounded-limitation .
+res:mapping-crm-018 oa:counterevidence res:evidence-crm-bounded-limitation .
+res:mapping-crm-019 oa:counterevidence res:evidence-crm-bounded-limitation .
+res:mapping-crm-020 oa:counterevidence res:evidence-crm-bounded-limitation .
+res:mapping-crm-021 oa:counterevidence res:evidence-crm-bounded-limitation .
+res:mapping-crm-022 oa:counterevidence res:evidence-crm-bounded-limitation .
+res:mapping-crm-023 oa:counterevidence res:evidence-crm-bounded-limitation .
+res:mapping-crm-024 oa:counterevidence res:evidence-crm-bounded-limitation .
+res:mapping-crm-025 oa:counterevidence res:evidence-crm-bounded-limitation .
+res:mapping-accounts-001 oa:counterevidence res:evidence-accounts-bounded-limitation .
+res:mapping-accounts-002 oa:counterevidence res:evidence-accounts-bounded-limitation .
+res:mapping-accounts-003 oa:counterevidence res:evidence-accounts-bounded-limitation .
+res:mapping-accounts-004 oa:counterevidence res:evidence-accounts-bounded-limitation .
+res:mapping-accounts-005 oa:counterevidence res:evidence-accounts-bounded-limitation .
+res:mapping-accounts-006 oa:counterevidence res:evidence-accounts-bounded-limitation .
+res:mapping-accounts-007 oa:counterevidence res:evidence-accounts-bounded-limitation .
+res:mapping-accounts-008 oa:counterevidence res:evidence-accounts-bounded-limitation .
+res:mapping-accounts-009 oa:counterevidence res:evidence-accounts-bounded-limitation .
+res:mapping-accounts-010 oa:counterevidence res:evidence-accounts-bounded-limitation .
+res:mapping-accounts-011 oa:counterevidence res:evidence-accounts-bounded-limitation .
+res:mapping-accounts-012 oa:counterevidence res:evidence-accounts-bounded-limitation .
+res:mapping-accounts-013 oa:counterevidence res:evidence-accounts-bounded-limitation .
+res:mapping-accounts-014 oa:counterevidence res:evidence-accounts-bounded-limitation .
+res:mapping-accounts-015 oa:counterevidence res:evidence-accounts-bounded-limitation .
+res:mapping-accounts-016 oa:counterevidence res:evidence-accounts-bounded-limitation .
+res:mapping-accounts-017 oa:counterevidence res:evidence-accounts-bounded-limitation .
+res:mapping-accounts-018 oa:counterevidence res:evidence-accounts-bounded-limitation .
+res:mapping-accounts-019 oa:counterevidence res:evidence-accounts-bounded-limitation .
+res:mapping-accounts-020 oa:counterevidence res:evidence-accounts-bounded-limitation .
+res:mapping-payments-001 oa:counterevidence res:evidence-payments-bounded-limitation .
+res:mapping-payments-002 oa:counterevidence res:evidence-payments-bounded-limitation .
+res:mapping-payments-003 oa:counterevidence res:evidence-payments-bounded-limitation .
+res:mapping-payments-004 oa:counterevidence res:evidence-payments-bounded-limitation .
+res:mapping-payments-005 oa:counterevidence res:evidence-payments-bounded-limitation .
+res:mapping-payments-006 oa:counterevidence res:evidence-payments-bounded-limitation .
+res:mapping-payments-007 oa:counterevidence res:evidence-payments-bounded-limitation .
+res:mapping-payments-008 oa:counterevidence res:evidence-payments-bounded-limitation .
+res:mapping-payments-009 oa:counterevidence res:evidence-payments-bounded-limitation .
+res:mapping-payments-010 oa:counterevidence res:evidence-payments-bounded-limitation .
+res:mapping-payments-011 oa:counterevidence res:evidence-payments-bounded-limitation .
+res:mapping-payments-012 oa:counterevidence res:evidence-payments-bounded-limitation .
+res:mapping-payments-013 oa:counterevidence res:evidence-payments-bounded-limitation .
+res:mapping-payments-014 oa:counterevidence res:evidence-payments-bounded-limitation .
+res:mapping-payments-015 oa:counterevidence res:evidence-payments-bounded-limitation .
+res:mapping-payments-016 oa:counterevidence res:evidence-payments-bounded-limitation .
+res:mapping-payments-017 oa:counterevidence res:evidence-payments-bounded-limitation .
+res:mapping-payments-018 oa:counterevidence res:evidence-payments-bounded-limitation .
+res:mapping-payments-019 oa:counterevidence res:evidence-payments-bounded-limitation .
+res:mapping-payments-020 oa:counterevidence res:evidence-payments-bounded-limitation .
+res:mapping-aml-001 oa:counterevidence res:evidence-aml-bounded-limitation .
+res:mapping-aml-002 oa:counterevidence res:evidence-aml-bounded-limitation .
+res:mapping-aml-003 oa:counterevidence res:evidence-aml-bounded-limitation .
+res:mapping-aml-004 oa:counterevidence res:evidence-aml-bounded-limitation .
+res:mapping-aml-005 oa:counterevidence res:evidence-aml-bounded-limitation .
+res:mapping-aml-006 oa:counterevidence res:evidence-aml-bounded-limitation .
+res:mapping-aml-007 oa:counterevidence res:evidence-aml-bounded-limitation .
+res:mapping-aml-008 oa:counterevidence res:evidence-aml-bounded-limitation .
+res:mapping-aml-009 oa:counterevidence res:evidence-aml-bounded-limitation .
+res:mapping-aml-010 oa:counterevidence res:evidence-aml-bounded-limitation .
+res:mapping-aml-011 oa:counterevidence res:evidence-aml-bounded-limitation .
+res:mapping-aml-012 oa:counterevidence res:evidence-aml-bounded-limitation .
+res:mapping-aml-013 oa:counterevidence res:evidence-aml-bounded-limitation .
+res:mapping-aml-014 oa:counterevidence res:evidence-aml-bounded-limitation .
+res:mapping-aml-015 oa:counterevidence res:evidence-aml-bounded-limitation .
+res:mapping-sanctions-001 oa:counterevidence res:evidence-sanctions-bounded-limitation .
+res:mapping-sanctions-002 oa:counterevidence res:evidence-sanctions-bounded-limitation .
+res:mapping-sanctions-003 oa:counterevidence res:evidence-sanctions-bounded-limitation .
+res:mapping-sanctions-004 oa:counterevidence res:evidence-sanctions-bounded-limitation .
+res:mapping-sanctions-005 oa:counterevidence res:evidence-sanctions-bounded-limitation .
+res:mapping-sanctions-006 oa:counterevidence res:evidence-sanctions-bounded-limitation .
+res:mapping-sanctions-007 oa:counterevidence res:evidence-sanctions-bounded-limitation .
+res:mapping-sanctions-008 oa:counterevidence res:evidence-sanctions-bounded-limitation .
+res:mapping-sanctions-009 oa:counterevidence res:evidence-sanctions-bounded-limitation .
+res:mapping-sanctions-010 oa:counterevidence res:evidence-sanctions-bounded-limitation .
+res:mapping-kyc-001 oa:counterevidence res:evidence-kyc-bounded-limitation .
+res:mapping-kyc-002 oa:counterevidence res:evidence-kyc-bounded-limitation .
+res:mapping-kyc-003 oa:counterevidence res:evidence-kyc-bounded-limitation .
+res:mapping-kyc-004 oa:counterevidence res:evidence-kyc-bounded-limitation .
+res:mapping-kyc-005 oa:counterevidence res:evidence-kyc-bounded-limitation .
+res:mapping-kyc-006 oa:counterevidence res:evidence-kyc-bounded-limitation .
+res:mapping-kyc-007 oa:counterevidence res:evidence-kyc-bounded-limitation .
+res:mapping-kyc-008 oa:counterevidence res:evidence-kyc-bounded-limitation .
+res:mapping-kyc-009 oa:counterevidence res:evidence-kyc-bounded-limitation .
+res:mapping-kyc-010 oa:counterevidence res:evidence-kyc-bounded-limitation .
+
+res:mapping-kyc-002 a oa:MappingProposal ;
+    rdfs:label "KYC_DOCUMENTS legal_entity → PartyIdentifier"@en ;
+    oa:mappingId "mapping-kyc-002" ;
+    oa:fieldName "legal_entity" ;
+    oa:sourceSystem "KYC_DOCUMENTS" ;
+    oa:mapsToConcept oa:PartyIdentifier ;
+    oa:proposalStatus "HUMAN_REVIEW" ;
+    oa:riskLevel "high" ;
+    oa:sourceSnapshotId "kyc-le-2001@sha256:ab6ca88676c4f2091c09228d718cbccb9f6711df9c0727026a5aff820aec1787" ;
+    oa:transformation "extract identifier in parentheses" ;
+    oa:rationale "The pinned synthetic KYC document span supports the extracted candidate; document review remains mandatory."@en ;
+    oa:counterexample "No contradiction was observed in the bounded fixture; production generalization remains unverified."@en ;
+    oa:confidenceLexical "0.88"^^xsd:decimal ;
+    oa:confidenceStructural "0.85"^^xsd:decimal ;
+    oa:confidenceInstance "0.80"^^xsd:decimal ;
+    oa:confidenceExternal "0.00"^^xsd:decimal ;
+    oa:confidenceModel "0.00"^^xsd:decimal ;
+    oa:confidenceEvidenceCoverage "0.80"^^xsd:decimal ;
+    oa:confidenceProvenance "1.00"^^xsd:decimal ;
+    oa:evidence res:evidence-kyc-document-1001 ;
+    oa:generationTrace res:generation-trace-kyc-batch ;
+    oa:verificationTrace res:verification-run-kyc-batch-mock .
+
+res:mapping-kyc-003 a oa:MappingProposal ;
+    rdfs:label "KYC_DOCUMENTS registered_country → Jurisdiction"@en ;
+    oa:mappingId "mapping-kyc-003" ;
+    oa:fieldName "registered_country" ;
+    oa:sourceSystem "KYC_DOCUMENTS" ;
+    oa:mapsToConcept oa:Jurisdiction ;
+    oa:proposalStatus "HUMAN_REVIEW" ;
+    oa:riskLevel "high" ;
+    oa:sourceSnapshotId "kyc-le-2001@sha256:ab6ca88676c4f2091c09228d718cbccb9f6711df9c0727026a5aff820aec1787" ;
+    oa:transformation "resolve ISO country code to jurisdiction" ;
+    oa:rationale "The pinned synthetic KYC document span supports the extracted candidate; document review remains mandatory."@en ;
+    oa:counterexample "No contradiction was observed in the bounded fixture; production generalization remains unverified."@en ;
+    oa:confidenceLexical "0.88"^^xsd:decimal ;
+    oa:confidenceStructural "0.85"^^xsd:decimal ;
+    oa:confidenceInstance "0.80"^^xsd:decimal ;
+    oa:confidenceExternal "0.00"^^xsd:decimal ;
+    oa:confidenceModel "0.00"^^xsd:decimal ;
+    oa:confidenceEvidenceCoverage "0.80"^^xsd:decimal ;
+    oa:confidenceProvenance "1.00"^^xsd:decimal ;
+    oa:evidence res:evidence-kyc-document-1001 ;
+    oa:generationTrace res:generation-trace-kyc-batch ;
+    oa:verificationTrace res:verification-run-kyc-batch-mock .
+
+res:mapping-kyc-004 a oa:MappingProposal ;
+    rdfs:label "KYC_DOCUMENTS registered_country → CountryCode"@en ;
+    oa:mappingId "mapping-kyc-004" ;
+    oa:fieldName "registered_country" ;
+    oa:sourceSystem "KYC_DOCUMENTS" ;
+    oa:mapsToConcept oa:CountryCode ;
+    oa:proposalStatus "HUMAN_REVIEW" ;
+    oa:riskLevel "high" ;
+    oa:sourceSnapshotId "kyc-le-2001@sha256:ab6ca88676c4f2091c09228d718cbccb9f6711df9c0727026a5aff820aec1787" ;
+    oa:transformation "uppercase(extracted_value)" ;
+    oa:rationale "The pinned synthetic KYC document span supports the extracted candidate; document review remains mandatory."@en ;
+    oa:counterexample "No contradiction was observed in the bounded fixture; production generalization remains unverified."@en ;
+    oa:confidenceLexical "0.88"^^xsd:decimal ;
+    oa:confidenceStructural "0.85"^^xsd:decimal ;
+    oa:confidenceInstance "0.80"^^xsd:decimal ;
+    oa:confidenceExternal "0.00"^^xsd:decimal ;
+    oa:confidenceModel "0.00"^^xsd:decimal ;
+    oa:confidenceEvidenceCoverage "0.80"^^xsd:decimal ;
+    oa:confidenceProvenance "1.00"^^xsd:decimal ;
+    oa:evidence res:evidence-kyc-document-1001 ;
+    oa:generationTrace res:generation-trace-kyc-batch ;
+    oa:verificationTrace res:verification-run-kyc-batch-mock .
+
+res:mapping-kyc-005 a oa:MappingProposal ;
+    rdfs:label "KYC_DOCUMENTS ubo_name → UltimateBeneficialOwner"@en ;
+    oa:mappingId "mapping-kyc-005" ;
+    oa:fieldName "ubo_name" ;
+    oa:sourceSystem "KYC_DOCUMENTS" ;
+    oa:mapsToConcept oa:UltimateBeneficialOwner ;
+    oa:proposalStatus "HUMAN_REVIEW" ;
+    oa:riskLevel "high" ;
+    oa:sourceSnapshotId "kyc-le-2001@sha256:ab6ca88676c4f2091c09228d718cbccb9f6711df9c0727026a5aff820aec1787" ;
+    oa:transformation "extract UBO name span" ;
+    oa:rationale "The pinned synthetic KYC document span supports the extracted candidate; document review remains mandatory."@en ;
+    oa:counterexample "No contradiction was observed in the bounded fixture; production generalization remains unverified."@en ;
+    oa:confidenceLexical "0.88"^^xsd:decimal ;
+    oa:confidenceStructural "0.85"^^xsd:decimal ;
+    oa:confidenceInstance "0.80"^^xsd:decimal ;
+    oa:confidenceExternal "0.00"^^xsd:decimal ;
+    oa:confidenceModel "0.00"^^xsd:decimal ;
+    oa:confidenceEvidenceCoverage "0.80"^^xsd:decimal ;
+    oa:confidenceProvenance "1.00"^^xsd:decimal ;
+    oa:evidence res:evidence-kyc-document-1001 ;
+    oa:generationTrace res:generation-trace-kyc-batch ;
+    oa:verificationTrace res:verification-run-kyc-batch-mock .
+
+res:mapping-kyc-006 a oa:MappingProposal ;
+    rdfs:label "KYC_DOCUMENTS ubo_name → Person"@en ;
+    oa:mappingId "mapping-kyc-006" ;
+    oa:fieldName "ubo_name" ;
+    oa:sourceSystem "KYC_DOCUMENTS" ;
+    oa:mapsToConcept oa:Person ;
+    oa:proposalStatus "HUMAN_REVIEW" ;
+    oa:riskLevel "high" ;
+    oa:sourceSnapshotId "kyc-le-2001@sha256:ab6ca88676c4f2091c09228d718cbccb9f6711df9c0727026a5aff820aec1787" ;
+    oa:transformation "construct person candidate" ;
+    oa:rationale "The pinned synthetic KYC document span supports the extracted candidate; document review remains mandatory."@en ;
+    oa:counterexample "No contradiction was observed in the bounded fixture; production generalization remains unverified."@en ;
+    oa:confidenceLexical "0.88"^^xsd:decimal ;
+    oa:confidenceStructural "0.85"^^xsd:decimal ;
+    oa:confidenceInstance "0.80"^^xsd:decimal ;
+    oa:confidenceExternal "0.00"^^xsd:decimal ;
+    oa:confidenceModel "0.00"^^xsd:decimal ;
+    oa:confidenceEvidenceCoverage "0.80"^^xsd:decimal ;
+    oa:confidenceProvenance "1.00"^^xsd:decimal ;
+    oa:evidence res:evidence-kyc-document-1001 ;
+    oa:generationTrace res:generation-trace-kyc-batch ;
+    oa:verificationTrace res:verification-run-kyc-batch-mock .
+
+res:mapping-kyc-007 a oa:MappingProposal ;
+    rdfs:label "KYC_DOCUMENTS ubo_party_id → PartyIdentifier"@en ;
+    oa:mappingId "mapping-kyc-007" ;
+    oa:fieldName "ubo_party_id" ;
+    oa:sourceSystem "KYC_DOCUMENTS" ;
+    oa:mapsToConcept oa:PartyIdentifier ;
+    oa:proposalStatus "HUMAN_REVIEW" ;
+    oa:riskLevel "high" ;
+    oa:sourceSnapshotId "kyc-le-2001@sha256:ab6ca88676c4f2091c09228d718cbccb9f6711df9c0727026a5aff820aec1787" ;
+    oa:transformation "extract identifier in parentheses" ;
+    oa:rationale "The pinned synthetic KYC document span supports the extracted candidate; document review remains mandatory."@en ;
+    oa:counterexample "No contradiction was observed in the bounded fixture; production generalization remains unverified."@en ;
+    oa:confidenceLexical "0.88"^^xsd:decimal ;
+    oa:confidenceStructural "0.85"^^xsd:decimal ;
+    oa:confidenceInstance "0.80"^^xsd:decimal ;
+    oa:confidenceExternal "0.00"^^xsd:decimal ;
+    oa:confidenceModel "0.00"^^xsd:decimal ;
+    oa:confidenceEvidenceCoverage "0.80"^^xsd:decimal ;
+    oa:confidenceProvenance "1.00"^^xsd:decimal ;
+    oa:evidence res:evidence-kyc-document-1001 ;
+    oa:generationTrace res:generation-trace-kyc-batch ;
+    oa:verificationTrace res:verification-run-kyc-batch-mock .
+
+res:mapping-kyc-008 a oa:MappingProposal ;
+    rdfs:label "KYC_DOCUMENTS ubo_party_id → beneficialOwnerOf"@en ;
+    oa:mappingId "mapping-kyc-008" ;
+    oa:fieldName "ubo_party_id" ;
+    oa:sourceSystem "KYC_DOCUMENTS" ;
+    oa:mapsToConcept oa:beneficialOwnerOf ;
+    oa:proposalStatus "HUMAN_REVIEW" ;
+    oa:riskLevel "high" ;
+    oa:sourceSnapshotId "kyc-le-2001@sha256:ab6ca88676c4f2091c09228d718cbccb9f6711df9c0727026a5aff820aec1787" ;
+    oa:transformation "link person candidate to legal entity after review" ;
+    oa:rationale "The pinned synthetic KYC document span supports the extracted candidate; document review remains mandatory."@en ;
+    oa:counterexample "No contradiction was observed in the bounded fixture; production generalization remains unverified."@en ;
+    oa:confidenceLexical "0.88"^^xsd:decimal ;
+    oa:confidenceStructural "0.85"^^xsd:decimal ;
+    oa:confidenceInstance "0.80"^^xsd:decimal ;
+    oa:confidenceExternal "0.00"^^xsd:decimal ;
+    oa:confidenceModel "0.00"^^xsd:decimal ;
+    oa:confidenceEvidenceCoverage "0.80"^^xsd:decimal ;
+    oa:confidenceProvenance "1.00"^^xsd:decimal ;
+    oa:evidence res:evidence-kyc-document-1001 ;
+    oa:generationTrace res:generation-trace-kyc-batch ;
+    oa:verificationTrace res:verification-run-kyc-batch-mock .
+
+res:mapping-kyc-009 a oa:MappingProposal ;
+    rdfs:label "KYC_DOCUMENTS ownership_percent → ownershipPercentage"@en ;
+    oa:mappingId "mapping-kyc-009" ;
+    oa:fieldName "ownership_percent" ;
+    oa:sourceSystem "KYC_DOCUMENTS" ;
+    oa:mapsToConcept oa:ownershipPercentage ;
+    oa:proposalStatus "HUMAN_REVIEW" ;
+    oa:riskLevel "high" ;
+    oa:sourceSnapshotId "kyc-le-2001@sha256:ab6ca88676c4f2091c09228d718cbccb9f6711df9c0727026a5aff820aec1787" ;
+    oa:transformation "parse percentage as decimal" ;
+    oa:rationale "The pinned synthetic KYC document span supports the extracted candidate; document review remains mandatory."@en ;
+    oa:counterexample "No contradiction was observed in the bounded fixture; production generalization remains unverified."@en ;
+    oa:confidenceLexical "0.88"^^xsd:decimal ;
+    oa:confidenceStructural "0.85"^^xsd:decimal ;
+    oa:confidenceInstance "0.80"^^xsd:decimal ;
+    oa:confidenceExternal "0.00"^^xsd:decimal ;
+    oa:confidenceModel "0.00"^^xsd:decimal ;
+    oa:confidenceEvidenceCoverage "0.80"^^xsd:decimal ;
+    oa:confidenceProvenance "1.00"^^xsd:decimal ;
+    oa:evidence res:evidence-kyc-document-1001 ;
+    oa:generationTrace res:generation-trace-kyc-batch ;
+    oa:verificationTrace res:verification-run-kyc-batch-mock .
+
+res:mapping-kyc-010 a oa:MappingProposal ;
+    rdfs:label "KYC_DOCUMENTS review_status → reviewStatus"@en ;
+    oa:mappingId "mapping-kyc-010" ;
+    oa:fieldName "review_status" ;
+    oa:sourceSystem "KYC_DOCUMENTS" ;
+    oa:mapsToConcept oa:reviewStatus ;
+    oa:proposalStatus "HUMAN_REVIEW" ;
+    oa:riskLevel "high" ;
+    oa:sourceSnapshotId "kyc-le-2001@sha256:ab6ca88676c4f2091c09228d718cbccb9f6711df9c0727026a5aff820aec1787" ;
+    oa:transformation "normalize review status" ;
+    oa:rationale "The pinned synthetic KYC document span supports the extracted candidate; document review remains mandatory."@en ;
+    oa:counterexample "No contradiction was observed in the bounded fixture; production generalization remains unverified."@en ;
+    oa:confidenceLexical "0.88"^^xsd:decimal ;
+    oa:confidenceStructural "0.85"^^xsd:decimal ;
+    oa:confidenceInstance "0.80"^^xsd:decimal ;
+    oa:confidenceExternal "0.00"^^xsd:decimal ;
+    oa:confidenceModel "0.00"^^xsd:decimal ;
+    oa:confidenceEvidenceCoverage "0.80"^^xsd:decimal ;
+    oa:confidenceProvenance "1.00"^^xsd:decimal ;
+    oa:evidence res:evidence-kyc-document-1001 ;
+    oa:generationTrace res:generation-trace-kyc-batch ;
+    oa:verificationTrace res:verification-run-kyc-batch-mock .

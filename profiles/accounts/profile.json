@@ -1,0 +1,112 @@
+{
+  "bounds": {
+    "maximumBytes": 65536,
+    "maximumRecords": 100,
+    "observedBytes": 241,
+    "observedRecords": 3
+  },
+  "extractorName": "ontology-appliance-synthetic-profiler",
+  "extractorVersion": "1.0.0",
+  "fields": {
+    "account_id": {
+      "logicalType": "string",
+      "sourceLocator": "data/synthetic/accounts.csv#column=account_id",
+      "statistics": {
+        "distinctCount": 3,
+        "maximumLength": 6,
+        "minimumLength": 5,
+        "nonNullCount": 3,
+        "nullCount": 0,
+        "nullRate": 0.0,
+        "uniquenessRatio": 1.0
+      }
+    },
+    "account_number": {
+      "logicalType": "string",
+      "sourceLocator": "data/synthetic/accounts.csv#column=account_number",
+      "statistics": {
+        "distinctCount": 3,
+        "maximumLength": 8,
+        "minimumLength": 8,
+        "nonNullCount": 3,
+        "nullCount": 0,
+        "nullRate": 0.0,
+        "uniquenessRatio": 1.0
+      }
+    },
+    "currency": {
+      "logicalType": "string",
+      "sourceLocator": "data/synthetic/accounts.csv#column=currency",
+      "statistics": {
+        "distinctCount": 1,
+        "maximumLength": 3,
+        "minimumLength": 3,
+        "nonNullCount": 3,
+        "nullCount": 0,
+        "nullRate": 0.0,
+        "uniquenessRatio": 0.333333
+      }
+    },
+    "owner_party_id": {
+      "logicalType": "string",
+      "sourceLocator": "data/synthetic/accounts.csv#column=owner_party_id",
+      "statistics": {
+        "distinctCount": 3,
+        "maximumLength": 7,
+        "minimumLength": 7,
+        "nonNullCount": 3,
+        "nullCount": 0,
+        "nullRate": 0.0,
+        "uniquenessRatio": 1.0
+      }
+    },
+    "source_updated_at": {
+      "logicalType": "datetime",
+      "sourceLocator": "data/synthetic/accounts.csv#column=source_updated_at",
+      "statistics": {
+        "distinctCount": 3,
+        "maximumLength": 20,
+        "minimumLength": 20,
+        "nonNullCount": 3,
+        "nullCount": 0,
+        "nullRate": 0.0,
+        "uniquenessRatio": 1.0
+      }
+    },
+    "status": {
+      "logicalType": "string",
+      "sourceLocator": "data/synthetic/accounts.csv#column=status",
+      "statistics": {
+        "distinctCount": 2,
+        "maximumLength": 8,
+        "minimumLength": 4,
+        "nonNullCount": 3,
+        "nullCount": 0,
+        "nullRate": 0.0,
+        "uniquenessRatio": 0.666667
+      }
+    }
+  },
+  "observedAt": "2026-06-17T06:32:00Z",
+  "relationshipEvidence": {
+    "currencyCounts": {
+      "EUR": 3
+    },
+    "distinctOwnerPartyCount": 3,
+    "externalAccountCount": 1,
+    "statusCounts": {
+      "EXTERNAL": 1,
+      "OPEN": 2
+    }
+  },
+  "schemaVersion": "1.0",
+  "snapshotId": "core-accounts@sha256:5048c0b5a286afecb3b7bdcc81891b54bda12ab151e7097fcf81b3f1b5bb974a",
+  "sourceContentSha256": "5048c0b5a286afecb3b7bdcc81891b54bda12ab151e7097fcf81b3f1b5bb974a",
+  "sourceId": "core-accounts",
+  "sourceLocator": "data/synthetic/accounts.csv",
+  "statistics": {
+    "fieldCount": 6,
+    "recordCount": 3
+  },
+  "tenantId": "demo-bank"
+}

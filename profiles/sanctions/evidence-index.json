@@ -1,0 +1,342 @@
+{
+  "evidence": [
+    {
+      "claim": {
+        "readOperations": {
+          "get": 1
+        },
+        "writeOperationCount": 0
+      },
+      "classification": "INTERNAL",
+      "contentSha256": "4b1fd668895b57ee4640943ef16d53c761d091ac48901aefcb71e02593cf54b7",
+      "evidenceId": "evidence-sanctions-api-761eacdc0a90499e",
+      "extractorName": "ontology-appliance-synthetic-profiler",
+      "extractorVersion": "1.0.0",
+      "locator": "data/contracts/sanctions.openapi.yaml#/paths/~1records/get",
+      "normalizedCoordinates": {
+        "method": "GET",
+        "path": "/records"
+      },
+      "observedAt": "2026-06-20T06:00:00Z",
+      "policyTags": [
+        "openapi",
+        "read-only",
+        "schema",
+        "synthetic"
+      ],
+      "snapshotId": "sanctions-api@sha256:8cdd1cb5067a14aa427a98701b8f0187850a5d90dfa246384e688cc9bf261ef8",
+      "sourceId": "sanctions-api",
+      "tenantId": "demo-bank"
+    },
+    {
+      "claim": {
+        "byteCount": 250,
+        "recordCount": 1
+      },
+      "classification": "INTERNAL",
+      "contentSha256": "9307b98034dfc4d49952fad88cc445a37fd081452e6ac437f4302c98807cca72",
+      "evidenceId": "evidence-sanctions-api-f6287320156eed1c",
+      "extractorName": "ontology-appliance-synthetic-profiler",
+      "extractorVersion": "1.0.0",
+      "locator": "data/synthetic/sanctions.json",
+      "normalizedCoordinates": {
+        "artifact": "response-fixture"
+      },
+      "observedAt": "2026-06-20T06:00:00Z",
+      "policyTags": [
+        "read-only",
+        "snapshot",
+        "synthetic"
+      ],
+      "snapshotId": "sanctions-api@sha256:8cdd1cb5067a14aa427a98701b8f0187850a5d90dfa246384e688cc9bf261ef8",
+      "sourceId": "sanctions-api",
+      "tenantId": "demo-bank"
+    },
+    {
+      "claim": {
+        "profileStatistics": {
+          "apiOperationCount": 1,
+          "apiOperations": {
+            "get": 1
+          },
+          "apiPathCount": 1,
+          "recordCount": 1
+        }
+      },
+      "classification": "INTERNAL",
+      "contentSha256": "936e2ab29de4d8fcac1f1dda52945f260f5227986101ae39f7709d8c1d985c8c",
+      "evidenceId": "evidence-sanctions-api-db274e74f965b386",
+      "extractorName": "ontology-appliance-synthetic-profiler",
+      "extractorVersion": "1.0.0",
+      "locator": "profiles/sanctions/profile.json#/statistics",
+      "normalizedCoordinates": {
+        "profilePointer": "/statistics"
+      },
+      "observedAt": "2026-06-20T06:00:00Z",
+      "policyTags": [
+        "bounded-profile",
+        "read-only",
+        "synthetic"
+      ],
+      "snapshotId": "sanctions-api@sha256:8cdd1cb5067a14aa427a98701b8f0187850a5d90dfa246384e688cc9bf261ef8",
+      "sourceId": "sanctions-api",
+      "tenantId": "demo-bank"
+    },
+    {
+      "claim": {
+        "profileStatistics": {
+          "distinctCount": 1,
+          "maximumLength": 2,
+          "minimumLength": 2,
+          "nonNullCount": 1,
+          "nullCount": 0,
+          "nullRate": 0.0,
+          "uniquenessRatio": 1.0
+        }
+      },
+      "classification": "INTERNAL",
+      "contentSha256": "281404a15f159870e35f42a2b95329020b68995502fcfff84d99f5a05c8ddf0d",
+      "evidenceId": "evidence-sanctions-api-3ed13e9d746ee4f8",
+      "extractorName": "ontology-appliance-synthetic-profiler",
+      "extractorVersion": "1.0.0",
+      "locator": "data/synthetic/sanctions.json#/records/*/countries",
+      "normalizedCoordinates": {
+        "field": "records[].countries",
+        "profilePointer": "/fields/records[].countries/statistics"
+      },
+      "observedAt": "2026-06-20T06:00:00Z",
+      "policyTags": [
+        "bounded-profile",
+        "read-only",
+        "synthetic"
+      ],
+      "snapshotId": "sanctions-api@sha256:8cdd1cb5067a14aa427a98701b8f0187850a5d90dfa246384e688cc9bf261ef8",
+      "sourceId": "sanctions-api",
+      "tenantId": "demo-bank"
+    },
+    {
+      "claim": {
+        "profileStatistics": {
+          "distinctCount": 1,
+          "maximumLength": 6,
+          "minimumLength": 6,
+          "nonNullCount": 1,
+          "nullCount": 0,
+          "nullRate": 0.0,
+          "uniquenessRatio": 1.0
+        }
+      },
+      "classification": "INTERNAL",
+      "contentSha256": "953ff040f873b0152f11565730ea4f1bd07f7331d8bbe6905cf7181884b6582a",
+      "evidenceId": "evidence-sanctions-api-420de073fa5e0ea3",
+      "extractorName": "ontology-appliance-synthetic-profiler",
+      "extractorVersion": "1.0.0",
+      "locator": "data/synthetic/sanctions.json#/records/*/id",
+      "normalizedCoordinates": {
+        "field": "records[].id",
+        "profilePointer": "/fields/records[].id/statistics"
+      },
+      "observedAt": "2026-06-20T06:00:00Z",
+      "policyTags": [
+        "bounded-profile",
+        "read-only",
+        "synthetic"
+      ],
+      "snapshotId": "sanctions-api@sha256:8cdd1cb5067a14aa427a98701b8f0187850a5d90dfa246384e688cc9bf261ef8",
+      "sourceId": "sanctions-api",
+      "tenantId": "demo-bank"
+    },
+    {
+      "claim": {
+        "profileStatistics": {
+          "distinctCount": 1,
+          "maximumLength": 13,
+          "minimumLength": 13,
+          "nonNullCount": 1,
+          "nullCount": 0,
+          "nullRate": 0.0,
+          "uniquenessRatio": 1.0
+        }
+      },
+      "classification": "INTERNAL",
+      "contentSha256": "7d0ce8386ace3c702ce538024a4ce8ff4d0738277e9debb069bea594a70a54d5",
+      "evidenceId": "evidence-sanctions-api-cc0bdb4cabfff4b5",
+      "extractorName": "ontology-appliance-synthetic-profiler",
+      "extractorVersion": "1.0.0",
+      "locator": "data/synthetic/sanctions.json#/records/*/name",
+      "normalizedCoordinates": {
+        "field": "records[].name",
+        "profilePointer": "/fields/records[].name/statistics"
+      },
+      "observedAt": "2026-06-20T06:00:00Z",
+      "policyTags": [
+        "bounded-profile",
+        "read-only",
+        "synthetic"
+      ],
+      "snapshotId": "sanctions-api@sha256:8cdd1cb5067a14aa427a98701b8f0187850a5d90dfa246384e688cc9bf261ef8",
+      "sourceId": "sanctions-api",
+      "tenantId": "demo-bank"
+    },
+    {
+      "claim": {
+        "profileStatistics": {
+          "distinctCount": 1,
+          "maximumLength": 10,
+          "minimumLength": 10,
+          "nonNullCount": 1,
+          "nullCount": 0,
+          "nullRate": 0.0,
+          "uniquenessRatio": 1.0
+        }
+      },
+      "classification": "INTERNAL",
+      "contentSha256": "71fbd877bf4e5ab7b17281abc3c29e57fed1aad9e38fcc78e6974008220de758",
+      "evidenceId": "evidence-sanctions-api-a6dcbca3df9a9f21",
+      "extractorName": "ontology-appliance-synthetic-profiler",
+      "extractorVersion": "1.0.0",
+      "locator": "data/synthetic/sanctions.json#/records/*/listedAt",
+      "normalizedCoordinates": {
+        "field": "records[].listedAt",
+        "profilePointer": "/fields/records[].listedAt/statistics"
+      },
+      "observedAt": "2026-06-20T06:00:00Z",
+      "policyTags": [
+        "bounded-profile",
+        "read-only",
+        "synthetic"
+      ],
+      "snapshotId": "sanctions-api@sha256:8cdd1cb5067a14aa427a98701b8f0187850a5d90dfa246384e688cc9bf261ef8",
+      "sourceId": "sanctions-api",
+      "tenantId": "demo-bank"
+    },
+    {
+      "claim": {
+        "profileStatistics": {
+          "distinctCount": 1,
+          "maximumLength": 7,
+          "minimumLength": 7,
+          "nonNullCount": 1,
+          "nullCount": 0,
+          "nullRate": 0.0,
+          "uniquenessRatio": 1.0
+        }
+      },
+      "classification": "INTERNAL",
+      "contentSha256": "dc70221c41c5939b99571747bfb594104509ad36c9c731e00dcc57fcf0687cc2",
+      "evidenceId": "evidence-sanctions-api-f96881866b12b750",
+      "extractorName": "ontology-appliance-synthetic-profiler",
+      "extractorVersion": "1.0.0",
+      "locator": "data/synthetic/sanctions.json#/records/*/program",
+      "normalizedCoordinates": {
+        "field": "records[].program",
+        "profilePointer": "/fields/records[].program/statistics"
+      },
+      "observedAt": "2026-06-20T06:00:00Z",
+      "policyTags": [
+        "bounded-profile",
+        "read-only",
+        "synthetic"
+      ],
+      "snapshotId": "sanctions-api@sha256:8cdd1cb5067a14aa427a98701b8f0187850a5d90dfa246384e688cc9bf261ef8",
+      "sourceId": "sanctions-api",
+      "tenantId": "demo-bank"
+    },
+    {
+      "claim": {
+        "profileStatistics": {
+          "distinctCount": 1,
+          "maximumLength": 6,
+          "minimumLength": 6,
+          "nonNullCount": 1,
+          "nullCount": 0,
+          "nullRate": 0.0,
+          "uniquenessRatio": 1.0
+        }
+      },
+      "classification": "INTERNAL",
+      "contentSha256": "953ff040f873b0152f11565730ea4f1bd07f7331d8bbe6905cf7181884b6582a",
+      "evidenceId": "evidence-sanctions-api-f04d2c23dd0e2fb8",
+      "extractorName": "ontology-appliance-synthetic-profiler",
+      "extractorVersion": "1.0.0",
+      "locator": "data/synthetic/sanctions.json#/records/*/matchedPartyId",
+      "normalizedCoordinates": {
+        "field": "records[].matchedPartyId",
+        "profilePointer": "/fields/records[].matchedPartyId/statistics"
+      },
+      "observedAt": "2026-06-20T06:00:00Z",
+      "policyTags": [
+        "bounded-profile",
+        "read-only",
+        "synthetic"
+      ],
+      "snapshotId": "sanctions-api@sha256:8cdd1cb5067a14aa427a98701b8f0187850a5d90dfa246384e688cc9bf261ef8",
+      "sourceId": "sanctions-api",
+      "tenantId": "demo-bank"
+    },
+    {
+      "claim": {
+        "includedInDeterministicSample": true
+      },
+      "classification": "INTERNAL",
+      "contentSha256": "60f80f257f558854e4004ee9d564dc0de0d8d058b0c491596cc26ab3907be0b2",
+      "evidenceId": "evidence-sanctions-api-72fe2c62077edef6",
+      "extractorName": "ontology-appliance-synthetic-profiler",
+      "extractorVersion": "1.0.0",
+      "locator": "data/synthetic/sanctions.json#/records/0",
+      "normalizedCoordinates": {
+        "recordId": "EU-998",
+        "recordIndex": 0
+      },
+      "observedAt": "2026-06-20T06:00:00Z",
+      "policyTags": [
+        "bounded-sample",
+        "read-only",
+        "synthetic"
+      ],
+      "snapshotId": "sanctions-api@sha256:8cdd1cb5067a14aa427a98701b8f0187850a5d90dfa246384e688cc9bf261ef8",
+      "sourceId": "sanctions-api",
+      "tenantId": "demo-bank"
+    },
+    {
+      "claim": {
+        "relationshipEvidence": {
+          "countryCounts": {
+            "LV": 1
+          },
+          "distinctMatchedPartyCount": 1,
+          "programCounts": {
+            "EU-DEMO": 1
+          }
+        }
+      },
+      "classification": "INTERNAL",
+      "contentSha256": "3f1bbdd33740a3247a479bf5aee40372cb63bcc5a2b25b4bca2b5b047b54572e",
+      "evidenceId": "evidence-sanctions-api-7b8363be7fb0e958",
+      "extractorName": "ontology-appliance-synthetic-profiler",
+      "extractorVersion": "1.0.0",
+      "locator": "profiles/sanctions/profile.json#/relationshipEvidence",
+      "normalizedCoordinates": {
+        "profilePointer": "/relationshipEvidence"
+      },
+      "observedAt": "2026-06-20T06:00:00Z",
+      "policyTags": [
+        "read-only",
+        "relationship-profile",
+        "synthetic"
+      ],
+      "snapshotId": "sanctions-api@sha256:8cdd1cb5067a14aa427a98701b8f0187850a5d90dfa246384e688cc9bf261ef8",
+      "sourceId": "sanctions-api",
+      "tenantId": "demo-bank"
+    }
+  ],
+  "extractorName": "ontology-appliance-synthetic-profiler",
+  "extractorVersion": "1.0.0",
+  "observedAt": "2026-06-20T06:00:00Z",
+  "schemaVersion": "1.0",
+  "snapshotId": "sanctions-api@sha256:8cdd1cb5067a14aa427a98701b8f0187850a5d90dfa246384e688cc9bf261ef8",
+  "sourceContentSha256": "8cdd1cb5067a14aa427a98701b8f0187850a5d90dfa246384e688cc9bf261ef8",
+  "sourceId": "sanctions-api",
+  "sourceLocator": "data/contracts/sanctions.openapi.yaml + data/synthetic/sanctions.json",
+  "tenantId": "demo-bank"
+}

@@ -1,0 +1,150 @@
+{
+  "bounds": {
+    "maximumBytes": 65536,
+    "maximumRecords": 100,
+    "observedBytes": 492,
+    "observedRecords": 6
+  },
+  "counterexamples": [
+    {
+      "claim": "cif_no is not absolutely unique across historical merged CRM records.",
+      "locators": [
+        "data/synthetic/crm_parties.csv#row=6:field=cif_no",
+        "data/synthetic/crm_parties.csv#row=7:field=cif_no"
+      ],
+      "occurrences": 2,
+      "partyIds": [
+        "P-HIST-1",
+        "P-HIST-2"
+      ],
+      "value": "CIF-0042"
+    }
+  ],
+  "extractorName": "ontology-appliance-csv-profiler",
+  "extractorVersion": "1.0.0",
+  "fields": {
+    "cif_no": {
+      "logicalType": "string",
+      "sourceLocator": "data/synthetic/crm_parties.csv#field=cif_no",
+      "statistics": {
+        "distinctCount": 5,
+        "maximumLength": 8,
+        "minimumLength": 8,
+        "nonNullCount": 6,
+        "nullCount": 0,
+        "nullRate": 0.0,
+        "pattern": "^CIF-[0-9]{4}$",
+        "patternMatchCount": 6,
+        "patternMatchRate": 1.0,
+        "uniquenessRatio": 0.833333
+      }
+    },
+    "country": {
+      "logicalType": "string",
+      "sourceLocator": "data/synthetic/crm_parties.csv#field=country",
+      "statistics": {
+        "distinctCount": 4,
+        "maximumLength": 2,
+        "minimumLength": 2,
+        "nonNullCount": 6,
+        "nullCount": 0,
+        "nullRate": 0.0,
+        "uniquenessRatio": 0.666667
+      }
+    },
+    "legal_name": {
+      "logicalType": "string",
+      "sourceLocator": "data/synthetic/crm_parties.csv#field=legal_name",
+      "statistics": {
+        "distinctCount": 6,
+        "maximumLength": 21,
+        "minimumLength": 11,
+        "nonNullCount": 6,
+        "nullCount": 0,
+        "nullRate": 0.0,
+        "uniquenessRatio": 1.0
+      }
+    },
+    "party_id": {
+      "logicalType": "string",
+      "sourceLocator": "data/synthetic/crm_parties.csv#field=party_id",
+      "statistics": {
+        "distinctCount": 6,
+        "maximumLength": 8,
+        "minimumLength": 6,
+        "nonNullCount": 6,
+        "nullCount": 0,
+        "nullRate": 0.0,
+        "uniquenessRatio": 1.0
+      }
+    },
+    "party_type": {
+      "logicalType": "string",
+      "sourceLocator": "data/synthetic/crm_parties.csv#field=party_type",
+      "statistics": {
+        "distinctCount": 2,
+        "maximumLength": 12,
+        "minimumLength": 6,
+        "nonNullCount": 6,
+        "nullCount": 0,
+        "nullRate": 0.0,
+        "uniquenessRatio": 0.333333
+      }
+    },
+    "source_updated_at": {
+      "logicalType": "datetime",
+      "sourceLocator": "data/synthetic/crm_parties.csv#field=source_updated_at",
+      "statistics": {
+        "distinctCount": 6,
+        "maximumLength": 20,
+        "minimumLength": 20,
+        "nonNullCount": 6,
+        "nullCount": 0,
+        "nullRate": 0.0,
+        "uniquenessRatio": 1.0
+      }
+    },
+    "ubo": {
+      "logicalType": "string",
+      "sourceLocator": "data/synthetic/crm_parties.csv#field=ubo",
+      "statistics": {
+        "distinctCount": 2,
+        "maximumLength": 6,
+        "minimumLength": 6,
+        "nonNullCount": 2,
+        "nullCount": 4,
+        "nullRate": 0.666667,
+        "uniquenessRatio": 0.333333
+      }
+    }
+  },
+  "observedAt": "2026-07-22T13:51:12Z",
+  "relationshipEvidence": {
+    "cifDuplicateValueCount": 1,
+    "countryCounts": {
+      "ES": 3,
+      "GB": 1,
+      "IT": 1,
+      "LV": 1
+    },
+    "distinctPartyCount": 6,
+    "partyTypeCounts": {
+      "LEGAL_ENTITY": 2,
+      "PERSON": 4
+    },
+    "uboLinkCount": 2
+  },
+  "schemaVersion": "1.0",
+  "snapshotId": "crm-parties@sha256:503d103ab015d2fb7720ba7e4aeed7f54e999426e22bc6e126fd663b79f5146a",
+  "sourceContentSha256": "503d103ab015d2fb7720ba7e4aeed7f54e999426e22bc6e126fd663b79f5146a",
+  "sourceId": "crm-parties",
+  "sourceLocator": "data/synthetic/crm_parties.csv",
+  "statistics": {
+    "completenessRate": 0.904762,
+    "fieldCount": 7,
+    "nonNullCellCount": 38,
+    "nullCellCount": 4,
+    "recordCount": 6
+  },
+  "tenantId": "demo-bank"
+}

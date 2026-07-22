@@ -1,0 +1,71 @@
+{
+  "$id": "urn:ontology-appliance:demo-bank:schema:sanctions-api:8cdd1cb5067a14aa427a98701b8f0187850a5d90dfa246384e688cc9bf261ef8",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "generatedAt": {
+      "format": "date-time",
+      "type": "string"
+    },
+    "records": {
+      "items": {
+        "additionalProperties": false,
+        "properties": {
+          "countries": {
+            "items": {
+              "pattern": "^[A-Z]{2}$",
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "id": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "listedAt": {
+            "format": "date",
+            "type": "string"
+          },
+          "matchedPartyId": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "name": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "program": {
+            "minLength": 1,
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "countries",
+          "listedAt",
+          "program",
+          "matchedPartyId"
+        ],
+        "type": "object"
+      },
+      "type": "array"
+    }
+  },
+  "required": [
+    "generatedAt",
+    "records"
+  ],
+  "title": "Synthetic sanctions API response schema",
+  "type": "object",
+  "x-ontology-appliance-evidence": {
+    "extractorName": "ontology-appliance-synthetic-profiler",
+    "extractorVersion": "1.0.0",
+    "observedAt": "2026-06-20T06:00:00Z",
+    "snapshotId": "sanctions-api@sha256:8cdd1cb5067a14aa427a98701b8f0187850a5d90dfa246384e688cc9bf261ef8",
+    "sourceId": "sanctions-api",
+    "sourceLocator": "data/contracts/sanctions.openapi.yaml#/paths/~1records/get/responses/200",
+    "sourceSha256": "8cdd1cb5067a14aa427a98701b8f0187850a5d90dfa246384e688cc9bf261ef8",
+    "tenantId": "demo-bank"
+  }
+}

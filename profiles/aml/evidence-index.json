@@ -1,0 +1,369 @@
+{
+  "evidence": [
+    {
+      "claim": {
+        "byteCount": 252,
+        "recordCount": 2
+      },
+      "classification": "INTERNAL",
+      "contentSha256": "7fce6a969a484aa2a1222c1f45a382a3f9f9f9d5d4f44b97b5dbcd9b562981cb",
+      "evidenceId": "evidence-aml-cases-8fe9b001c7654033",
+      "extractorName": "ontology-appliance-synthetic-profiler",
+      "extractorVersion": "1.0.0",
+      "locator": "data/synthetic/aml_cases.csv",
+      "normalizedCoordinates": {
+        "artifact": "source-snapshot"
+      },
+      "observedAt": "2026-06-20T12:10:00Z",
+      "policyTags": [
+        "read-only",
+        "snapshot",
+        "synthetic"
+      ],
+      "snapshotId": "aml-cases@sha256:7fce6a969a484aa2a1222c1f45a382a3f9f9f9d5d4f44b97b5dbcd9b562981cb",
+      "sourceId": "aml-cases",
+      "tenantId": "demo-bank"
+    },
+    {
+      "claim": {
+        "profileStatistics": {
+          "fieldCount": 7,
+          "recordCount": 2
+        }
+      },
+      "classification": "INTERNAL",
+      "contentSha256": "69ea677df18218a19da3ab32408a603f3b872559bb0d1ef90ccbc083438eca46",
+      "evidenceId": "evidence-aml-cases-03a59448cc3697f6",
+      "extractorName": "ontology-appliance-synthetic-profiler",
+      "extractorVersion": "1.0.0",
+      "locator": "profiles/aml/profile.json#/statistics",
+      "normalizedCoordinates": {
+        "profilePointer": "/statistics"
+      },
+      "observedAt": "2026-06-20T12:10:00Z",
+      "policyTags": [
+        "bounded-profile",
+        "read-only",
+        "synthetic"
+      ],
+      "snapshotId": "aml-cases@sha256:7fce6a969a484aa2a1222c1f45a382a3f9f9f9d5d4f44b97b5dbcd9b562981cb",
+      "sourceId": "aml-cases",
+      "tenantId": "demo-bank"
+    },
+    {
+      "claim": {
+        "profileStatistics": {
+          "distinctCount": 2,
+          "maximumLength": 6,
+          "minimumLength": 6,
+          "nonNullCount": 2,
+          "nullCount": 0,
+          "nullRate": 0.0,
+          "uniquenessRatio": 1.0
+        }
+      },
+      "classification": "INTERNAL",
+      "contentSha256": "7c345a0beb7156d44d3557953d03e1242b03a338a059428392f6e7d7f25ee6ee",
+      "evidenceId": "evidence-aml-cases-e811fdd27daf8df4",
+      "extractorName": "ontology-appliance-synthetic-profiler",
+      "extractorVersion": "1.0.0",
+      "locator": "data/synthetic/aml_cases.csv#column=case_id",
+      "normalizedCoordinates": {
+        "field": "case_id",
+        "profilePointer": "/fields/case_id/statistics"
+      },
+      "observedAt": "2026-06-20T12:10:00Z",
+      "policyTags": [
+        "bounded-profile",
+        "read-only",
+        "synthetic"
+      ],
+      "snapshotId": "aml-cases@sha256:7fce6a969a484aa2a1222c1f45a382a3f9f9f9d5d4f44b97b5dbcd9b562981cb",
+      "sourceId": "aml-cases",
+      "tenantId": "demo-bank"
+    },
+    {
+      "claim": {
+        "profileStatistics": {
+          "distinctCount": 2,
+          "maximumLength": 11,
+          "minimumLength": 9,
+          "nonNullCount": 2,
+          "nullCount": 0,
+          "nullRate": 0.0,
+          "uniquenessRatio": 1.0
+        }
+      },
+      "classification": "INTERNAL",
+      "contentSha256": "28b2e7069accb7b14e54f581a459091edd58d147a59fa758a5980b439913cd76",
+      "evidenceId": "evidence-aml-cases-b74173824b085feb",
+      "extractorName": "ontology-appliance-synthetic-profiler",
+      "extractorVersion": "1.0.0",
+      "locator": "data/synthetic/aml_cases.csv#column=party_name",
+      "normalizedCoordinates": {
+        "field": "party_name",
+        "profilePointer": "/fields/party_name/statistics"
+      },
+      "observedAt": "2026-06-20T12:10:00Z",
+      "policyTags": [
+        "bounded-profile",
+        "read-only",
+        "synthetic"
+      ],
+      "snapshotId": "aml-cases@sha256:7fce6a969a484aa2a1222c1f45a382a3f9f9f9d5d4f44b97b5dbcd9b562981cb",
+      "sourceId": "aml-cases",
+      "tenantId": "demo-bank"
+    },
+    {
+      "claim": {
+        "profileStatistics": {
+          "distinctCount": 2,
+          "maximumLength": 2,
+          "minimumLength": 2,
+          "nonNullCount": 2,
+          "nullCount": 0,
+          "nullRate": 0.0,
+          "uniquenessRatio": 1.0
+        }
+      },
+      "classification": "INTERNAL",
+      "contentSha256": "da0401ec81d7dde6c19c02133b214a176b33fb82728977f416b42dc257d1f4d1",
+      "evidenceId": "evidence-aml-cases-32d077101a6f7cd5",
+      "extractorName": "ontology-appliance-synthetic-profiler",
+      "extractorVersion": "1.0.0",
+      "locator": "data/synthetic/aml_cases.csv#column=country",
+      "normalizedCoordinates": {
+        "field": "country",
+        "profilePointer": "/fields/country/statistics"
+      },
+      "observedAt": "2026-06-20T12:10:00Z",
+      "policyTags": [
+        "bounded-profile",
+        "read-only",
+        "synthetic"
+      ],
+      "snapshotId": "aml-cases@sha256:7fce6a969a484aa2a1222c1f45a382a3f9f9f9d5d4f44b97b5dbcd9b562981cb",
+      "sourceId": "aml-cases",
+      "tenantId": "demo-bank"
+    },
+    {
+      "claim": {
+        "profileStatistics": {
+          "distinctCount": 2,
+          "maximumLength": 6,
+          "minimumLength": 6,
+          "nonNullCount": 2,
+          "nullCount": 0,
+          "nullRate": 0.0,
+          "uniquenessRatio": 1.0
+        }
+      },
+      "classification": "INTERNAL",
+      "contentSha256": "7c345a0beb7156d44d3557953d03e1242b03a338a059428392f6e7d7f25ee6ee",
+      "evidenceId": "evidence-aml-cases-962ec725a04cacb1",
+      "extractorName": "ontology-appliance-synthetic-profiler",
+      "extractorVersion": "1.0.0",
+      "locator": "data/synthetic/aml_cases.csv#column=matched_party_id",
+      "normalizedCoordinates": {
+        "field": "matched_party_id",
+        "profilePointer": "/fields/matched_party_id/statistics"
+      },
+      "observedAt": "2026-06-20T12:10:00Z",
+      "policyTags": [
+        "bounded-profile",
+        "read-only",
+        "synthetic"
+      ],
+      "snapshotId": "aml-cases@sha256:7fce6a969a484aa2a1222c1f45a382a3f9f9f9d5d4f44b97b5dbcd9b562981cb",
+      "sourceId": "aml-cases",
+      "tenantId": "demo-bank"
+    },
+    {
+      "claim": {
+        "profileStatistics": {
+          "distinctCount": 2,
+          "maximumLength": 36,
+          "minimumLength": 22,
+          "nonNullCount": 2,
+          "nullCount": 0,
+          "nullRate": 0.0,
+          "uniquenessRatio": 1.0
+        }
+      },
+      "classification": "INTERNAL",
+      "contentSha256": "f40f409c87be45f6b3a69d52a6d72317fc4e2fd0d9ff6c5389ac2c46f391e319",
+      "evidenceId": "evidence-aml-cases-553c9ab738931ef2",
+      "extractorName": "ontology-appliance-synthetic-profiler",
+      "extractorVersion": "1.0.0",
+      "locator": "data/synthetic/aml_cases.csv#column=match_features",
+      "normalizedCoordinates": {
+        "field": "match_features",
+        "profilePointer": "/fields/match_features/statistics"
+      },
+      "observedAt": "2026-06-20T12:10:00Z",
+      "policyTags": [
+        "bounded-profile",
+        "read-only",
+        "synthetic"
+      ],
+      "snapshotId": "aml-cases@sha256:7fce6a969a484aa2a1222c1f45a382a3f9f9f9d5d4f44b97b5dbcd9b562981cb",
+      "sourceId": "aml-cases",
+      "tenantId": "demo-bank"
+    },
+    {
+      "claim": {
+        "profileStatistics": {
+          "distinctCount": 2,
+          "maximumLength": 4,
+          "minimumLength": 3,
+          "nonNullCount": 2,
+          "nullCount": 0,
+          "nullRate": 0.0,
+          "uniquenessRatio": 1.0
+        }
+      },
+      "classification": "INTERNAL",
+      "contentSha256": "96559cdcf06e134944a2e859b6ef06dbdd60ecef5995cadbae626ce00b902dbb",
+      "evidenceId": "evidence-aml-cases-6cd7e508948a76a0",
+      "extractorName": "ontology-appliance-synthetic-profiler",
+      "extractorVersion": "1.0.0",
+      "locator": "data/synthetic/aml_cases.csv#column=risk_level",
+      "normalizedCoordinates": {
+        "field": "risk_level",
+        "profilePointer": "/fields/risk_level/statistics"
+      },
+      "observedAt": "2026-06-20T12:10:00Z",
+      "policyTags": [
+        "bounded-profile",
+        "read-only",
+        "synthetic"
+      ],
+      "snapshotId": "aml-cases@sha256:7fce6a969a484aa2a1222c1f45a382a3f9f9f9d5d4f44b97b5dbcd9b562981cb",
+      "sourceId": "aml-cases",
+      "tenantId": "demo-bank"
+    },
+    {
+      "claim": {
+        "profileStatistics": {
+          "distinctCount": 2,
+          "maximumLength": 20,
+          "minimumLength": 20,
+          "nonNullCount": 2,
+          "nullCount": 0,
+          "nullRate": 0.0,
+          "uniquenessRatio": 1.0
+        }
+      },
+      "classification": "INTERNAL",
+      "contentSha256": "044ea330629a4c41ecbbbe6aec1f96c1698653558efc83d74fccd40a6854d702",
+      "evidenceId": "evidence-aml-cases-96a1b449418419da",
+      "extractorName": "ontology-appliance-synthetic-profiler",
+      "extractorVersion": "1.0.0",
+      "locator": "data/synthetic/aml_cases.csv#column=opened_at",
+      "normalizedCoordinates": {
+        "field": "opened_at",
+        "profilePointer": "/fields/opened_at/statistics"
+      },
+      "observedAt": "2026-06-20T12:10:00Z",
+      "policyTags": [
+        "bounded-profile",
+        "read-only",
+        "synthetic"
+      ],
+      "snapshotId": "aml-cases@sha256:7fce6a969a484aa2a1222c1f45a382a3f9f9f9d5d4f44b97b5dbcd9b562981cb",
+      "sourceId": "aml-cases",
+      "tenantId": "demo-bank"
+    },
+    {
+      "claim": {
+        "includedInDeterministicSample": true
+      },
+      "classification": "INTERNAL",
+      "contentSha256": "6896767dda9e17abc08ed778a0d1aee48b342c6032d21c0dd108419ad207ec1c",
+      "evidenceId": "evidence-aml-cases-c6ab18a4519daaae",
+      "extractorName": "ontology-appliance-synthetic-profiler",
+      "extractorVersion": "1.0.0",
+      "locator": "data/synthetic/aml_cases.csv#row=2",
+      "normalizedCoordinates": {
+        "row": 2,
+        "sampleOrdinal": 1
+      },
+      "observedAt": "2026-06-20T12:10:00Z",
+      "policyTags": [
+        "bounded-sample",
+        "read-only",
+        "synthetic"
+      ],
+      "snapshotId": "aml-cases@sha256:7fce6a969a484aa2a1222c1f45a382a3f9f9f9d5d4f44b97b5dbcd9b562981cb",
+      "sourceId": "aml-cases",
+      "tenantId": "demo-bank"
+    },
+    {
+      "claim": {
+        "includedInDeterministicSample": true
+      },
+      "classification": "INTERNAL",
+      "contentSha256": "eb02bc278a438e88b3fb4b8151eccd1b622720d965fea5f472f1b5eb57a50837",
+      "evidenceId": "evidence-aml-cases-12a6d06411df5b5c",
+      "extractorName": "ontology-appliance-synthetic-profiler",
+      "extractorVersion": "1.0.0",
+      "locator": "data/synthetic/aml_cases.csv#row=3",
+      "normalizedCoordinates": {
+        "row": 3,
+        "sampleOrdinal": 2
+      },
+      "observedAt": "2026-06-20T12:10:00Z",
+      "policyTags": [
+        "bounded-sample",
+        "read-only",
+        "synthetic"
+      ],
+      "snapshotId": "aml-cases@sha256:7fce6a969a484aa2a1222c1f45a382a3f9f9f9d5d4f44b97b5dbcd9b562981cb",
+      "sourceId": "aml-cases",
+      "tenantId": "demo-bank"
+    },
+    {
+      "claim": {
+        "relationshipEvidence": {
+          "distinctMatchedPartyCount": 2,
+          "matchFeatureCounts": {
+            "country": 2,
+            "document": 1,
+            "name": 2
+          },
+          "riskLevelCounts": {
+            "HIGH": 1,
+            "LOW": 1
+          }
+        }
+      },
+      "classification": "INTERNAL",
+      "contentSha256": "a73f6252069392953c5194e558b89686f734f73cb1dc0012eb7b2523cfea43ab",
+      "evidenceId": "evidence-aml-cases-fec3e02ebedcaaa9",
+      "extractorName": "ontology-appliance-synthetic-profiler",
+      "extractorVersion": "1.0.0",
+      "locator": "profiles/aml/profile.json#/relationshipEvidence",
+      "normalizedCoordinates": {
+        "profilePointer": "/relationshipEvidence"
+      },
+      "observedAt": "2026-06-20T12:10:00Z",
+      "policyTags": [
+        "read-only",
+        "relationship-profile",
+        "synthetic"
+      ],
+      "snapshotId": "aml-cases@sha256:7fce6a969a484aa2a1222c1f45a382a3f9f9f9d5d4f44b97b5dbcd9b562981cb",
+      "sourceId": "aml-cases",
+      "tenantId": "demo-bank"
+    }
+  ],
+  "extractorName": "ontology-appliance-synthetic-profiler",
+  "extractorVersion": "1.0.0",
+  "observedAt": "2026-06-20T12:10:00Z",
+  "schemaVersion": "1.0",
+  "snapshotId": "aml-cases@sha256:7fce6a969a484aa2a1222c1f45a382a3f9f9f9d5d4f44b97b5dbcd9b562981cb",
+  "sourceContentSha256": "7fce6a969a484aa2a1222c1f45a382a3f9f9f9d5d4f44b97b5dbcd9b562981cb",
+  "sourceId": "aml-cases",
+  "sourceLocator": "data/synthetic/aml_cases.csv",
+  "tenantId": "demo-bank"
+}

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Run Semantic Discovery"
+  short_description: "Discover and rank semantic candidates"
+  default_prompt: "Use $run-semantic-discovery to produce evidence-backed semantic mapping proposals."

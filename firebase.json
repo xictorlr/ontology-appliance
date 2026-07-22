@@ -1,0 +1,82 @@
+{
+  "$schema": "https://raw.githubusercontent.com/firebase/firebase-tools/master/schema/firebase-config.json",
+  "apphosting": {
+    "backendId": "ontology-appliance-web",
+    "rootDir": "apps/web",
+    "ignore": [
+      "node_modules",
+      ".next",
+      ".git",
+      "firebase-debug.log",
+      "firebase-debug.*.log"
+    ]
+  },
+  "functions": [
+    {
+      "source": "functions",
+      "codebase": "control-plane",
+      "runtime": "nodejs22",
+      "ignore": [
+        "node_modules",
+        ".git",
+        "firebase-debug.log",
+        "firebase-debug.*.log",
+        "test"
+      ],
+      "predeploy": [
+        "pnpm --dir functions run build",
+        "pnpm --dir functions run test:unit"
+      ]
+    }
+  ],
+  "firestore": {
+    "database": "(default)",
+    "location": "europe-west4",
+    "rules": "firestore.rules",
+    "indexes": "firestore.indexes.json"
+  },
+  "storage": [
+    {
+      "target": "input",
+      "rules": "storage.rules"
+    },
+    {
+      "target": "artifacts",
+      "rules": "storage.rules"
+    }
+  ],
+  "emulators": {
+    "apphosting": {
+      "host": "127.0.0.1",
+      "port": 5002,
+      "rootDirectory": "apps/web",
+      "startCommand": "pnpm dev"
+    },
+    "auth": {
+      "host": "127.0.0.1",
+      "port": 9099
+    },
+    "functions": {
+      "host": "127.0.0.1",
+      "port": 5001
+    },
+    "firestore": {
+      "host": "127.0.0.1",
+      "port": 8080
+    },
+    "storage": {
+      "host": "127.0.0.1",
+      "port": 9199
+    },
+    "tasks": {
+      "host": "127.0.0.1",
+      "port": 9499
+    },
+    "ui": {
+      "enabled": true,
+      "host": "127.0.0.1",
+      "port": 4000
+    },
+    "singleProjectMode": true
+  }
+}

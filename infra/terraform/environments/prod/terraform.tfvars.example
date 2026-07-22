@@ -1,0 +1,9 @@
+# Production is intentionally defined but cannot provision anything unless this
+# flag is changed in a separately reviewed deployment.
+enable_production = false
+
+project_id         = "ontology-appliance-prod-REPLACE_ME"
+billing_account_id = ""
+folder_id          = null
+organization_id    = null
+github_repository  = "REPLACE_OWNER/ontology-appliance"

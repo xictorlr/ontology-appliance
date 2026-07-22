@@ -1,0 +1,4 @@
+interface:
+  display_name: "Verify Semantic Proposals"
+  short_description: "Apply deterministic semantic approval gates"
+  default_prompt: "Use $verify-semantic-proposals to validate proposals and route them through governed review gates."

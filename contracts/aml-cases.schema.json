@@ -1,0 +1,58 @@
+{
+  "$id": "urn:ontology-appliance:demo-bank:schema:aml-cases:7fce6a969a484aa2a1222c1f45a382a3f9f9f9d5d4f44b97b5dbcd9b562981cb",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "case_id": {
+      "minLength": 1,
+      "type": "string"
+    },
+    "country": {
+      "pattern": "^[A-Z]{2}$",
+      "type": "string"
+    },
+    "match_features": {
+      "minLength": 1,
+      "type": "string"
+    },
+    "matched_party_id": {
+      "minLength": 1,
+      "type": "string"
+    },
+    "opened_at": {
+      "format": "date-time",
+      "type": "string"
+    },
+    "party_name": {
+      "minLength": 1,
+      "type": "string"
+    },
+    "risk_level": {
+      "enum": [
+        "HIGH",
+        "LOW"
+      ]
+    }
+  },
+  "required": [
+    "case_id",
+    "party_name",
+    "country",
+    "matched_party_id",
+    "match_features",
+    "risk_level",
+    "opened_at"
+  ],
+  "title": "Synthetic aml-cases snapshot schema",
+  "type": "object",
+  "x-ontology-appliance-evidence": {
+    "extractorName": "ontology-appliance-synthetic-profiler",
+    "extractorVersion": "1.0.0",
+    "observedAt": "2026-06-20T12:10:00Z",
+    "snapshotId": "aml-cases@sha256:7fce6a969a484aa2a1222c1f45a382a3f9f9f9d5d4f44b97b5dbcd9b562981cb",
+    "sourceId": "aml-cases",
+    "sourceLocator": "data/synthetic/aml_cases.csv#header",
+    "sourceSha256": "7fce6a969a484aa2a1222c1f45a382a3f9f9f9d5d4f44b97b5dbcd9b562981cb",
+    "tenantId": "demo-bank"
+  }
+}

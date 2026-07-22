@@ -1,0 +1,92 @@
+{
+  "schema_version": "1.0",
+  "verification_run_id": "verification-mapping-crm-cif-mock-20260722",
+  "policy_version": "semantic-verification-policy-v1",
+  "proposal_id": "mapping-crm-cif",
+  "tenant_id": "demo-bank",
+  "risk": "medium",
+  "frozen_proposal_sha256": "9d7d55baa38796955eb6baae183820c51f7347a08907db2f04a6eeab7d7b4bb7",
+  "frozen_evidence_index_sha256": "68e55a0369905fcf9ea6d48a234bfae2d66470f404419c851872caf702ed2f7f",
+  "source_snapshot_ids": [
+    "crm-parties@sha256:503d103ab015d2fb7720ba7e4aeed7f54e999426e22bc6e126fd663b79f5146a"
+  ],
+  "active_ontology_version": "2026.07.1",
+  "evidence": [
+    {
+      "evidence_id": "evidence-crm-schema-cif",
+      "tenant_id": "demo-bank",
+      "source_id": "crm-parties",
+      "snapshot_id": "crm-parties@sha256:503d103ab015d2fb7720ba7e4aeed7f54e999426e22bc6e126fd663b79f5146a",
+      "locator": "contracts/crm.schema.json#/properties/cif_no",
+      "observed_at": "2026-07-22T13:51:12Z",
+      "extractor_version": "1.0.0",
+      "content_sha256": "1e06c3c81dc5f2c2d60ad063ff54428aaf3620d6d15e5ac3c4c3e26f826599cd"
+    },
+    {
+      "evidence_id": "evidence-crm-profile-cif",
+      "tenant_id": "demo-bank",
+      "source_id": "crm-parties",
+      "snapshot_id": "crm-parties@sha256:503d103ab015d2fb7720ba7e4aeed7f54e999426e22bc6e126fd663b79f5146a",
+      "locator": "profiles/crm/cif_no.json#/statistics",
+      "observed_at": "2026-07-22T13:51:12Z",
+      "extractor_version": "1.0.0",
+      "content_sha256": "4b361852e6ee0f9719317b0999022a31a52fa92bb1d31e44ae3d1569523896e3"
+    }
+  ],
+  "counterevidence": [
+    {
+      "evidence_id": "evidence-crm-cif-duplicate-0042",
+      "tenant_id": "demo-bank",
+      "source_id": "crm-parties",
+      "snapshot_id": "crm-parties@sha256:503d103ab015d2fb7720ba7e4aeed7f54e999426e22bc6e126fd663b79f5146a",
+      "locator": "data/synthetic/crm_parties.csv#row=6:field=cif_no,row=7:field=cif_no",
+      "observed_at": "2026-07-22T13:51:12Z",
+      "extractor_version": "1.0.0",
+      "content_sha256": "503d103ab015d2fb7720ba7e4aeed7f54e999426e22bc6e126fd663b79f5146a"
+    }
+  ],
+  "confidence": {
+    "lexical": 0.96,
+    "structural": 0.92,
+    "instance": 0.88,
+    "external": 0.0,
+    "model": 0.0,
+    "evidence_coverage": 1.0
+  },
+  "checks": {
+    "provenance_complete": true,
+    "schema_valid": true,
+    "shacl_valid": true,
+    "sql_valid": true,
+    "competency_questions_passed": 5,
+    "competency_questions_total": 5
+  },
+  "models": {
+    "mode": "mock",
+    "generator": {
+      "provider": "ontology-appliance",
+      "model": "schema-profile-rules-v1",
+      "model_participated": false
+    },
+    "verifier": {
+      "provider": "deterministic-mock",
+      "model": "fixture-verifier-v1",
+      "prompt_version": "fixture-v1",
+      "store": false,
+      "independent_model": false,
+      "response_status": "abstained"
+    },
+    "independent_agreement": null
+  },
+  "gate_result": {
+    "status": "HUMAN_REVIEW",
+    "reason_codes": [
+      "MOCK_REQUIRES_HUMAN",
+      "RISK_REQUIRES_HUMAN"
+    ]
+  },
+  "status": "HUMAN_REVIEW",
+  "review_requirement": "A steward must review the mapping; it cannot enter the Publisher queue while independent agreement is unavailable.",
+  "decided_at": "2026-07-22T13:51:12Z",
+  "verification_run_sha256": "e9b581f4fd6ab95b64b645be1173e51b2b8e3bc06f14e418ae65869e105f77e6"
+}

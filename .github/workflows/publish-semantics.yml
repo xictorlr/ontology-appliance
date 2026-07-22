@@ -1,0 +1,179 @@
+name: Publish reviewed semantics
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write
+
+concurrency:
+  group: ontology-dev-mutation
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    if: >-
+      github.repository_owner != 'example' &&
+      github.ref == 'refs/heads/main' &&
+      vars.CLOUD_DEPLOY_ENABLED == 'true'
+    runs-on: ubuntu-latest
+    environment: semantic-publication
+    env:
+      RELEASE_SHA: ${{ github.sha }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.sha }}
+      - name: Refuse publication from historical main
+        env:
+          EXPECTED_RELEASE_SHA: ${{ env.RELEASE_SHA }}
+        run: bash scripts/assert_current_main.sh
+      - name: Validate protected environment configuration
+        shell: bash
+        env:
+          GCP_PROJECT_ID: ${{ vars.GCP_PROJECT_ID }}
+          GCP_PUBLISHER_WORKLOAD_IDENTITY_PROVIDER: ${{ vars.GCP_PUBLISHER_WORKLOAD_IDENTITY_PROVIDER }}
+          GCP_SEMANTIC_ROLLOUT_WORKLOAD_IDENTITY_PROVIDER: ${{ vars.GCP_SEMANTIC_ROLLOUT_WORKLOAD_IDENTITY_PROVIDER }}
+          PUBLISHER_SERVICE_ACCOUNT: ${{ vars.PUBLISHER_SERVICE_ACCOUNT }}
+          GCP_DEPLOY_SERVICE_ACCOUNT: ${{ vars.GCP_DEPLOY_SERVICE_ACCOUNT }}
+          ARTIFACT_BUCKET: ${{ vars.ARTIFACT_BUCKET }}
+          GATEWAY_SERVICE: ${{ vars.GATEWAY_SERVICE }}
+        run: |
+          for name in GCP_PROJECT_ID GCP_PUBLISHER_WORKLOAD_IDENTITY_PROVIDER \
+            GCP_SEMANTIC_ROLLOUT_WORKLOAD_IDENTITY_PROVIDER \
+            PUBLISHER_SERVICE_ACCOUNT GCP_DEPLOY_SERVICE_ACCOUNT \
+            ARTIFACT_BUCKET GATEWAY_SERVICE; do
+            test -n "${!name}" || { echo "Missing protected environment variable: $name" >&2; exit 1; }
+          done
+          test "$PUBLISHER_SERVICE_ACCOUNT" != "$GCP_DEPLOY_SERVICE_ACCOUNT"
+      - uses: astral-sh/setup-uv@c771a70e6277c0a99b617c7a806ffedaca235ff9 # v9.0.0
+        with:
+          python-version: "3.12"
+          version: "0.11.30"
+          enable-cache: true
+          prune-cache: true
+      - name: Fail closed unless every mapping has independent review evidence
+        working-directory: services/semantic-gateway
+        run: |
+          uv sync --dev --extra firebase --frozen
+          uv run python ../../scripts/check_semantic_publication.py --self-test
+          uv run python ../../scripts/export_publication_review.py --self-test
+          uv run python ../../scripts/manage_semantic_rollback.py --self-test
+          uv run python ../../scripts/check_semantic_publication.py --mode publish
+          uv run pytest
+      - name: Authenticate only the Publisher identity
+        uses: google-github-actions/auth@7c6bc770dae815cd3e89ee6cdf493a5fab2cc093 # v3
+        with:
+          workload_identity_provider: ${{ vars.GCP_PUBLISHER_WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ vars.PUBLISHER_SERVICE_ACCOUNT }}
+      - uses: google-github-actions/setup-gcloud@aa5489c8933f4cc7a4f7d45035b3b1440c9c10db # v3
+      - name: Record real Publisher authorization
+        shell: bash
+        run: |
+          publisher_account="$(gcloud auth list --filter=status:ACTIVE --format='value(account)')"
+          test "$publisher_account" = "${{ vars.PUBLISHER_SERVICE_ACCOUNT }}"
+          echo "PUBLISHER_SUBJECT=serviceAccount:${publisher_account}" >> "$GITHUB_ENV"
+          echo "AUTHORIZED_AT=$(date -u +'%Y-%m-%dT%H:%M:%SZ')" >> "$GITHUB_ENV"
+      - name: Create the Publisher-promoted immutable bundle
+        shell: bash
+        run: |
+          release_dir="${RUNNER_TEMP}/semantic-release"
+          release_id="${RELEASE_SHA}-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}"
+          ontology_version="$(jq -er '.version' semantic/artifacts/manifest.json)"
+          release_prefix="tenants/demo-bank/ontology/releases/${ontology_version}-${release_id}"
+          manifest_object="${release_prefix}/manifest.json"
+          published_at="$(date -u +'%Y-%m-%dT%H:%M:%SZ')"
+          cd services/semantic-gateway
+          uv run python ../../scripts/check_semantic_publication.py \
+            ../../semantic/artifacts/manifest.json \
+            --mode publish \
+            --promote-output "$release_dir" \
+            --publisher-subject "$PUBLISHER_SUBJECT" \
+            --release-sha "$RELEASE_SHA" \
+            --release-id "$release_id" \
+            --authorized-at "$AUTHORIZED_AT" \
+            --published-at "$published_at" \
+            --manifest-object "$manifest_object"
+          uv run python ../../scripts/check_semantic_publication.py \
+            "$release_dir/manifest.json" --mode published
+          echo "RELEASE_BUNDLE_DIR=$release_dir" >> "$GITHUB_ENV"
+          echo "RELEASE_PREFIX=$release_prefix" >> "$GITHUB_ENV"
+          echo "MANIFEST_OBJECT=$manifest_object" >> "$GITHUB_ENV"
+          echo "ONTOLOGY_VERSION=$ontology_version" >> "$GITHUB_ENV"
+      - name: Upload immutable release objects
+        shell: bash
+        run: |
+          manifest_file="${RELEASE_BUNDLE_DIR}/manifest.json"
+          mapfile -t relative_paths < <(
+            jq -er '.artifacts[].path, .supportingArtifacts[].path' "$manifest_file" | sort -u
+          )
+          relative_paths+=(manifest.json)
+          for relative_path in "${relative_paths[@]}"; do
+            file="${RELEASE_BUNDLE_DIR}/${relative_path}"
+            test -f "$file"
+            destination="gs://${{ vars.ARTIFACT_BUCKET }}/${RELEASE_PREFIX}/${relative_path}"
+            if gcloud storage objects describe "$destination" \
+              --project "${{ vars.GCP_PROJECT_ID }}" >/dev/null 2>&1; then
+              local_sha="$(sha256sum "$file" | awk '{print $1}')"
+              remote_sha="$(gcloud storage cat "$destination" \
+                --project "${{ vars.GCP_PROJECT_ID }}" | sha256sum | awk '{print $1}')"
+              test "$local_sha" = "$remote_sha"
+            else
+              gcloud storage cp "$file" "$destination" \
+                --project "${{ vars.GCP_PROJECT_ID }}" \
+                --if-generation-match=0
+            fi
+          done
+          echo "MANIFEST_SHA256=$(sha256sum "$manifest_file" | awk '{print $1}')" >> "$GITHUB_ENV"
+      - name: Activate through the stable generation-guarded pointer
+        id: activate
+        shell: bash
+        run: |
+          pointer_file="${RUNNER_TEMP}/active.json"
+          pointer_object="gs://${{ vars.ARTIFACT_BUCKET }}/tenants/demo-bank/ontology/active.json"
+          activated_at="$(date -u +'%Y-%m-%dT%H:%M:%SZ')"
+          cd services/semantic-gateway
+          uv run python ../../scripts/check_semantic_publication.py \
+            "$RELEASE_BUNDLE_DIR/manifest.json" \
+            --mode published \
+            --create-pointer-output "$pointer_file" \
+            --manifest-object "$MANIFEST_OBJECT" \
+            --activated-at "$activated_at"
+          if gcloud storage objects describe "$pointer_object" \
+            --project "${{ vars.GCP_PROJECT_ID }}" >/dev/null 2>&1; then
+            generation="$(gcloud storage objects describe "$pointer_object" \
+              --project "${{ vars.GCP_PROJECT_ID }}" \
+              --format='value(generation)')"
+          else
+            generation=0
+          fi
+          gcloud storage cp "$pointer_file" "$pointer_object" \
+            --project "${{ vars.GCP_PROJECT_ID }}" \
+            --if-generation-match="$generation"
+          activated_generation="$(gcloud storage objects describe "$pointer_object" \
+            --project "${{ vars.GCP_PROJECT_ID }}" --format='value(generation)')"
+          test -n "$activated_generation"
+          remote_pointer="$(gcloud storage cat "$pointer_object" --project "${{ vars.GCP_PROJECT_ID }}")"
+          jq -e --arg object "$MANIFEST_OBJECT" --arg digest "$MANIFEST_SHA256" \
+            '.operation == "PUBLISH" and .manifestObject == $object and .manifestSha256 == $digest' \
+            <<<"$remote_pointer" >/dev/null
+          echo "pointer_generation=$activated_generation" >> "$GITHUB_OUTPUT"
+      - name: Switch to the separate deployment identity
+        uses: google-github-actions/auth@7c6bc770dae815cd3e89ee6cdf493a5fab2cc093 # v3
+        with:
+          workload_identity_provider: ${{ vars.GCP_SEMANTIC_ROLLOUT_WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ vars.GCP_DEPLOY_SERVICE_ACCOUNT }}
+      - name: Force every gateway instance onto a fresh validated revision
+        env:
+          GCP_PROJECT_ID: ${{ vars.GCP_PROJECT_ID }}
+          ARTIFACT_BUCKET: ${{ vars.ARTIFACT_BUCKET }}
+          GATEWAY_SERVICE: ${{ vars.GATEWAY_SERVICE }}
+          EXPECTED_POINTER_GENERATION: ${{ steps.activate.outputs.pointer_generation }}
+        run: |
+          active_account="$(gcloud auth list --filter=status:ACTIVE --format='value(account)')"
+          test "$active_account" = "${{ vars.GCP_DEPLOY_SERVICE_ACCOUNT }}"
+          export EXPECTED_MANIFEST_OBJECT="$MANIFEST_OBJECT"
+          export EXPECTED_MANIFEST_SHA256="$MANIFEST_SHA256"
+          export EXPECTED_ONTOLOGY_VERSION="$ONTOLOGY_VERSION"
+          bash scripts/rollout_semantic_gateway.sh

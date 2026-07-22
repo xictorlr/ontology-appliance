@@ -1,0 +1,18 @@
+{
+  "projects": {
+    "default": "ontology-appliance-dev-REPLACE_ME"
+  },
+  "targets": {
+    "ontology-appliance-dev-REPLACE_ME": {
+      "storage": {
+        "input": [
+          "ontology-appliance-dev-REPLACE_ME-oa-input"
+        ],
+        "artifacts": [
+          "ontology-appliance-dev-REPLACE_ME-oa-artifacts"
+        ]
+      }
+    }
+  },
+  "etags": {}
+}

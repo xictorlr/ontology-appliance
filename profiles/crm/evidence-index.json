@@ -1,0 +1,509 @@
+{
+  "evidence": [
+    {
+      "claim": "The CRM evidence was extracted from the pinned content-addressed CSV snapshot.",
+      "classification": "INTERNAL",
+      "contentSha256": "503d103ab015d2fb7720ba7e4aeed7f54e999426e22bc6e126fd663b79f5146a",
+      "evidenceId": "evidence-crm-snapshot",
+      "extractorName": "ontology-appliance-csv-profiler",
+      "extractorVersion": "1.0.0",
+      "locator": "data/synthetic/crm_parties.csv",
+      "normalizedCoordinates": {
+        "artifact": "source-snapshot"
+      },
+      "observedAt": "2026-07-22T13:51:12Z",
+      "policyTags": [
+        "bounded-profile",
+        "read-only",
+        "snapshot",
+        "synthetic"
+      ],
+      "snapshotId": "crm-parties@sha256:503d103ab015d2fb7720ba7e4aeed7f54e999426e22bc6e126fd663b79f5146a",
+      "sourceId": "crm-parties",
+      "tenantId": "demo-bank"
+    },
+    {
+      "claim": {
+        "profileStatistics": {
+          "completenessRate": 0.904762,
+          "fieldCount": 7,
+          "nonNullCellCount": 38,
+          "nullCellCount": 4,
+          "recordCount": 6
+        }
+      },
+      "classification": "INTERNAL",
+      "contentSha256": "6aa910f584918ae0a24bc433aec04257b539a92aa852008107e465c75298b69c",
+      "evidenceId": "evidence-crm-parties-e461baf4687f7ad5",
+      "extractorName": "ontology-appliance-csv-profiler",
+      "extractorVersion": "1.0.0",
+      "locator": "profiles/crm/profile.json#/statistics",
+      "normalizedCoordinates": {
+        "profilePointer": "/statistics"
+      },
+      "observedAt": "2026-07-22T13:51:12Z",
+      "policyTags": [
+        "bounded-profile",
+        "read-only",
+        "synthetic"
+      ],
+      "snapshotId": "crm-parties@sha256:503d103ab015d2fb7720ba7e4aeed7f54e999426e22bc6e126fd663b79f5146a",
+      "sourceId": "crm-parties",
+      "tenantId": "demo-bank"
+    },
+    {
+      "claim": "cif_no is a required CRM string matching the CIF identifier pattern.",
+      "classification": "INTERNAL",
+      "contentSha256": "1e06c3c81dc5f2c2d60ad063ff54428aaf3620d6d15e5ac3c4c3e26f826599cd",
+      "evidenceId": "evidence-crm-schema-cif",
+      "extractorName": "ontology-appliance-csv-profiler",
+      "extractorVersion": "1.0.0",
+      "locator": "contracts/crm.schema.json#/properties/cif_no",
+      "normalizedCoordinates": {
+        "field": "cif_no",
+        "schemaPointer": "/properties/cif_no"
+      },
+      "observedAt": "2026-07-22T13:51:12Z",
+      "policyTags": [
+        "read-only",
+        "schema",
+        "synthetic"
+      ],
+      "snapshotId": "crm-parties@sha256:503d103ab015d2fb7720ba7e4aeed7f54e999426e22bc6e126fd663b79f5146a",
+      "sourceId": "crm-parties",
+      "tenantId": "demo-bank"
+    },
+    {
+      "claim": "All six cif_no values are populated and pattern-conformant; five values are distinct.",
+      "classification": "INTERNAL",
+      "contentSha256": "4b361852e6ee0f9719317b0999022a31a52fa92bb1d31e44ae3d1569523896e3",
+      "evidenceId": "evidence-crm-profile-cif",
+      "extractorName": "ontology-appliance-csv-profiler",
+      "extractorVersion": "1.0.0",
+      "locator": "profiles/crm/cif_no.json#/statistics",
+      "normalizedCoordinates": {
+        "field": "cif_no",
+        "hashScope": "artifact",
+        "profileArtifact": "profiles/crm/cif_no.json",
+        "profilePointer": "/statistics"
+      },
+      "observedAt": "2026-07-22T13:51:12Z",
+      "policyTags": [
+        "bounded-sample",
+        "profile",
+        "read-only",
+        "synthetic"
+      ],
+      "snapshotId": "crm-parties@sha256:503d103ab015d2fb7720ba7e4aeed7f54e999426e22bc6e126fd663b79f5146a",
+      "sourceId": "crm-parties",
+      "tenantId": "demo-bank"
+    },
+    {
+      "claim": {
+        "profileStatistics": {
+          "distinctCount": 6,
+          "maximumLength": 8,
+          "minimumLength": 6,
+          "nonNullCount": 6,
+          "nullCount": 0,
+          "nullRate": 0.0,
+          "uniquenessRatio": 1.0
+        }
+      },
+      "classification": "INTERNAL",
+      "contentSha256": "aef0e76b2e1df7e853d83a1fa18a16737d98614477d96c9c5cb0887c8a8437d0",
+      "evidenceId": "evidence-crm-parties-2b43fcce1932f3bd",
+      "extractorName": "ontology-appliance-csv-profiler",
+      "extractorVersion": "1.0.0",
+      "locator": "data/synthetic/crm_parties.csv#field=party_id",
+      "normalizedCoordinates": {
+        "field": "party_id",
+        "profilePointer": "/fields/party_id/statistics"
+      },
+      "observedAt": "2026-07-22T13:51:12Z",
+      "policyTags": [
+        "bounded-profile",
+        "read-only",
+        "synthetic"
+      ],
+      "snapshotId": "crm-parties@sha256:503d103ab015d2fb7720ba7e4aeed7f54e999426e22bc6e126fd663b79f5146a",
+      "sourceId": "crm-parties",
+      "tenantId": "demo-bank"
+    },
+    {
+      "claim": {
+        "profileStatistics": {
+          "distinctCount": 2,
+          "maximumLength": 12,
+          "minimumLength": 6,
+          "nonNullCount": 6,
+          "nullCount": 0,
+          "nullRate": 0.0,
+          "uniquenessRatio": 0.333333
+        }
+      },
+      "classification": "INTERNAL",
+      "contentSha256": "a1cf56c25469bcbae1394dfbd74cb16a424cf3af97e9705dc970d715d22f3636",
+      "evidenceId": "evidence-crm-parties-cf79e3aff4e36b84",
+      "extractorName": "ontology-appliance-csv-profiler",
+      "extractorVersion": "1.0.0",
+      "locator": "data/synthetic/crm_parties.csv#field=party_type",
+      "normalizedCoordinates": {
+        "field": "party_type",
+        "profilePointer": "/fields/party_type/statistics"
+      },
+      "observedAt": "2026-07-22T13:51:12Z",
+      "policyTags": [
+        "bounded-profile",
+        "read-only",
+        "synthetic"
+      ],
+      "snapshotId": "crm-parties@sha256:503d103ab015d2fb7720ba7e4aeed7f54e999426e22bc6e126fd663b79f5146a",
+      "sourceId": "crm-parties",
+      "tenantId": "demo-bank"
+    },
+    {
+      "claim": {
+        "profileStatistics": {
+          "distinctCount": 6,
+          "maximumLength": 21,
+          "minimumLength": 11,
+          "nonNullCount": 6,
+          "nullCount": 0,
+          "nullRate": 0.0,
+          "uniquenessRatio": 1.0
+        }
+      },
+      "classification": "INTERNAL",
+      "contentSha256": "423bf7f9a53087f4d7a37ae570468f8686eae849fdd6f476998adcb3a7b0a851",
+      "evidenceId": "evidence-crm-parties-afb6e4e7c56d853a",
+      "extractorName": "ontology-appliance-csv-profiler",
+      "extractorVersion": "1.0.0",
+      "locator": "data/synthetic/crm_parties.csv#field=legal_name",
+      "normalizedCoordinates": {
+        "field": "legal_name",
+        "profilePointer": "/fields/legal_name/statistics"
+      },
+      "observedAt": "2026-07-22T13:51:12Z",
+      "policyTags": [
+        "bounded-profile",
+        "read-only",
+        "synthetic"
+      ],
+      "snapshotId": "crm-parties@sha256:503d103ab015d2fb7720ba7e4aeed7f54e999426e22bc6e126fd663b79f5146a",
+      "sourceId": "crm-parties",
+      "tenantId": "demo-bank"
+    },
+    {
+      "claim": {
+        "profileStatistics": {
+          "distinctCount": 4,
+          "maximumLength": 2,
+          "minimumLength": 2,
+          "nonNullCount": 6,
+          "nullCount": 0,
+          "nullRate": 0.0,
+          "uniquenessRatio": 0.666667
+        }
+      },
+      "classification": "INTERNAL",
+      "contentSha256": "b846f9efd676426bbcb149db3f7966d8c5e4a9cacbd532816578a7117b63992b",
+      "evidenceId": "evidence-crm-parties-8f5ecfa34f0b2484",
+      "extractorName": "ontology-appliance-csv-profiler",
+      "extractorVersion": "1.0.0",
+      "locator": "data/synthetic/crm_parties.csv#field=country",
+      "normalizedCoordinates": {
+        "field": "country",
+        "profilePointer": "/fields/country/statistics"
+      },
+      "observedAt": "2026-07-22T13:51:12Z",
+      "policyTags": [
+        "bounded-profile",
+        "read-only",
+        "synthetic"
+      ],
+      "snapshotId": "crm-parties@sha256:503d103ab015d2fb7720ba7e4aeed7f54e999426e22bc6e126fd663b79f5146a",
+      "sourceId": "crm-parties",
+      "tenantId": "demo-bank"
+    },
+    {
+      "claim": {
+        "profileStatistics": {
+          "distinctCount": 2,
+          "maximumLength": 6,
+          "minimumLength": 6,
+          "nonNullCount": 2,
+          "nullCount": 4,
+          "nullRate": 0.666667,
+          "uniquenessRatio": 0.333333
+        }
+      },
+      "classification": "INTERNAL",
+      "contentSha256": "92ef15360ad26c37261303a9b1e059220f55ecdb38d294976721589ec291a14e",
+      "evidenceId": "evidence-crm-parties-ce7cb1a97d875b4c",
+      "extractorName": "ontology-appliance-csv-profiler",
+      "extractorVersion": "1.0.0",
+      "locator": "data/synthetic/crm_parties.csv#field=ubo",
+      "normalizedCoordinates": {
+        "field": "ubo",
+        "profilePointer": "/fields/ubo/statistics"
+      },
+      "observedAt": "2026-07-22T13:51:12Z",
+      "policyTags": [
+        "bounded-profile",
+        "read-only",
+        "synthetic"
+      ],
+      "snapshotId": "crm-parties@sha256:503d103ab015d2fb7720ba7e4aeed7f54e999426e22bc6e126fd663b79f5146a",
+      "sourceId": "crm-parties",
+      "tenantId": "demo-bank"
+    },
+    {
+      "claim": {
+        "profileStatistics": {
+          "distinctCount": 6,
+          "maximumLength": 20,
+          "minimumLength": 20,
+          "nonNullCount": 6,
+          "nullCount": 0,
+          "nullRate": 0.0,
+          "uniquenessRatio": 1.0
+        }
+      },
+      "classification": "INTERNAL",
+      "contentSha256": "363d6c6acb501504c6fabb4c051cf9901afdb92f63316b0e6ca288cffb848f89",
+      "evidenceId": "evidence-crm-parties-f61af57d06c8da83",
+      "extractorName": "ontology-appliance-csv-profiler",
+      "extractorVersion": "1.0.0",
+      "locator": "data/synthetic/crm_parties.csv#field=source_updated_at",
+      "normalizedCoordinates": {
+        "field": "source_updated_at",
+        "profilePointer": "/fields/source_updated_at/statistics"
+      },
+      "observedAt": "2026-07-22T13:51:12Z",
+      "policyTags": [
+        "bounded-profile",
+        "read-only",
+        "synthetic"
+      ],
+      "snapshotId": "crm-parties@sha256:503d103ab015d2fb7720ba7e4aeed7f54e999426e22bc6e126fd663b79f5146a",
+      "sourceId": "crm-parties",
+      "tenantId": "demo-bank"
+    },
+    {
+      "claim": {
+        "includedInDeterministicSample": true
+      },
+      "classification": "INTERNAL",
+      "contentSha256": "027c54ad7da995c659a541375c6cda4b1765ff10c2416520b466d32f32461b43",
+      "evidenceId": "evidence-crm-parties-3d807d34af4620a4",
+      "extractorName": "ontology-appliance-csv-profiler",
+      "extractorVersion": "1.0.0",
+      "locator": "data/synthetic/crm_parties.csv#row=2",
+      "normalizedCoordinates": {
+        "row": 2,
+        "sampleOrdinal": 1
+      },
+      "observedAt": "2026-07-22T13:51:12Z",
+      "policyTags": [
+        "bounded-sample",
+        "read-only",
+        "synthetic"
+      ],
+      "snapshotId": "crm-parties@sha256:503d103ab015d2fb7720ba7e4aeed7f54e999426e22bc6e126fd663b79f5146a",
+      "sourceId": "crm-parties",
+      "tenantId": "demo-bank"
+    },
+    {
+      "claim": {
+        "includedInDeterministicSample": true
+      },
+      "classification": "INTERNAL",
+      "contentSha256": "886e6d75703b3405fa60956cefb78c991c0ff8bf01c4a4b19d93b180153b288f",
+      "evidenceId": "evidence-crm-parties-3dbbb356fd6538b2",
+      "extractorName": "ontology-appliance-csv-profiler",
+      "extractorVersion": "1.0.0",
+      "locator": "data/synthetic/crm_parties.csv#row=3",
+      "normalizedCoordinates": {
+        "row": 3,
+        "sampleOrdinal": 2
+      },
+      "observedAt": "2026-07-22T13:51:12Z",
+      "policyTags": [
+        "bounded-sample",
+        "read-only",
+        "synthetic"
+      ],
+      "snapshotId": "crm-parties@sha256:503d103ab015d2fb7720ba7e4aeed7f54e999426e22bc6e126fd663b79f5146a",
+      "sourceId": "crm-parties",
+      "tenantId": "demo-bank"
+    },
+    {
+      "claim": {
+        "includedInDeterministicSample": true
+      },
+      "classification": "INTERNAL",
+      "contentSha256": "3a722a6179373d7991df3065dca78a01f694e238afa436448d0bf42db8385e28",
+      "evidenceId": "evidence-crm-parties-f7aed2faf315ea1e",
+      "extractorName": "ontology-appliance-csv-profiler",
+      "extractorVersion": "1.0.0",
+      "locator": "data/synthetic/crm_parties.csv#row=4",
+      "normalizedCoordinates": {
+        "row": 4,
+        "sampleOrdinal": 3
+      },
+      "observedAt": "2026-07-22T13:51:12Z",
+      "policyTags": [
+        "bounded-sample",
+        "read-only",
+        "synthetic"
+      ],
+      "snapshotId": "crm-parties@sha256:503d103ab015d2fb7720ba7e4aeed7f54e999426e22bc6e126fd663b79f5146a",
+      "sourceId": "crm-parties",
+      "tenantId": "demo-bank"
+    },
+    {
+      "claim": {
+        "includedInDeterministicSample": true
+      },
+      "classification": "INTERNAL",
+      "contentSha256": "4e88bf6d1f005b9bf411f50d1e29de05a0a1dc7e305dcfa7526f1e8b62f56d87",
+      "evidenceId": "evidence-crm-parties-949faf6ec2917740",
+      "extractorName": "ontology-appliance-csv-profiler",
+      "extractorVersion": "1.0.0",
+      "locator": "data/synthetic/crm_parties.csv#row=5",
+      "normalizedCoordinates": {
+        "row": 5,
+        "sampleOrdinal": 4
+      },
+      "observedAt": "2026-07-22T13:51:12Z",
+      "policyTags": [
+        "bounded-sample",
+        "read-only",
+        "synthetic"
+      ],
+      "snapshotId": "crm-parties@sha256:503d103ab015d2fb7720ba7e4aeed7f54e999426e22bc6e126fd663b79f5146a",
+      "sourceId": "crm-parties",
+      "tenantId": "demo-bank"
+    },
+    {
+      "claim": {
+        "includedInDeterministicSample": true
+      },
+      "classification": "INTERNAL",
+      "contentSha256": "76b85b1a6fdf8246f97705a53b79ec67695d6d9116015af34e33149f6f0470df",
+      "evidenceId": "evidence-crm-parties-375a5e0fca250785",
+      "extractorName": "ontology-appliance-csv-profiler",
+      "extractorVersion": "1.0.0",
+      "locator": "data/synthetic/crm_parties.csv#row=6",
+      "normalizedCoordinates": {
+        "row": 6,
+        "sampleOrdinal": 5
+      },
+      "observedAt": "2026-07-22T13:51:12Z",
+      "policyTags": [
+        "bounded-sample",
+        "read-only",
+        "synthetic"
+      ],
+      "snapshotId": "crm-parties@sha256:503d103ab015d2fb7720ba7e4aeed7f54e999426e22bc6e126fd663b79f5146a",
+      "sourceId": "crm-parties",
+      "tenantId": "demo-bank"
+    },
+    {
+      "claim": {
+        "includedInDeterministicSample": true
+      },
+      "classification": "INTERNAL",
+      "contentSha256": "5ad32710accfa037e617274eac558f730e711bd3c69eaa71e156db581c3ae872",
+      "evidenceId": "evidence-crm-parties-965e77846634d5a1",
+      "extractorName": "ontology-appliance-csv-profiler",
+      "extractorVersion": "1.0.0",
+      "locator": "data/synthetic/crm_parties.csv#row=7",
+      "normalizedCoordinates": {
+        "row": 7,
+        "sampleOrdinal": 6
+      },
+      "observedAt": "2026-07-22T13:51:12Z",
+      "policyTags": [
+        "bounded-sample",
+        "read-only",
+        "synthetic"
+      ],
+      "snapshotId": "crm-parties@sha256:503d103ab015d2fb7720ba7e4aeed7f54e999426e22bc6e126fd663b79f5146a",
+      "sourceId": "crm-parties",
+      "tenantId": "demo-bank"
+    },
+    {
+      "claim": {
+        "relationshipEvidence": {
+          "cifDuplicateValueCount": 1,
+          "countryCounts": {
+            "ES": 3,
+            "GB": 1,
+            "IT": 1,
+            "LV": 1
+          },
+          "distinctPartyCount": 6,
+          "partyTypeCounts": {
+            "LEGAL_ENTITY": 2,
+            "PERSON": 4
+          },
+          "uboLinkCount": 2
+        }
+      },
+      "classification": "INTERNAL",
+      "contentSha256": "760b3c61da24ada6cb30f3f61f1c455aba86b2ee7809411f47b7f6262848c05d",
+      "evidenceId": "evidence-crm-parties-97c7cecf3997aa7e",
+      "extractorName": "ontology-appliance-csv-profiler",
+      "extractorVersion": "1.0.0",
+      "locator": "profiles/crm/profile.json#/relationshipEvidence",
+      "normalizedCoordinates": {
+        "profilePointer": "/relationshipEvidence"
+      },
+      "observedAt": "2026-07-22T13:51:12Z",
+      "policyTags": [
+        "read-only",
+        "relationship-profile",
+        "synthetic"
+      ],
+      "snapshotId": "crm-parties@sha256:503d103ab015d2fb7720ba7e4aeed7f54e999426e22bc6e126fd663b79f5146a",
+      "sourceId": "crm-parties",
+      "tenantId": "demo-bank"
+    },
+    {
+      "claim": "CIF-0042 is reused by two historical merged party records, so cif_no is not an absolute uniqueness key.",
+      "classification": "INTERNAL",
+      "contentSha256": "503d103ab015d2fb7720ba7e4aeed7f54e999426e22bc6e126fd663b79f5146a",
+      "evidenceId": "evidence-crm-cif-duplicate-0042",
+      "extractorName": "ontology-appliance-csv-profiler",
+      "extractorVersion": "1.0.0",
+      "locator": "data/synthetic/crm_parties.csv#row=6:field=cif_no,row=7:field=cif_no",
+      "normalizedCoordinates": {
+        "field": "cif_no",
+        "rows": [
+          6,
+          7
+        ]
+      },
+      "observedAt": "2026-07-22T13:51:12Z",
+      "policyTags": [
+        "counterevidence",
+        "read-only",
+        "synthetic"
+      ],
+      "snapshotId": "crm-parties@sha256:503d103ab015d2fb7720ba7e4aeed7f54e999426e22bc6e126fd663b79f5146a",
+      "sourceId": "crm-parties",
+      "tenantId": "demo-bank"
+    }
+  ],
+  "extractorName": "ontology-appliance-csv-profiler",
+  "extractorVersion": "1.0.0",
+  "observedAt": "2026-07-22T13:51:12Z",
+  "schemaVersion": "1.0",
+  "snapshotId": "crm-parties@sha256:503d103ab015d2fb7720ba7e4aeed7f54e999426e22bc6e126fd663b79f5146a",
+  "sourceContentSha256": "503d103ab015d2fb7720ba7e4aeed7f54e999426e22bc6e126fd663b79f5146a",
+  "sourceId": "crm-parties",
+  "sourceLocator": "data/synthetic/crm_parties.csv",
+  "tenantId": "demo-bank"
+}

@@ -1,0 +1,26 @@
+{
+  "accessMode": "read_only",
+  "content": {
+    "byteCount": 1054,
+    "recordCount": 1,
+    "sha256": "8aa24ffe6183c52c49a93b026298164886548eb2860184203609ddd0aa038769",
+    "sourceAssets": [
+      {
+        "byteCount": 1054,
+        "mediaType": "application/pdf",
+        "path": "data/synthetic/kyc/LE-2001.pdf",
+        "sha256": "8aa24ffe6183c52c49a93b026298164886548eb2860184203609ddd0aa038769"
+      }
+    ]
+  },
+  "extractorName": "ontology-appliance-synthetic-profiler",
+  "extractorVersion": "1.0.0",
+  "observedAt": "2026-06-20T06:30:00Z",
+  "profileLocator": "profiles/kyc-documents/profile.json",
+  "schemaLocator": "contracts/kyc-document.schema.json",
+  "schemaVersion": "1.0",
+  "snapshotId": "kyc-documents@sha256:8aa24ffe6183c52c49a93b026298164886548eb2860184203609ddd0aa038769",
+  "sourceId": "kyc-documents",
+  "sourceLocator": "data/synthetic/kyc/LE-2001.pdf",
+  "tenantId": "demo-bank"
+}

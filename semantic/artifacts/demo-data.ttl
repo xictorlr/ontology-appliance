@@ -1,0 +1,97 @@
+@prefix oa: <urn:ontology-appliance:vocab:> .
+@prefix res: <urn:ontology-appliance:demo-bank:resource:> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+
+res:party-p-1001 a oa:Party ;
+    skos:prefLabel "Alexei Petrov"@en ;
+    oa:sourceSystem "CRM" ;
+    oa:sourceRecordId "P-1001" ;
+    oa:beneficialOwnerOf res:entity-le-2001 ;
+    oa:evidence res:evidence-crm-p-1001 .
+
+res:party-aml-77 a oa:Party ;
+    skos:prefLabel "A. Petrov"@en ;
+    oa:sourceSystem "AML_CASES" ;
+    oa:sourceRecordId "AML-77" ;
+    oa:possibleDuplicateOf res:party-p-1001 ;
+    oa:evidence res:evidence-aml-77 .
+
+res:party-p-1002 a oa:Party ;
+    skos:prefLabel "Marta Rossi"@en ;
+    oa:sourceSystem "CRM" ;
+    oa:sourceRecordId "P-1002" ;
+    oa:beneficialOwnerOf res:entity-le-2002 ;
+    oa:evidence res:evidence-crm-p-1002 .
+
+res:entity-le-2001 a oa:LegalEntity ;
+    skos:prefLabel "Northstar Trading Ltd"@en ;
+    oa:sourceSystem "CRM" ;
+    oa:sourceRecordId "LE-2001" ;
+    oa:hasAccount res:account-es120001 .
+
+res:entity-le-2002 a oa:LegalEntity ;
+    skos:prefLabel "Rossi Foods SL"@en ;
+    oa:sourceSystem "CRM" ;
+    oa:sourceRecordId "LE-2002" ;
+    oa:hasAccount res:account-es120002 .
+
+res:account-es120001 a oa:Account ;
+    rdfs:label "Northstar operating account"@en ;
+    oa:accountNumber "ES120001" ;
+    oa:ownedBy res:entity-le-2001 ;
+    oa:sourceSystem "CORE_BANKING" ;
+    oa:sourceRecordId "A-9001" .
+
+res:account-es120002 a oa:Account ;
+    rdfs:label "Rossi Foods account"@en ;
+    oa:accountNumber "ES120002" ;
+    oa:ownedBy res:entity-le-2002 ;
+    oa:sourceSystem "CORE_BANKING" ;
+    oa:sourceRecordId "A-9002" .
+
+res:account-de890001 a oa:Account ;
+    rdfs:label "External beneficiary account"@en ;
+    oa:accountNumber "DE890001" ;
+    oa:ownedBy res:entity-le-3001 ;
+    oa:sourceSystem "PAYMENTS" ;
+    oa:sourceRecordId "EXT-1" .
+
+res:entity-le-3001 a oa:LegalEntity ;
+    skos:prefLabel "Baltic Consulting GmbH"@en ;
+    oa:hasAccount res:account-de890001 .
+
+res:payment-pay-5001 a oa:Payment ;
+    rdfs:label "Payment PAY-5001"@en ;
+    oa:fromAccount res:account-es120001 ;
+    oa:toAccount res:account-de890001 ;
+    oa:amount "125000.00"^^xsd:decimal ;
+    oa:currency "EUR" ;
+    oa:sourceSystem "PAYMENTS" ;
+    oa:sourceRecordId "PAY-5001" .
+
+res:payment-pay-5002 a oa:Payment ;
+    rdfs:label "Payment PAY-5002"@en ;
+    oa:fromAccount res:account-es120001 ;
+    oa:toAccount res:account-de890001 ;
+    oa:amount "17000.00"^^xsd:decimal ;
+    oa:currency "USD" ;
+    oa:sourceSystem "PAYMENTS" ;
+    oa:sourceRecordId "PAY-5002" .
+
+res:payment-pay-5003 a oa:Payment ;
+    rdfs:label "Payment PAY-5003"@en ;
+    oa:fromAccount res:account-es120002 ;
+    oa:toAccount res:account-de890001 ;
+    oa:amount "320.00"^^xsd:decimal ;
+    oa:currency "EUR" ;
+    oa:sourceSystem "PAYMENTS" ;
+    oa:sourceRecordId "PAY-5003" .
+
+res:sanctions-entry-eu-998 a oa:SanctionsEntry ;
+    rdfs:label "EU sanctions record EU-998"@en ;
+    oa:targetsParty res:party-p-1001 ;
+    oa:sourceSystem "EU_SANCTIONS" ;
+    oa:sourceRecordId "EU-998" ;
+    oa:evidence res:evidence-sanctions-eu-998 .

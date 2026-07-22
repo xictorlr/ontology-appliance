@@ -1,0 +1,61 @@
+{
+  "artifacts": [
+    {
+      "path": "data/contracts/kyc-documents.connector.json",
+      "sha256": "45b49ed6509082d3332a3efcb1a3b8056a82f7c9f0f6a8ff08a0951d9fb59b77"
+    },
+    {
+      "path": "contracts/kyc-document.schema.json",
+      "sha256": "0c93de294cfd3b6f91c9356c46e8407c31c521b3fea2ef68e30e9c06cff3c96e"
+    },
+    {
+      "path": "profiles/kyc-documents/snapshot.json",
+      "sha256": "f6e1177a5fd657b15404a3fa63c8e4b2ca926f7d8429d335ebb66ef64bb3bc03"
+    },
+    {
+      "path": "profiles/kyc-documents/profile.json",
+      "sha256": "a11b95c82b2a47946541b0ac537125118eb9b9b43df2bd33f03f8c6d430bfc01"
+    },
+    {
+      "path": "profiles/kyc-documents/evidence-index.json",
+      "sha256": "c37f94e5016f93ceeea3115557e25c3f46162aee83c46a704003f7de9e8bffe9"
+    }
+  ],
+  "checks": [
+    {
+      "detail": "The connector manifest fixes access_mode to read_only.",
+      "name": "read_only_access",
+      "passed": true
+    },
+    {
+      "detail": "The snapshot ID pins source content with SHA-256 8aa24ffe6183c52c49a93b026298164886548eb2860184203609ddd0aa038769.",
+      "name": "content_addressed_snapshot",
+      "passed": true
+    },
+    {
+      "detail": "The deterministic sample contains 1 records and 1054 bytes within policy bounds.",
+      "name": "bounded_sample",
+      "passed": true
+    },
+    {
+      "detail": "All 14 evidence records have stable repository-relative locators and content hashes.",
+      "name": "stable_evidence",
+      "passed": true
+    },
+    {
+      "detail": "No connector fixture contains a credential and no adapter capability permits writes.",
+      "name": "credential_and_write_guard",
+      "passed": true
+    }
+  ],
+  "connectorId": "kyc-documents",
+  "contentSha256": "8aa24ffe6183c52c49a93b026298164886548eb2860184203609ddd0aa038769",
+  "executedAt": "2026-06-20T06:30:00Z",
+  "extractorName": "ontology-appliance-synthetic-profiler",
+  "extractorVersion": "1.0.0",
+  "observedAt": "2026-06-20T06:30:00Z",
+  "schemaVersion": "1.0",
+  "snapshotId": "kyc-documents@sha256:8aa24ffe6183c52c49a93b026298164886548eb2860184203609ddd0aa038769",
+  "sourceLocator": "data/synthetic/kyc/LE-2001.pdf",
+  "status": "PASSED"
+}

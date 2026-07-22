@@ -1,0 +1,396 @@
+<urn:ontology-appliance:demo-bank:resource:evidence-crm-p-1001> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <urn:ontology-appliance:vocab:EvidenceArtifact> <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:evidence-crm-p-1001> <http://www.w3.org/2000/01/rdf-schema#label> "CRM party row P-1001"@en <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:evidence-crm-p-1001> <urn:ontology-appliance:vocab:tenantId> "demo-bank" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:evidence-crm-p-1001> <urn:ontology-appliance:vocab:sourceId> "crm-parties" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:evidence-crm-p-1001> <urn:ontology-appliance:vocab:snapshotId> "crm-parties@sha256:503d103ab015d2fb7720ba7e4aeed7f54e999426e22bc6e126fd663b79f5146a" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:evidence-crm-p-1001> <urn:ontology-appliance:vocab:locator> "data/synthetic/crm_parties.csv#row=2" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:evidence-crm-p-1001> <urn:ontology-appliance:vocab:observedAt> "2026-07-22T13:51:12Z"^^<http://www.w3.org/2001/XMLSchema#dateTime> <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:evidence-crm-p-1001> <urn:ontology-appliance:vocab:extractorName> "ontology-appliance-csv-profiler" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:evidence-crm-p-1001> <urn:ontology-appliance:vocab:extractorVersion> "1.0.0" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:evidence-crm-p-1001> <urn:ontology-appliance:vocab:contentSha256> "503d103ab015d2fb7720ba7e4aeed7f54e999426e22bc6e126fd663b79f5146a" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:evidence-crm-p-1001> <urn:ontology-appliance:vocab:classification> "INTERNAL" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:evidence-crm-p-1001> <urn:ontology-appliance:vocab:claim> "CRM row P-1001 supports the governed party record for Alexei Petrov." <urn:ontology-appliance:demo-bank:graph:provenance> .
+
+<urn:ontology-appliance:demo-bank:resource:evidence-crm-p-1002> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <urn:ontology-appliance:vocab:EvidenceArtifact> <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:evidence-crm-p-1002> <http://www.w3.org/2000/01/rdf-schema#label> "CRM party row P-1002"@en <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:evidence-crm-p-1002> <urn:ontology-appliance:vocab:tenantId> "demo-bank" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:evidence-crm-p-1002> <urn:ontology-appliance:vocab:sourceId> "crm-parties" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:evidence-crm-p-1002> <urn:ontology-appliance:vocab:snapshotId> "crm-parties@sha256:503d103ab015d2fb7720ba7e4aeed7f54e999426e22bc6e126fd663b79f5146a" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:evidence-crm-p-1002> <urn:ontology-appliance:vocab:locator> "data/synthetic/crm_parties.csv#row=3" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:evidence-crm-p-1002> <urn:ontology-appliance:vocab:observedAt> "2026-07-22T13:51:12Z"^^<http://www.w3.org/2001/XMLSchema#dateTime> <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:evidence-crm-p-1002> <urn:ontology-appliance:vocab:extractorName> "ontology-appliance-csv-profiler" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:evidence-crm-p-1002> <urn:ontology-appliance:vocab:extractorVersion> "1.0.0" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:evidence-crm-p-1002> <urn:ontology-appliance:vocab:contentSha256> "503d103ab015d2fb7720ba7e4aeed7f54e999426e22bc6e126fd663b79f5146a" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:evidence-crm-p-1002> <urn:ontology-appliance:vocab:classification> "INTERNAL" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:evidence-crm-p-1002> <urn:ontology-appliance:vocab:claim> "CRM row P-1002 supports the governed party record for Marta Rossi." <urn:ontology-appliance:demo-bank:graph:provenance> .
+
+<urn:ontology-appliance:demo-bank:resource:evidence-aml-77> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <urn:ontology-appliance:vocab:EvidenceArtifact> <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:evidence-aml-77> <http://www.w3.org/2000/01/rdf-schema#label> "AML case AML-77"@en <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:evidence-aml-77> <urn:ontology-appliance:vocab:tenantId> "demo-bank" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:evidence-aml-77> <urn:ontology-appliance:vocab:sourceId> "aml-cases" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:evidence-aml-77> <urn:ontology-appliance:vocab:snapshotId> "aml-cases@sha256:7fce6a969a484aa2a1222c1f45a382a3f9f9f9d5d4f44b97b5dbcd9b562981cb" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:evidence-aml-77> <urn:ontology-appliance:vocab:locator> "data/synthetic/aml_cases.csv#row=2" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:evidence-aml-77> <urn:ontology-appliance:vocab:observedAt> "2026-07-22T13:51:12Z"^^<http://www.w3.org/2001/XMLSchema#dateTime> <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:evidence-aml-77> <urn:ontology-appliance:vocab:extractorName> "ontology-appliance-csv-profiler" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:evidence-aml-77> <urn:ontology-appliance:vocab:extractorVersion> "1.0.0" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:evidence-aml-77> <urn:ontology-appliance:vocab:contentSha256> "7fce6a969a484aa2a1222c1f45a382a3f9f9f9d5d4f44b97b5dbcd9b562981cb" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:evidence-aml-77> <urn:ontology-appliance:vocab:classification> "INTERNAL" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:evidence-aml-77> <urn:ontology-appliance:vocab:claim> "AML-77 proposes P-1001 as the matched CRM party with recorded match features." <urn:ontology-appliance:demo-bank:graph:provenance> .
+
+<urn:ontology-appliance:demo-bank:resource:evidence-sanctions-eu-998> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <urn:ontology-appliance:vocab:EvidenceArtifact> <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:evidence-sanctions-eu-998> <http://www.w3.org/2000/01/rdf-schema#label> "EU sanctions mock record EU-998"@en <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:evidence-sanctions-eu-998> <urn:ontology-appliance:vocab:tenantId> "demo-bank" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:evidence-sanctions-eu-998> <urn:ontology-appliance:vocab:sourceId> "sanctions-mock" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:evidence-sanctions-eu-998> <urn:ontology-appliance:vocab:snapshotId> "sanctions-mock@sha256:9307b98034dfc4d49952fad88cc445a37fd081452e6ac437f4302c98807cca72" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:evidence-sanctions-eu-998> <urn:ontology-appliance:vocab:locator> "data/synthetic/sanctions.json#/records/0" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:evidence-sanctions-eu-998> <urn:ontology-appliance:vocab:observedAt> "2026-07-22T13:51:12Z"^^<http://www.w3.org/2001/XMLSchema#dateTime> <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:evidence-sanctions-eu-998> <urn:ontology-appliance:vocab:extractorName> "ontology-appliance-json-profiler" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:evidence-sanctions-eu-998> <urn:ontology-appliance:vocab:extractorVersion> "1.0.0" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:evidence-sanctions-eu-998> <urn:ontology-appliance:vocab:contentSha256> "9307b98034dfc4d49952fad88cc445a37fd081452e6ac437f4302c98807cca72" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:evidence-sanctions-eu-998> <urn:ontology-appliance:vocab:classification> "INTERNAL" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:evidence-sanctions-eu-998> <urn:ontology-appliance:vocab:claim> "Synthetic sanctions record EU-998 names P-1001 as its matched party." <urn:ontology-appliance:demo-bank:graph:provenance> .
+
+<urn:ontology-appliance:demo-bank:resource:evidence-crm-schema-cif> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <urn:ontology-appliance:vocab:EvidenceArtifact> <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:evidence-crm-schema-cif> <http://www.w3.org/2000/01/rdf-schema#label> "CRM schema declaration for cif_no"@en <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:evidence-crm-schema-cif> <urn:ontology-appliance:vocab:tenantId> "demo-bank" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:evidence-crm-schema-cif> <urn:ontology-appliance:vocab:sourceId> "crm-parties" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:evidence-crm-schema-cif> <urn:ontology-appliance:vocab:snapshotId> "crm-parties@sha256:503d103ab015d2fb7720ba7e4aeed7f54e999426e22bc6e126fd663b79f5146a" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:evidence-crm-schema-cif> <urn:ontology-appliance:vocab:locator> "contracts/crm.schema.json#/properties/cif_no" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:evidence-crm-schema-cif> <urn:ontology-appliance:vocab:observedAt> "2026-07-22T13:51:12Z"^^<http://www.w3.org/2001/XMLSchema#dateTime> <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:evidence-crm-schema-cif> <urn:ontology-appliance:vocab:extractorName> "ontology-appliance-csv-profiler" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:evidence-crm-schema-cif> <urn:ontology-appliance:vocab:extractorVersion> "1.0.0" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:evidence-crm-schema-cif> <urn:ontology-appliance:vocab:contentSha256> "1e06c3c81dc5f2c2d60ad063ff54428aaf3620d6d15e5ac3c4c3e26f826599cd" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:evidence-crm-schema-cif> <urn:ontology-appliance:vocab:classification> "INTERNAL" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:evidence-crm-schema-cif> <urn:ontology-appliance:vocab:claim> "cif_no is a required CRM string matching the CIF identifier pattern." <urn:ontology-appliance:demo-bank:graph:provenance> .
+
+<urn:ontology-appliance:demo-bank:resource:evidence-crm-profile-cif> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <urn:ontology-appliance:vocab:EvidenceArtifact> <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:evidence-crm-profile-cif> <http://www.w3.org/2000/01/rdf-schema#label> "Profile statistics for cif_no"@en <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:evidence-crm-profile-cif> <urn:ontology-appliance:vocab:tenantId> "demo-bank" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:evidence-crm-profile-cif> <urn:ontology-appliance:vocab:sourceId> "crm-parties" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:evidence-crm-profile-cif> <urn:ontology-appliance:vocab:snapshotId> "crm-parties@sha256:503d103ab015d2fb7720ba7e4aeed7f54e999426e22bc6e126fd663b79f5146a" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:evidence-crm-profile-cif> <urn:ontology-appliance:vocab:locator> "profiles/crm/cif_no.json#/statistics" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:evidence-crm-profile-cif> <urn:ontology-appliance:vocab:observedAt> "2026-07-22T13:51:12Z"^^<http://www.w3.org/2001/XMLSchema#dateTime> <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:evidence-crm-profile-cif> <urn:ontology-appliance:vocab:extractorName> "ontology-appliance-csv-profiler" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:evidence-crm-profile-cif> <urn:ontology-appliance:vocab:extractorVersion> "1.0.0" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:evidence-crm-profile-cif> <urn:ontology-appliance:vocab:contentSha256> "4b361852e6ee0f9719317b0999022a31a52fa92bb1d31e44ae3d1569523896e3" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:evidence-crm-profile-cif> <urn:ontology-appliance:vocab:classification> "INTERNAL" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:evidence-crm-profile-cif> <urn:ontology-appliance:vocab:claim> "All six cif_no values are populated and pattern-conformant; five are distinct." <urn:ontology-appliance:demo-bank:graph:provenance> .
+
+<urn:ontology-appliance:demo-bank:resource:evidence-crm-cif-duplicate-0042> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <urn:ontology-appliance:vocab:EvidenceArtifact> <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:evidence-crm-cif-duplicate-0042> <http://www.w3.org/2000/01/rdf-schema#label> "Duplicate historical CIF-0042 rows"@en <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:evidence-crm-cif-duplicate-0042> <urn:ontology-appliance:vocab:tenantId> "demo-bank" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:evidence-crm-cif-duplicate-0042> <urn:ontology-appliance:vocab:sourceId> "crm-parties" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:evidence-crm-cif-duplicate-0042> <urn:ontology-appliance:vocab:snapshotId> "crm-parties@sha256:503d103ab015d2fb7720ba7e4aeed7f54e999426e22bc6e126fd663b79f5146a" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:evidence-crm-cif-duplicate-0042> <urn:ontology-appliance:vocab:locator> "data/synthetic/crm_parties.csv#row=6:field=cif_no,row=7:field=cif_no" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:evidence-crm-cif-duplicate-0042> <urn:ontology-appliance:vocab:observedAt> "2026-07-22T13:51:12Z"^^<http://www.w3.org/2001/XMLSchema#dateTime> <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:evidence-crm-cif-duplicate-0042> <urn:ontology-appliance:vocab:extractorName> "ontology-appliance-csv-profiler" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:evidence-crm-cif-duplicate-0042> <urn:ontology-appliance:vocab:extractorVersion> "1.0.0" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:evidence-crm-cif-duplicate-0042> <urn:ontology-appliance:vocab:contentSha256> "503d103ab015d2fb7720ba7e4aeed7f54e999426e22bc6e126fd663b79f5146a" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:evidence-crm-cif-duplicate-0042> <urn:ontology-appliance:vocab:classification> "INTERNAL" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:evidence-crm-cif-duplicate-0042> <urn:ontology-appliance:vocab:claim> "CIF-0042 is reused by two historical merged party records and is not an absolute uniqueness key." <urn:ontology-appliance:demo-bank:graph:provenance> .
+
+<urn:ontology-appliance:demo-bank:resource:evidence-crm-schema-ubo> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <urn:ontology-appliance:vocab:EvidenceArtifact> <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:evidence-crm-schema-ubo> <http://www.w3.org/2000/01/rdf-schema#label> "CRM schema declaration for ubo"@en <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:evidence-crm-schema-ubo> <urn:ontology-appliance:vocab:tenantId> "demo-bank" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:evidence-crm-schema-ubo> <urn:ontology-appliance:vocab:sourceId> "crm-parties" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:evidence-crm-schema-ubo> <urn:ontology-appliance:vocab:snapshotId> "crm-parties@sha256:503d103ab015d2fb7720ba7e4aeed7f54e999426e22bc6e126fd663b79f5146a" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:evidence-crm-schema-ubo> <urn:ontology-appliance:vocab:locator> "contracts/crm.schema.json#/properties/ubo" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:evidence-crm-schema-ubo> <urn:ontology-appliance:vocab:observedAt> "2026-07-22T13:51:12Z"^^<http://www.w3.org/2001/XMLSchema#dateTime> <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:evidence-crm-schema-ubo> <urn:ontology-appliance:vocab:extractorName> "ontology-appliance-csv-profiler" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:evidence-crm-schema-ubo> <urn:ontology-appliance:vocab:extractorVersion> "1.0.0" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:evidence-crm-schema-ubo> <urn:ontology-appliance:vocab:contentSha256> "1e06c3c81dc5f2c2d60ad063ff54428aaf3620d6d15e5ac3c4c3e26f826599cd" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:evidence-crm-schema-ubo> <urn:ontology-appliance:vocab:classification> "INTERNAL" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:evidence-crm-schema-ubo> <urn:ontology-appliance:vocab:claim> "ubo is an optional CRM field in the pinned source schema." <urn:ontology-appliance:demo-bank:graph:provenance> .
+
+<urn:ontology-appliance:demo-bank:resource:evidence-kyc-document-1001> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <urn:ontology-appliance:vocab:EvidenceArtifact> <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:evidence-kyc-document-1001> <http://www.w3.org/2000/01/rdf-schema#label> "KYC document for LE-2001"@en <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:evidence-kyc-document-1001> <urn:ontology-appliance:vocab:tenantId> "demo-bank" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:evidence-kyc-document-1001> <urn:ontology-appliance:vocab:sourceId> "kyc-documents" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:evidence-kyc-document-1001> <urn:ontology-appliance:vocab:snapshotId> "kyc-le-2001@sha256:ab6ca88676c4f2091c09228d718cbccb9f6711df9c0727026a5aff820aec1787" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:evidence-kyc-document-1001> <urn:ontology-appliance:vocab:locator> "data/synthetic/kyc/LE-2001.txt#line=4" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:evidence-kyc-document-1001> <urn:ontology-appliance:vocab:observedAt> "2026-07-22T13:51:12Z"^^<http://www.w3.org/2001/XMLSchema#dateTime> <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:evidence-kyc-document-1001> <urn:ontology-appliance:vocab:extractorName> "ontology-appliance-document-profiler" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:evidence-kyc-document-1001> <urn:ontology-appliance:vocab:extractorVersion> "1.0.0" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:evidence-kyc-document-1001> <urn:ontology-appliance:vocab:contentSha256> "ab6ca88676c4f2091c09228d718cbccb9f6711df9c0727026a5aff820aec1787" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:evidence-kyc-document-1001> <urn:ontology-appliance:vocab:classification> "INTERNAL" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:evidence-kyc-document-1001> <urn:ontology-appliance:vocab:claim> "The synthetic KYC record names P-1001 as the ultimate beneficial owner of LE-2001." <urn:ontology-appliance:demo-bank:graph:provenance> .
+
+<urn:ontology-appliance:demo-bank:resource:generation-trace-crm-cif> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <urn:ontology-appliance:vocab:GenerationTrace> <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:generation-trace-crm-cif> <urn:ontology-appliance:vocab:generationMode> "deterministic" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:generation-trace-crm-cif> <urn:ontology-appliance:vocab:generatorProvider> "ontology-appliance" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:generation-trace-crm-cif> <urn:ontology-appliance:vocab:generatorModel> "schema-profile-rules-v1" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:generation-trace-crm-cif> <urn:ontology-appliance:vocab:modelParticipated> "false"^^<http://www.w3.org/2001/XMLSchema#boolean> <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:generation-trace-crm-cif> <urn:ontology-appliance:vocab:promptVersion> "not-applicable" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:generation-trace-crm-cif> <urn:ontology-appliance:vocab:algorithmVersion> "mapping-cif-rules-v1" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:generation-trace-crm-cif> <urn:ontology-appliance:vocab:deterministicInputHash> "fe6cd5cf3826a67e8bd3c216c888febbd55697b7c2b638aa381bcb389bcf985d" <urn:ontology-appliance:demo-bank:graph:provenance> .
+
+<urn:ontology-appliance:demo-bank:resource:generation-trace-crm-ubo> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <urn:ontology-appliance:vocab:GenerationTrace> <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:generation-trace-crm-ubo> <urn:ontology-appliance:vocab:generationMode> "deterministic" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:generation-trace-crm-ubo> <urn:ontology-appliance:vocab:generatorProvider> "ontology-appliance" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:generation-trace-crm-ubo> <urn:ontology-appliance:vocab:generatorModel> "schema-profile-rules-v1" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:generation-trace-crm-ubo> <urn:ontology-appliance:vocab:modelParticipated> "false"^^<http://www.w3.org/2001/XMLSchema#boolean> <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:generation-trace-crm-ubo> <urn:ontology-appliance:vocab:promptVersion> "not-applicable" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:generation-trace-crm-ubo> <urn:ontology-appliance:vocab:algorithmVersion> "mapping-ubo-rules-v1" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:generation-trace-crm-ubo> <urn:ontology-appliance:vocab:deterministicInputHash> "a86a7877bb404e9fa43de6af8c17a90d11739cb93e9f91013ee96ad0ccb5bb7f" <urn:ontology-appliance:demo-bank:graph:provenance> .
+
+<urn:ontology-appliance:demo-bank:resource:verification-run-crm-cif-mock> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <urn:ontology-appliance:vocab:VerificationRun> <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:verification-run-crm-cif-mock> <urn:ontology-appliance:vocab:verificationMode> "mock" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:verification-run-crm-cif-mock> <urn:ontology-appliance:vocab:verifierProvider> "deterministic-mock" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:verification-run-crm-cif-mock> <urn:ontology-appliance:vocab:verifierModel> "fixture-verifier-v1" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:verification-run-crm-cif-mock> <urn:ontology-appliance:vocab:promptVersion> "fixture-v1" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:verification-run-crm-cif-mock> <urn:ontology-appliance:vocab:independentAgreementAvailable> "false"^^<http://www.w3.org/2001/XMLSchema#boolean> <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:verification-run-crm-cif-mock> <urn:ontology-appliance:vocab:verificationReasonCode> "RISK_REQUIRES_HUMAN" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:verification-run-crm-cif-mock> <urn:ontology-appliance:vocab:verificationReasonCode> "MOCK_REQUIRES_HUMAN" <urn:ontology-appliance:demo-bank:graph:provenance> .
+
+<urn:ontology-appliance:demo-bank:resource:verification-run-crm-ubo-mock> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <urn:ontology-appliance:vocab:VerificationRun> <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:verification-run-crm-ubo-mock> <urn:ontology-appliance:vocab:verificationMode> "mock" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:verification-run-crm-ubo-mock> <urn:ontology-appliance:vocab:verifierProvider> "deterministic-mock" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:verification-run-crm-ubo-mock> <urn:ontology-appliance:vocab:verifierModel> "fixture-verifier-v1" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:verification-run-crm-ubo-mock> <urn:ontology-appliance:vocab:promptVersion> "fixture-v1" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:verification-run-crm-ubo-mock> <urn:ontology-appliance:vocab:independentAgreementAvailable> "false"^^<http://www.w3.org/2001/XMLSchema#boolean> <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:verification-run-crm-ubo-mock> <urn:ontology-appliance:vocab:verificationReasonCode> "RISK_REQUIRES_HUMAN" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:verification-run-crm-ubo-mock> <urn:ontology-appliance:vocab:verificationReasonCode> "MOCK_REQUIRES_HUMAN" <urn:ontology-appliance:demo-bank:graph:provenance> .
+
+<urn:ontology-appliance:demo-bank:resource:evidence-crm-snapshot> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <urn:ontology-appliance:vocab:EvidenceArtifact> <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:evidence-crm-snapshot> <http://www.w3.org/2000/01/rdf-schema#label> "CRM parties source snapshot"@en <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:evidence-crm-snapshot> <urn:ontology-appliance:vocab:tenantId> "demo-bank" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:evidence-crm-snapshot> <urn:ontology-appliance:vocab:sourceId> "crm-parties" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:evidence-crm-snapshot> <urn:ontology-appliance:vocab:snapshotId> "crm-parties@sha256:503d103ab015d2fb7720ba7e4aeed7f54e999426e22bc6e126fd663b79f5146a" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:evidence-crm-snapshot> <urn:ontology-appliance:vocab:locator> "data/synthetic/crm_parties.csv" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:evidence-crm-snapshot> <urn:ontology-appliance:vocab:observedAt> "2026-07-22T13:51:12Z"^^<http://www.w3.org/2001/XMLSchema#dateTime> <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:evidence-crm-snapshot> <urn:ontology-appliance:vocab:extractorName> "ontology-appliance-csv-profiler" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:evidence-crm-snapshot> <urn:ontology-appliance:vocab:extractorVersion> "1.0.0" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:evidence-crm-snapshot> <urn:ontology-appliance:vocab:contentSha256> "503d103ab015d2fb7720ba7e4aeed7f54e999426e22bc6e126fd663b79f5146a" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:evidence-crm-snapshot> <urn:ontology-appliance:vocab:classification> "INTERNAL" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:evidence-crm-snapshot> <urn:ontology-appliance:vocab:claim> "The pinned CRM CSV snapshot supports bounded source-field mapping proposals." <urn:ontology-appliance:demo-bank:graph:provenance> .
+
+<urn:ontology-appliance:demo-bank:resource:evidence-accounts-snapshot> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <urn:ontology-appliance:vocab:EvidenceArtifact> <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:evidence-accounts-snapshot> <http://www.w3.org/2000/01/rdf-schema#label> "Core banking accounts source snapshot"@en <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:evidence-accounts-snapshot> <urn:ontology-appliance:vocab:tenantId> "demo-bank" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:evidence-accounts-snapshot> <urn:ontology-appliance:vocab:sourceId> "core-accounts" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:evidence-accounts-snapshot> <urn:ontology-appliance:vocab:snapshotId> "core-accounts@sha256:5048c0b5a286afecb3b7bdcc81891b54bda12ab151e7097fcf81b3f1b5bb974a" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:evidence-accounts-snapshot> <urn:ontology-appliance:vocab:locator> "data/synthetic/accounts.csv" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:evidence-accounts-snapshot> <urn:ontology-appliance:vocab:observedAt> "2026-07-22T13:51:12Z"^^<http://www.w3.org/2001/XMLSchema#dateTime> <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:evidence-accounts-snapshot> <urn:ontology-appliance:vocab:extractorName> "ontology-appliance-csv-profiler" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:evidence-accounts-snapshot> <urn:ontology-appliance:vocab:extractorVersion> "1.0.0" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:evidence-accounts-snapshot> <urn:ontology-appliance:vocab:contentSha256> "5048c0b5a286afecb3b7bdcc81891b54bda12ab151e7097fcf81b3f1b5bb974a" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:evidence-accounts-snapshot> <urn:ontology-appliance:vocab:classification> "INTERNAL" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:evidence-accounts-snapshot> <urn:ontology-appliance:vocab:claim> "The pinned core-banking accounts CSV snapshot supports bounded source-field mapping proposals." <urn:ontology-appliance:demo-bank:graph:provenance> .
+
+<urn:ontology-appliance:demo-bank:resource:evidence-payments-snapshot> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <urn:ontology-appliance:vocab:EvidenceArtifact> <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:evidence-payments-snapshot> <http://www.w3.org/2000/01/rdf-schema#label> "Payments source snapshot"@en <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:evidence-payments-snapshot> <urn:ontology-appliance:vocab:tenantId> "demo-bank" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:evidence-payments-snapshot> <urn:ontology-appliance:vocab:sourceId> "payments" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:evidence-payments-snapshot> <urn:ontology-appliance:vocab:snapshotId> "payments@sha256:0439bfd4fd9c595042add6fa1f6cdcae557a88f566c1e50eac8739e1e7c76d86" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:evidence-payments-snapshot> <urn:ontology-appliance:vocab:locator> "data/synthetic/payments.jsonl" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:evidence-payments-snapshot> <urn:ontology-appliance:vocab:observedAt> "2026-07-22T13:51:12Z"^^<http://www.w3.org/2001/XMLSchema#dateTime> <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:evidence-payments-snapshot> <urn:ontology-appliance:vocab:extractorName> "ontology-appliance-jsonl-profiler" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:evidence-payments-snapshot> <urn:ontology-appliance:vocab:extractorVersion> "1.0.0" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:evidence-payments-snapshot> <urn:ontology-appliance:vocab:contentSha256> "0439bfd4fd9c595042add6fa1f6cdcae557a88f566c1e50eac8739e1e7c76d86" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:evidence-payments-snapshot> <urn:ontology-appliance:vocab:classification> "INTERNAL" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:evidence-payments-snapshot> <urn:ontology-appliance:vocab:claim> "The pinned payments JSONL snapshot supports bounded source-field mapping proposals." <urn:ontology-appliance:demo-bank:graph:provenance> .
+
+<urn:ontology-appliance:demo-bank:resource:evidence-aml-snapshot> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <urn:ontology-appliance:vocab:EvidenceArtifact> <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:evidence-aml-snapshot> <http://www.w3.org/2000/01/rdf-schema#label> "AML cases source snapshot"@en <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:evidence-aml-snapshot> <urn:ontology-appliance:vocab:tenantId> "demo-bank" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:evidence-aml-snapshot> <urn:ontology-appliance:vocab:sourceId> "aml-cases" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:evidence-aml-snapshot> <urn:ontology-appliance:vocab:snapshotId> "aml-cases@sha256:7fce6a969a484aa2a1222c1f45a382a3f9f9f9d5d4f44b97b5dbcd9b562981cb" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:evidence-aml-snapshot> <urn:ontology-appliance:vocab:locator> "data/synthetic/aml_cases.csv" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:evidence-aml-snapshot> <urn:ontology-appliance:vocab:observedAt> "2026-07-22T13:51:12Z"^^<http://www.w3.org/2001/XMLSchema#dateTime> <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:evidence-aml-snapshot> <urn:ontology-appliance:vocab:extractorName> "ontology-appliance-csv-profiler" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:evidence-aml-snapshot> <urn:ontology-appliance:vocab:extractorVersion> "1.0.0" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:evidence-aml-snapshot> <urn:ontology-appliance:vocab:contentSha256> "7fce6a969a484aa2a1222c1f45a382a3f9f9f9d5d4f44b97b5dbcd9b562981cb" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:evidence-aml-snapshot> <urn:ontology-appliance:vocab:classification> "INTERNAL" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:evidence-aml-snapshot> <urn:ontology-appliance:vocab:claim> "The pinned AML cases CSV snapshot supports bounded high-risk mapping proposals." <urn:ontology-appliance:demo-bank:graph:provenance> .
+
+<urn:ontology-appliance:demo-bank:resource:evidence-sanctions-snapshot> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <urn:ontology-appliance:vocab:EvidenceArtifact> <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:evidence-sanctions-snapshot> <http://www.w3.org/2000/01/rdf-schema#label> "Sanctions source snapshot"@en <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:evidence-sanctions-snapshot> <urn:ontology-appliance:vocab:tenantId> "demo-bank" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:evidence-sanctions-snapshot> <urn:ontology-appliance:vocab:sourceId> "sanctions-mock" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:evidence-sanctions-snapshot> <urn:ontology-appliance:vocab:snapshotId> "sanctions-mock@sha256:9307b98034dfc4d49952fad88cc445a37fd081452e6ac437f4302c98807cca72" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:evidence-sanctions-snapshot> <urn:ontology-appliance:vocab:locator> "data/synthetic/sanctions.json" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:evidence-sanctions-snapshot> <urn:ontology-appliance:vocab:observedAt> "2026-07-22T13:51:12Z"^^<http://www.w3.org/2001/XMLSchema#dateTime> <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:evidence-sanctions-snapshot> <urn:ontology-appliance:vocab:extractorName> "ontology-appliance-json-profiler" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:evidence-sanctions-snapshot> <urn:ontology-appliance:vocab:extractorVersion> "1.0.0" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:evidence-sanctions-snapshot> <urn:ontology-appliance:vocab:contentSha256> "9307b98034dfc4d49952fad88cc445a37fd081452e6ac437f4302c98807cca72" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:evidence-sanctions-snapshot> <urn:ontology-appliance:vocab:classification> "INTERNAL" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:evidence-sanctions-snapshot> <urn:ontology-appliance:vocab:claim> "The pinned sanctions JSON snapshot supports bounded high-risk mapping proposals." <urn:ontology-appliance:demo-bank:graph:provenance> .
+
+<urn:ontology-appliance:demo-bank:resource:generation-trace-crm-batch> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <urn:ontology-appliance:vocab:GenerationTrace> <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:generation-trace-crm-batch> <urn:ontology-appliance:vocab:generationMode> "deterministic" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:generation-trace-crm-batch> <urn:ontology-appliance:vocab:generatorProvider> "ontology-appliance" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:generation-trace-crm-batch> <urn:ontology-appliance:vocab:generatorModel> "schema-profile-rules-v1" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:generation-trace-crm-batch> <urn:ontology-appliance:vocab:modelParticipated> "false"^^<http://www.w3.org/2001/XMLSchema#boolean> <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:generation-trace-crm-batch> <urn:ontology-appliance:vocab:promptVersion> "not-applicable" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:generation-trace-crm-batch> <urn:ontology-appliance:vocab:algorithmVersion> "mapping-crm-batch-rules-v1" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:generation-trace-crm-batch> <urn:ontology-appliance:vocab:deterministicInputHash> "17dd4deb41aaf6626054a9e6eecbf9b9a71ee4859530174a2c899bef2aa9b48a" <urn:ontology-appliance:demo-bank:graph:provenance> .
+
+<urn:ontology-appliance:demo-bank:resource:verification-run-crm-batch-mock> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <urn:ontology-appliance:vocab:VerificationRun> <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:verification-run-crm-batch-mock> <urn:ontology-appliance:vocab:verificationMode> "mock" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:verification-run-crm-batch-mock> <urn:ontology-appliance:vocab:verifierProvider> "deterministic-mock" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:verification-run-crm-batch-mock> <urn:ontology-appliance:vocab:verifierModel> "fixture-verifier-v1" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:verification-run-crm-batch-mock> <urn:ontology-appliance:vocab:promptVersion> "fixture-v1" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:verification-run-crm-batch-mock> <urn:ontology-appliance:vocab:independentAgreementAvailable> "false"^^<http://www.w3.org/2001/XMLSchema#boolean> <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:verification-run-crm-batch-mock> <urn:ontology-appliance:vocab:verificationReasonCode> "MOCK_REQUIRES_HUMAN" <urn:ontology-appliance:demo-bank:graph:provenance> .
+
+<urn:ontology-appliance:demo-bank:resource:generation-trace-accounts-batch> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <urn:ontology-appliance:vocab:GenerationTrace> <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:generation-trace-accounts-batch> <urn:ontology-appliance:vocab:generationMode> "deterministic" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:generation-trace-accounts-batch> <urn:ontology-appliance:vocab:generatorProvider> "ontology-appliance" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:generation-trace-accounts-batch> <urn:ontology-appliance:vocab:generatorModel> "schema-profile-rules-v1" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:generation-trace-accounts-batch> <urn:ontology-appliance:vocab:modelParticipated> "false"^^<http://www.w3.org/2001/XMLSchema#boolean> <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:generation-trace-accounts-batch> <urn:ontology-appliance:vocab:promptVersion> "not-applicable" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:generation-trace-accounts-batch> <urn:ontology-appliance:vocab:algorithmVersion> "mapping-accounts-batch-rules-v1" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:generation-trace-accounts-batch> <urn:ontology-appliance:vocab:deterministicInputHash> "38920b9fea1556b3759f335efd1470529d6a0c60804053397fab92cb98c64a59" <urn:ontology-appliance:demo-bank:graph:provenance> .
+
+<urn:ontology-appliance:demo-bank:resource:verification-run-accounts-batch-mock> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <urn:ontology-appliance:vocab:VerificationRun> <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:verification-run-accounts-batch-mock> <urn:ontology-appliance:vocab:verificationMode> "mock" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:verification-run-accounts-batch-mock> <urn:ontology-appliance:vocab:verifierProvider> "deterministic-mock" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:verification-run-accounts-batch-mock> <urn:ontology-appliance:vocab:verifierModel> "fixture-verifier-v1" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:verification-run-accounts-batch-mock> <urn:ontology-appliance:vocab:promptVersion> "fixture-v1" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:verification-run-accounts-batch-mock> <urn:ontology-appliance:vocab:independentAgreementAvailable> "false"^^<http://www.w3.org/2001/XMLSchema#boolean> <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:verification-run-accounts-batch-mock> <urn:ontology-appliance:vocab:verificationReasonCode> "MOCK_REQUIRES_HUMAN" <urn:ontology-appliance:demo-bank:graph:provenance> .
+
+<urn:ontology-appliance:demo-bank:resource:generation-trace-payments-batch> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <urn:ontology-appliance:vocab:GenerationTrace> <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:generation-trace-payments-batch> <urn:ontology-appliance:vocab:generationMode> "deterministic" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:generation-trace-payments-batch> <urn:ontology-appliance:vocab:generatorProvider> "ontology-appliance" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:generation-trace-payments-batch> <urn:ontology-appliance:vocab:generatorModel> "schema-profile-rules-v1" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:generation-trace-payments-batch> <urn:ontology-appliance:vocab:modelParticipated> "false"^^<http://www.w3.org/2001/XMLSchema#boolean> <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:generation-trace-payments-batch> <urn:ontology-appliance:vocab:promptVersion> "not-applicable" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:generation-trace-payments-batch> <urn:ontology-appliance:vocab:algorithmVersion> "mapping-payments-batch-rules-v1" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:generation-trace-payments-batch> <urn:ontology-appliance:vocab:deterministicInputHash> "24d33993acdb47b26d4a49255d4c29f5d9467b9346653d9dfa9a8f57d960dbec" <urn:ontology-appliance:demo-bank:graph:provenance> .
+
+<urn:ontology-appliance:demo-bank:resource:verification-run-payments-batch-mock> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <urn:ontology-appliance:vocab:VerificationRun> <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:verification-run-payments-batch-mock> <urn:ontology-appliance:vocab:verificationMode> "mock" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:verification-run-payments-batch-mock> <urn:ontology-appliance:vocab:verifierProvider> "deterministic-mock" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:verification-run-payments-batch-mock> <urn:ontology-appliance:vocab:verifierModel> "fixture-verifier-v1" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:verification-run-payments-batch-mock> <urn:ontology-appliance:vocab:promptVersion> "fixture-v1" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:verification-run-payments-batch-mock> <urn:ontology-appliance:vocab:independentAgreementAvailable> "false"^^<http://www.w3.org/2001/XMLSchema#boolean> <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:verification-run-payments-batch-mock> <urn:ontology-appliance:vocab:verificationReasonCode> "MOCK_REQUIRES_HUMAN" <urn:ontology-appliance:demo-bank:graph:provenance> .
+
+<urn:ontology-appliance:demo-bank:resource:generation-trace-aml-batch> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <urn:ontology-appliance:vocab:GenerationTrace> <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:generation-trace-aml-batch> <urn:ontology-appliance:vocab:generationMode> "deterministic" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:generation-trace-aml-batch> <urn:ontology-appliance:vocab:generatorProvider> "ontology-appliance" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:generation-trace-aml-batch> <urn:ontology-appliance:vocab:generatorModel> "schema-profile-rules-v1" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:generation-trace-aml-batch> <urn:ontology-appliance:vocab:modelParticipated> "false"^^<http://www.w3.org/2001/XMLSchema#boolean> <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:generation-trace-aml-batch> <urn:ontology-appliance:vocab:promptVersion> "not-applicable" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:generation-trace-aml-batch> <urn:ontology-appliance:vocab:algorithmVersion> "mapping-aml-batch-rules-v1" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:generation-trace-aml-batch> <urn:ontology-appliance:vocab:deterministicInputHash> "b9d2bcf1d6a44b8bdba06e9240db786052278f6e6d242738492af44c4c7d44cd" <urn:ontology-appliance:demo-bank:graph:provenance> .
+
+<urn:ontology-appliance:demo-bank:resource:verification-run-aml-batch-mock> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <urn:ontology-appliance:vocab:VerificationRun> <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:verification-run-aml-batch-mock> <urn:ontology-appliance:vocab:verificationMode> "mock" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:verification-run-aml-batch-mock> <urn:ontology-appliance:vocab:verifierProvider> "deterministic-mock" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:verification-run-aml-batch-mock> <urn:ontology-appliance:vocab:verifierModel> "fixture-verifier-v1" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:verification-run-aml-batch-mock> <urn:ontology-appliance:vocab:promptVersion> "fixture-v1" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:verification-run-aml-batch-mock> <urn:ontology-appliance:vocab:independentAgreementAvailable> "false"^^<http://www.w3.org/2001/XMLSchema#boolean> <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:verification-run-aml-batch-mock> <urn:ontology-appliance:vocab:verificationReasonCode> "MOCK_REQUIRES_HUMAN" <urn:ontology-appliance:demo-bank:graph:provenance> .
+
+<urn:ontology-appliance:demo-bank:resource:generation-trace-sanctions-batch> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <urn:ontology-appliance:vocab:GenerationTrace> <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:generation-trace-sanctions-batch> <urn:ontology-appliance:vocab:generationMode> "deterministic" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:generation-trace-sanctions-batch> <urn:ontology-appliance:vocab:generatorProvider> "ontology-appliance" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:generation-trace-sanctions-batch> <urn:ontology-appliance:vocab:generatorModel> "schema-profile-rules-v1" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:generation-trace-sanctions-batch> <urn:ontology-appliance:vocab:modelParticipated> "false"^^<http://www.w3.org/2001/XMLSchema#boolean> <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:generation-trace-sanctions-batch> <urn:ontology-appliance:vocab:promptVersion> "not-applicable" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:generation-trace-sanctions-batch> <urn:ontology-appliance:vocab:algorithmVersion> "mapping-sanctions-batch-rules-v1" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:generation-trace-sanctions-batch> <urn:ontology-appliance:vocab:deterministicInputHash> "29f3de3c459930173c8b8895b7099594575f9e5a7778b3617f77b3a9cfa8b505" <urn:ontology-appliance:demo-bank:graph:provenance> .
+
+<urn:ontology-appliance:demo-bank:resource:verification-run-sanctions-batch-mock> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <urn:ontology-appliance:vocab:VerificationRun> <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:verification-run-sanctions-batch-mock> <urn:ontology-appliance:vocab:verificationMode> "mock" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:verification-run-sanctions-batch-mock> <urn:ontology-appliance:vocab:verifierProvider> "deterministic-mock" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:verification-run-sanctions-batch-mock> <urn:ontology-appliance:vocab:verifierModel> "fixture-verifier-v1" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:verification-run-sanctions-batch-mock> <urn:ontology-appliance:vocab:promptVersion> "fixture-v1" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:verification-run-sanctions-batch-mock> <urn:ontology-appliance:vocab:independentAgreementAvailable> "false"^^<http://www.w3.org/2001/XMLSchema#boolean> <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:verification-run-sanctions-batch-mock> <urn:ontology-appliance:vocab:verificationReasonCode> "MOCK_REQUIRES_HUMAN" <urn:ontology-appliance:demo-bank:graph:provenance> .
+
+<urn:ontology-appliance:demo-bank:resource:generation-trace-kyc-batch> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <urn:ontology-appliance:vocab:GenerationTrace> <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:generation-trace-kyc-batch> <urn:ontology-appliance:vocab:generationMode> "deterministic" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:generation-trace-kyc-batch> <urn:ontology-appliance:vocab:generatorProvider> "ontology-appliance" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:generation-trace-kyc-batch> <urn:ontology-appliance:vocab:generatorModel> "schema-profile-rules-v1" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:generation-trace-kyc-batch> <urn:ontology-appliance:vocab:modelParticipated> "false"^^<http://www.w3.org/2001/XMLSchema#boolean> <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:generation-trace-kyc-batch> <urn:ontology-appliance:vocab:promptVersion> "not-applicable" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:generation-trace-kyc-batch> <urn:ontology-appliance:vocab:algorithmVersion> "mapping-kyc-batch-rules-v1" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:generation-trace-kyc-batch> <urn:ontology-appliance:vocab:deterministicInputHash> "d18357da7a22e067474a8de163abd3264ccc4ea991e228daeceac5d21863c25e" <urn:ontology-appliance:demo-bank:graph:provenance> .
+
+<urn:ontology-appliance:demo-bank:resource:verification-run-kyc-batch-mock> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <urn:ontology-appliance:vocab:VerificationRun> <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:verification-run-kyc-batch-mock> <urn:ontology-appliance:vocab:verificationMode> "mock" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:verification-run-kyc-batch-mock> <urn:ontology-appliance:vocab:verifierProvider> "deterministic-mock" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:verification-run-kyc-batch-mock> <urn:ontology-appliance:vocab:verifierModel> "fixture-verifier-v1" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:verification-run-kyc-batch-mock> <urn:ontology-appliance:vocab:promptVersion> "fixture-v1" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:verification-run-kyc-batch-mock> <urn:ontology-appliance:vocab:independentAgreementAvailable> "false"^^<http://www.w3.org/2001/XMLSchema#boolean> <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:verification-run-kyc-batch-mock> <urn:ontology-appliance:vocab:verificationReasonCode> "MOCK_REQUIRES_HUMAN" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:evidence-crm-bounded-limitation> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <urn:ontology-appliance:vocab:EvidenceArtifact> <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:evidence-crm-bounded-limitation> <http://www.w3.org/2000/01/rdf-schema#label> "CRM bounded-snapshot limitation"@en <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:evidence-crm-bounded-limitation> <urn:ontology-appliance:vocab:tenantId> "demo-bank" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:evidence-crm-bounded-limitation> <urn:ontology-appliance:vocab:sourceId> "crm-parties" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:evidence-crm-bounded-limitation> <urn:ontology-appliance:vocab:snapshotId> "crm-parties@sha256:503d103ab015d2fb7720ba7e4aeed7f54e999426e22bc6e126fd663b79f5146a" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:evidence-crm-bounded-limitation> <urn:ontology-appliance:vocab:locator> "data/synthetic/crm_parties.csv" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:evidence-crm-bounded-limitation> <urn:ontology-appliance:vocab:observedAt> "2026-07-22T13:51:12Z"^^<http://www.w3.org/2001/XMLSchema#dateTime> <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:evidence-crm-bounded-limitation> <urn:ontology-appliance:vocab:extractorName> "ontology-appliance-csv-profiler" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:evidence-crm-bounded-limitation> <urn:ontology-appliance:vocab:extractorVersion> "1.0.0" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:evidence-crm-bounded-limitation> <urn:ontology-appliance:vocab:contentSha256> "503d103ab015d2fb7720ba7e4aeed7f54e999426e22bc6e126fd663b79f5146a" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:evidence-crm-bounded-limitation> <urn:ontology-appliance:vocab:classification> "INTERNAL" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:evidence-crm-bounded-limitation> <urn:ontology-appliance:vocab:claim> "The bounded synthetic snapshot cannot establish production-wide generalization; steward review remains required." <urn:ontology-appliance:demo-bank:graph:provenance> .
+
+<urn:ontology-appliance:demo-bank:resource:evidence-accounts-bounded-limitation> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <urn:ontology-appliance:vocab:EvidenceArtifact> <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:evidence-accounts-bounded-limitation> <http://www.w3.org/2000/01/rdf-schema#label> "Accounts bounded-snapshot limitation"@en <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:evidence-accounts-bounded-limitation> <urn:ontology-appliance:vocab:tenantId> "demo-bank" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:evidence-accounts-bounded-limitation> <urn:ontology-appliance:vocab:sourceId> "core-accounts" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:evidence-accounts-bounded-limitation> <urn:ontology-appliance:vocab:snapshotId> "core-accounts@sha256:5048c0b5a286afecb3b7bdcc81891b54bda12ab151e7097fcf81b3f1b5bb974a" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:evidence-accounts-bounded-limitation> <urn:ontology-appliance:vocab:locator> "data/synthetic/accounts.csv" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:evidence-accounts-bounded-limitation> <urn:ontology-appliance:vocab:observedAt> "2026-07-22T13:51:12Z"^^<http://www.w3.org/2001/XMLSchema#dateTime> <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:evidence-accounts-bounded-limitation> <urn:ontology-appliance:vocab:extractorName> "ontology-appliance-csv-profiler" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:evidence-accounts-bounded-limitation> <urn:ontology-appliance:vocab:extractorVersion> "1.0.0" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:evidence-accounts-bounded-limitation> <urn:ontology-appliance:vocab:contentSha256> "5048c0b5a286afecb3b7bdcc81891b54bda12ab151e7097fcf81b3f1b5bb974a" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:evidence-accounts-bounded-limitation> <urn:ontology-appliance:vocab:classification> "INTERNAL" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:evidence-accounts-bounded-limitation> <urn:ontology-appliance:vocab:claim> "The bounded synthetic snapshot cannot establish production-wide generalization; steward review remains required." <urn:ontology-appliance:demo-bank:graph:provenance> .
+
+<urn:ontology-appliance:demo-bank:resource:evidence-payments-bounded-limitation> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <urn:ontology-appliance:vocab:EvidenceArtifact> <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:evidence-payments-bounded-limitation> <http://www.w3.org/2000/01/rdf-schema#label> "Payments bounded-snapshot limitation"@en <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:evidence-payments-bounded-limitation> <urn:ontology-appliance:vocab:tenantId> "demo-bank" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:evidence-payments-bounded-limitation> <urn:ontology-appliance:vocab:sourceId> "payments" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:evidence-payments-bounded-limitation> <urn:ontology-appliance:vocab:snapshotId> "payments@sha256:0439bfd4fd9c595042add6fa1f6cdcae557a88f566c1e50eac8739e1e7c76d86" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:evidence-payments-bounded-limitation> <urn:ontology-appliance:vocab:locator> "data/synthetic/payments.jsonl" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:evidence-payments-bounded-limitation> <urn:ontology-appliance:vocab:observedAt> "2026-07-22T13:51:12Z"^^<http://www.w3.org/2001/XMLSchema#dateTime> <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:evidence-payments-bounded-limitation> <urn:ontology-appliance:vocab:extractorName> "ontology-appliance-jsonl-profiler" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:evidence-payments-bounded-limitation> <urn:ontology-appliance:vocab:extractorVersion> "1.0.0" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:evidence-payments-bounded-limitation> <urn:ontology-appliance:vocab:contentSha256> "0439bfd4fd9c595042add6fa1f6cdcae557a88f566c1e50eac8739e1e7c76d86" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:evidence-payments-bounded-limitation> <urn:ontology-appliance:vocab:classification> "INTERNAL" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:evidence-payments-bounded-limitation> <urn:ontology-appliance:vocab:claim> "The bounded synthetic snapshot cannot establish production-wide generalization; steward review remains required." <urn:ontology-appliance:demo-bank:graph:provenance> .
+
+<urn:ontology-appliance:demo-bank:resource:evidence-aml-bounded-limitation> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <urn:ontology-appliance:vocab:EvidenceArtifact> <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:evidence-aml-bounded-limitation> <http://www.w3.org/2000/01/rdf-schema#label> "AML bounded-snapshot limitation"@en <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:evidence-aml-bounded-limitation> <urn:ontology-appliance:vocab:tenantId> "demo-bank" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:evidence-aml-bounded-limitation> <urn:ontology-appliance:vocab:sourceId> "aml-cases" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:evidence-aml-bounded-limitation> <urn:ontology-appliance:vocab:snapshotId> "aml-cases@sha256:7fce6a969a484aa2a1222c1f45a382a3f9f9f9d5d4f44b97b5dbcd9b562981cb" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:evidence-aml-bounded-limitation> <urn:ontology-appliance:vocab:locator> "data/synthetic/aml_cases.csv" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:evidence-aml-bounded-limitation> <urn:ontology-appliance:vocab:observedAt> "2026-07-22T13:51:12Z"^^<http://www.w3.org/2001/XMLSchema#dateTime> <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:evidence-aml-bounded-limitation> <urn:ontology-appliance:vocab:extractorName> "ontology-appliance-csv-profiler" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:evidence-aml-bounded-limitation> <urn:ontology-appliance:vocab:extractorVersion> "1.0.0" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:evidence-aml-bounded-limitation> <urn:ontology-appliance:vocab:contentSha256> "7fce6a969a484aa2a1222c1f45a382a3f9f9f9d5d4f44b97b5dbcd9b562981cb" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:evidence-aml-bounded-limitation> <urn:ontology-appliance:vocab:classification> "INTERNAL" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:evidence-aml-bounded-limitation> <urn:ontology-appliance:vocab:claim> "The bounded synthetic snapshot cannot establish production-wide generalization; steward review remains required." <urn:ontology-appliance:demo-bank:graph:provenance> .
+
+<urn:ontology-appliance:demo-bank:resource:evidence-sanctions-bounded-limitation> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <urn:ontology-appliance:vocab:EvidenceArtifact> <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:evidence-sanctions-bounded-limitation> <http://www.w3.org/2000/01/rdf-schema#label> "Sanctions bounded-snapshot limitation"@en <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:evidence-sanctions-bounded-limitation> <urn:ontology-appliance:vocab:tenantId> "demo-bank" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:evidence-sanctions-bounded-limitation> <urn:ontology-appliance:vocab:sourceId> "sanctions-mock" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:evidence-sanctions-bounded-limitation> <urn:ontology-appliance:vocab:snapshotId> "sanctions-mock@sha256:9307b98034dfc4d49952fad88cc445a37fd081452e6ac437f4302c98807cca72" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:evidence-sanctions-bounded-limitation> <urn:ontology-appliance:vocab:locator> "data/synthetic/sanctions.json" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:evidence-sanctions-bounded-limitation> <urn:ontology-appliance:vocab:observedAt> "2026-07-22T13:51:12Z"^^<http://www.w3.org/2001/XMLSchema#dateTime> <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:evidence-sanctions-bounded-limitation> <urn:ontology-appliance:vocab:extractorName> "ontology-appliance-json-profiler" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:evidence-sanctions-bounded-limitation> <urn:ontology-appliance:vocab:extractorVersion> "1.0.0" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:evidence-sanctions-bounded-limitation> <urn:ontology-appliance:vocab:contentSha256> "9307b98034dfc4d49952fad88cc445a37fd081452e6ac437f4302c98807cca72" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:evidence-sanctions-bounded-limitation> <urn:ontology-appliance:vocab:classification> "INTERNAL" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:evidence-sanctions-bounded-limitation> <urn:ontology-appliance:vocab:claim> "The bounded synthetic snapshot cannot establish production-wide generalization; steward review remains required." <urn:ontology-appliance:demo-bank:graph:provenance> .
+
+<urn:ontology-appliance:demo-bank:resource:evidence-kyc-bounded-limitation> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <urn:ontology-appliance:vocab:EvidenceArtifact> <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:evidence-kyc-bounded-limitation> <http://www.w3.org/2000/01/rdf-schema#label> "KYC document bounded-snapshot limitation"@en <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:evidence-kyc-bounded-limitation> <urn:ontology-appliance:vocab:tenantId> "demo-bank" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:evidence-kyc-bounded-limitation> <urn:ontology-appliance:vocab:sourceId> "kyc-documents" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:evidence-kyc-bounded-limitation> <urn:ontology-appliance:vocab:snapshotId> "kyc-le-2001@sha256:ab6ca88676c4f2091c09228d718cbccb9f6711df9c0727026a5aff820aec1787" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:evidence-kyc-bounded-limitation> <urn:ontology-appliance:vocab:locator> "data/synthetic/kyc/LE-2001.txt" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:evidence-kyc-bounded-limitation> <urn:ontology-appliance:vocab:observedAt> "2026-07-22T13:51:12Z"^^<http://www.w3.org/2001/XMLSchema#dateTime> <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:evidence-kyc-bounded-limitation> <urn:ontology-appliance:vocab:extractorName> "ontology-appliance-document-profiler" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:evidence-kyc-bounded-limitation> <urn:ontology-appliance:vocab:extractorVersion> "1.0.0" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:evidence-kyc-bounded-limitation> <urn:ontology-appliance:vocab:contentSha256> "ab6ca88676c4f2091c09228d718cbccb9f6711df9c0727026a5aff820aec1787" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:evidence-kyc-bounded-limitation> <urn:ontology-appliance:vocab:classification> "INTERNAL" <urn:ontology-appliance:demo-bank:graph:provenance> .
+<urn:ontology-appliance:demo-bank:resource:evidence-kyc-bounded-limitation> <urn:ontology-appliance:vocab:claim> "The bounded synthetic snapshot cannot establish production-wide generalization; steward review remains required." <urn:ontology-appliance:demo-bank:graph:provenance> .

@@ -1,0 +1,453 @@
+openapi: 3.1.0
+info:
+  title: Ontology Appliance Semantic Gateway
+  version: 0.1.0
+  description: >-
+    Read-only, tenant-aware access to semantic context. Every successful response
+    identifies the ontology version, execution trace, supporting evidence, and whether
+    the bundle is a non-published demo candidate or a Publisher-promoted active release.
+servers:
+  - url: http://localhost:8081
+    description: Local semantic gateway
+security:
+  - bearerAuth: []
+paths:
+  /healthz:
+    get:
+      operationId: health
+      security: []
+      responses:
+        "200":
+          description: Runtime and active ontology health
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HealthResponse"
+  /v1/resolve:
+    post:
+      operationId: resolveTerm
+      summary: Resolve a business term or alias to governed concepts
+      x-required-roles: [admin, steward, auditor]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ResolveRequest"
+      responses:
+        "200":
+          description: Ranked concepts with provenance
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ResolveResponse"
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+        "422": { $ref: "#/components/responses/InvalidRequest" }
+        default: { $ref: "#/components/responses/DefaultProblem" }
+  /v1/context:
+    post:
+      operationId: getContext
+      summary: Build versioned semantic context for an agent task
+      x-required-roles: [admin, steward, auditor]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ContextRequest"
+      responses:
+        "200":
+          description: Governed context bundle
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ContextResponse"
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+        default: { $ref: "#/components/responses/DefaultProblem" }
+  /v1/query:
+    post:
+      operationId: semanticQuery
+      summary: Answer a supported competency question over approved fixtures
+      x-required-roles: [admin, steward, auditor]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/QueryRequest"
+      responses:
+        "200":
+          description: Evidence-backed semantic answer
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/QueryResponse"
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+        default: { $ref: "#/components/responses/DefaultProblem" }
+  /v1/explain:
+    post:
+      operationId: explainAssertion
+      summary: Explain an assertion, mapping, or prior trace
+      x-required-roles: [admin, steward, auditor]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ExplainRequest"
+      responses:
+        "200":
+          description: Explanation with concrete evidence locators
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ExplainResponse"
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+        default: { $ref: "#/components/responses/DefaultProblem" }
+  /v1/validate:
+    post:
+      operationId: validateProposal
+      summary: Evaluate an atomic semantic proposal through deterministic gates
+      x-required-roles: [admin, steward]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ValidateRequest"
+      responses:
+        "200":
+          description: Gate results and routing decision
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidateResponse"
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+        default: { $ref: "#/components/responses/DefaultProblem" }
+  /v1/sparql:
+    post:
+      operationId: readOnlySparql
+      summary: Execute a bounded read-only SPARQL query
+      description: UPDATE, SERVICE, LOAD, CLEAR, DROP, CREATE, COPY, MOVE, and ADD are rejected.
+      x-required-roles: [admin, steward, auditor]
+      x-read-only: true
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SparqlRequest"
+      responses:
+        "200":
+          description: SPARQL JSON result bounded by the server limit
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SparqlResponse"
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+        "422": { $ref: "#/components/responses/InvalidRequest" }
+        default: { $ref: "#/components/responses/DefaultProblem" }
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: Firebase-session-cookie
+  responses:
+    Unauthorized:
+      description: Missing or invalid identity
+      content:
+        application/problem+json:
+          schema: { $ref: "#/components/schemas/ProblemDetails" }
+    Forbidden:
+      description: Tenant or role is not authorized
+      content:
+        application/problem+json:
+          schema: { $ref: "#/components/schemas/ProblemDetails" }
+    InvalidRequest:
+      description: Contract or policy validation failed
+      content:
+        application/problem+json:
+          schema: { $ref: "#/components/schemas/ProblemDetails" }
+    DefaultProblem:
+      description: RFC 9457 Problem Details
+      content:
+        application/problem+json:
+          schema: { $ref: "#/components/schemas/ProblemDetails" }
+  schemas:
+    TenantId:
+      type: string
+      pattern: "^[a-z][a-z0-9-]{2,63}$"
+      example: demo-bank
+    HealthResponse:
+      type: object
+      additionalProperties: false
+      required: [status, ontologyVersion, artifactStatus, publicationState, servingMode, isPublished, tripleCount, loadedAt]
+      properties:
+        status: { enum: [ok, degraded] }
+        ontologyVersion: { type: string }
+        artifactStatus: { type: string }
+        publicationState: { enum: [CANDIDATE, PUBLISHED] }
+        servingMode: { enum: [DEMO_ONLY, ACTIVE] }
+        isPublished: { type: boolean }
+        tripleCount: { type: integer, minimum: 0 }
+        loadedAt: { type: string, format: date-time }
+    EvidenceReference:
+      type: object
+      additionalProperties: false
+      required: [artifact, sha256]
+      properties:
+        artifact: { type: string }
+        sha256: { type: string, pattern: "^[a-f0-9]{64}$" }
+        locator: { type: [string, "null"] }
+        sourceSystem: { type: [string, "null"] }
+        sourceRecordId: { type: [string, "null"] }
+    ResponseEnvelope:
+      type: object
+      additionalProperties: false
+      required: [data, ontologyVersion, traceId, tenantId, publicationState, servingMode, isPublished, evidence, warnings, status, generatedAt]
+      properties:
+        data: {}
+        ontologyVersion: { type: string }
+        traceId: { type: string }
+        tenantId: { $ref: "#/components/schemas/TenantId" }
+        publicationState: { enum: [CANDIDATE, PUBLISHED] }
+        servingMode: { enum: [DEMO_ONLY, ACTIVE] }
+        isPublished: { type: boolean }
+        evidence:
+          type: array
+          items: { $ref: "#/components/schemas/EvidenceReference" }
+        warnings:
+          type: array
+          items: { type: string }
+        status:
+          enum: [OK, PARTIAL, ABSTAINED]
+        generatedAt: { type: string, format: date-time }
+    ResolveRequest:
+      type: object
+      additionalProperties: false
+      required: [term]
+      properties:
+        term: { type: string, minLength: 1, maxLength: 200 }
+        limit: { type: integer, minimum: 1, maximum: 20, default: 5 }
+    ConceptMatch:
+      type: object
+      additionalProperties: false
+      required: [iri, label, score, matchedOn]
+      properties:
+        iri: { type: string }
+        label: { type: string }
+        definition: { type: [string, "null"] }
+        conceptType: { type: [string, "null"] }
+        score: { type: number, minimum: 0, maximum: 1 }
+        matchedOn: { type: string }
+    ResolveResponse:
+      allOf:
+        - { $ref: "#/components/schemas/ResponseEnvelope" }
+        - type: object
+          required: [data]
+          properties:
+            data:
+              type: object
+              required: [term, concepts]
+              properties:
+                term: { type: string }
+                concepts: { type: array, items: { $ref: "#/components/schemas/ConceptMatch" } }
+    ContextRequest:
+      type: object
+      additionalProperties: false
+      anyOf:
+        - required: [conceptIri]
+          properties:
+            conceptIri: { type: string, minLength: 1 }
+        - required: [term]
+          properties:
+            term: { type: string, minLength: 1 }
+      properties:
+        conceptIri: { type: [string, "null"], minLength: 1, maxLength: 2048, default: null }
+        term: { type: [string, "null"], minLength: 1, maxLength: 300, default: null }
+        includeNeighbors: { type: boolean, default: true }
+        limit: { type: integer, minimum: 1, maximum: 100, default: 25 }
+    ContextResponse:
+      allOf:
+        - { $ref: "#/components/schemas/ResponseEnvelope" }
+        - type: object
+          required: [data]
+          properties:
+            data:
+              type: object
+              required: [iri, label, types, relations, mappings]
+              properties:
+                iri: { type: string }
+                label: { type: string }
+                definition: { type: [string, "null"] }
+                types: { type: array, items: { type: string } }
+                relations: { type: array, items: { type: object } }
+                mappings: { type: array, items: { type: object } }
+    QueryRequest:
+      type: object
+      additionalProperties: false
+      anyOf:
+        - required: [question]
+          properties:
+            question: { type: string, minLength: 1 }
+        - required: [competencyQuestionId]
+          properties:
+            competencyQuestionId: { type: string, pattern: "^CQ-00[1-5]$" }
+      properties:
+        question: { type: [string, "null"], minLength: 1, maxLength: 2000, default: null }
+        competencyQuestionId: { type: [string, "null"], pattern: "^CQ-00[1-5]$", default: null }
+        parameters:
+          type: object
+          additionalProperties:
+            anyOf:
+              - { type: string }
+              - { type: integer }
+              - { type: number }
+              - { type: boolean }
+    QueryResponse:
+      allOf:
+        - { $ref: "#/components/schemas/ResponseEnvelope" }
+        - type: object
+          required: [data]
+          properties:
+            data:
+              type: object
+              required: [question, rows, explanation]
+              properties:
+                competencyQuestionId: { type: [string, "null"] }
+                question: { type: string }
+                rows: { type: array, items: { type: object } }
+                explanation: { type: string }
+                sparql: { type: [string, "null"] }
+    ExplainRequest:
+      type: object
+      additionalProperties: false
+      anyOf:
+        - required: [resourceIri]
+          properties:
+            resourceIri: { type: string, minLength: 1 }
+        - required: [mappingId]
+          properties:
+            mappingId: { type: string, minLength: 1 }
+      properties:
+        resourceIri: { type: [string, "null"], minLength: 1, maxLength: 2048, default: null }
+        mappingId: { type: [string, "null"], minLength: 1, maxLength: 300, default: null }
+    ExplainResponse:
+      allOf:
+        - { $ref: "#/components/schemas/ResponseEnvelope" }
+        - type: object
+          required: [data]
+          properties:
+            data:
+              type: object
+              required: [resourceIri, label, rationale, steps, counterexamples]
+              properties:
+                resourceIri: { type: string }
+                label: { type: string }
+                rationale: { type: string }
+                confidence: { type: [object, "null"], additionalProperties: { type: number } }
+                steps: { type: array, items: { type: object } }
+                counterexamples: { type: array, items: { type: string } }
+    ConfidenceVector:
+      type: object
+      additionalProperties: false
+      required: [evidenceCoverage, sourceAgreement, deterministicTests, semanticConsistency, modelAgreement, humanApproval]
+      properties:
+        evidenceCoverage: { type: number, minimum: 0, maximum: 1 }
+        sourceAgreement: { type: number, minimum: 0, maximum: 1 }
+        deterministicTests: { type: number, minimum: 0, maximum: 1 }
+        semanticConsistency: { type: number, minimum: 0, maximum: 1 }
+        modelAgreement: { type: [number, "null"], minimum: 0, maximum: 1 }
+        humanApproval: { type: [number, "null"], minimum: 0, maximum: 1 }
+    Proposal:
+      type: object
+      additionalProperties: false
+      required: [id, kind, subjectIri, objectValue, risk, evidence]
+      properties:
+        id: { type: string }
+        kind: { enum: [CONCEPT, RELATION, MAPPING, CONSTRAINT, MERGE, ASSERTION] }
+        subjectIri: { type: string }
+        predicateIri: { type: string }
+        objectValue: { type: string }
+        risk: { enum: [LOW, MEDIUM, HIGH] }
+        evidence:
+          type: array
+          minItems: 1
+          items: { $ref: "#/components/schemas/EvidenceReference" }
+    ValidateRequest:
+      type: object
+      additionalProperties: false
+      properties:
+        dataTurtle: { type: [string, "null"], maxLength: 1000000, default: null }
+        shapesTurtle: { type: [string, "null"], maxLength: 1000000, default: null }
+        includeOwlRlClosure: { type: boolean, default: true }
+    GateResult:
+      type: object
+      additionalProperties: false
+      required: [gate, status, details, evidenceIds]
+      properties:
+        gate:
+          enum: [CONTRACT, SEMANTIC, SOURCE_EVIDENCE, INDEPENDENT_QUESTIONS, MODEL_CONSISTENCY, DATA_TESTS, GLOBAL_CONSISTENCY, HUMAN_ADJUDICATION]
+        status: { enum: [PASSED, FAILED, SKIPPED, REVIEW_REQUIRED] }
+        details: { type: string }
+        evidenceIds: { type: array, items: { type: string } }
+    ValidateResponse:
+      allOf:
+        - { $ref: "#/components/schemas/ResponseEnvelope" }
+        - type: object
+          required: [data]
+          properties:
+            data:
+              type: object
+              required: [conforms, issues, reportText, inferredTriples]
+              properties:
+                conforms: { type: boolean }
+                issues: { type: array, items: { type: object } }
+                reportText: { type: string }
+                inferredTriples: { type: integer, minimum: 0 }
+    SparqlRequest:
+      type: object
+      additionalProperties: false
+      required: [query]
+      properties:
+        query: { type: string, minLength: 1, maxLength: 20000 }
+        maxRows: { type: integer, minimum: 1, maximum: 1000, default: 100 }
+    SparqlResponse:
+      allOf:
+        - { $ref: "#/components/schemas/ResponseEnvelope" }
+        - type: object
+          required: [data]
+          properties:
+            data:
+              $ref: "#/components/schemas/SparqlResult"
+    SparqlResult:
+      type: object
+      additionalProperties: false
+      required: [queryType, variables, rows, boolean, truncated]
+      properties:
+        queryType: { type: string, enum: [SELECT, ASK, CONSTRUCT, DESCRIBE] }
+        variables: { type: array, items: { type: string } }
+        rows:
+          type: array
+          items: { type: object, additionalProperties: true }
+        boolean: { type: [boolean, "null"] }
+        truncated: { type: boolean }
+    ProblemDetails:
+      type: object
+      additionalProperties: true
+      required: [type, title, status, detail, instance, code, traceId]
+      properties:
+        type: { type: string, format: uri-reference }
+        title: { type: string }
+        status: { type: integer, minimum: 400, maximum: 599 }
+        detail: { type: string }
+        instance: { type: string }
+        code: { type: string }
+        traceId: { type: string }

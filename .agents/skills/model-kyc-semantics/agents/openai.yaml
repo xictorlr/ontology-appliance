@@ -1,0 +1,4 @@
+interface:
+  display_name: "Model KYC Semantics"
+  short_description: "Model governed KYC ontology packages"
+  default_prompt: "Use $model-kyc-semantics to design and validate the pilot KYC ontology package."

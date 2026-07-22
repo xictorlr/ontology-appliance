@@ -1,0 +1,26 @@
+{
+  "accessMode": "read_only",
+  "content": {
+    "byteCount": 444,
+    "recordCount": 3,
+    "sha256": "0439bfd4fd9c595042add6fa1f6cdcae557a88f566c1e50eac8739e1e7c76d86",
+    "sourceAssets": [
+      {
+        "byteCount": 444,
+        "mediaType": "application/x-ndjson",
+        "path": "data/synthetic/payments.jsonl",
+        "sha256": "0439bfd4fd9c595042add6fa1f6cdcae557a88f566c1e50eac8739e1e7c76d86"
+      }
+    ]
+  },
+  "extractorName": "ontology-appliance-synthetic-profiler",
+  "extractorVersion": "1.0.0",
+  "observedAt": "2026-06-19T08:45:00Z",
+  "profileLocator": "profiles/payments/profile.json",
+  "schemaLocator": "contracts/payments.schema.json",
+  "schemaVersion": "1.0",
+  "snapshotId": "payments-ledger@sha256:0439bfd4fd9c595042add6fa1f6cdcae557a88f566c1e50eac8739e1e7c76d86",
+  "sourceId": "payments-ledger",
+  "sourceLocator": "data/synthetic/payments.jsonl",
+  "tenantId": "demo-bank"
+}

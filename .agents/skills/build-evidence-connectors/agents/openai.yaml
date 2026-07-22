@@ -1,0 +1,4 @@
+interface:
+  display_name: "Build Evidence Connectors"
+  short_description: "Build provenance-first source connectors"
+  default_prompt: "Use $build-evidence-connectors to implement a read-only evidence connector and its manifest."

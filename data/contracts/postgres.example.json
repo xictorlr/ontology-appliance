@@ -1,0 +1,16 @@
+{
+  "connectorId": "pilot-postgres",
+  "kind": "postgresql",
+  "mode": "READ_ONLY",
+  "tenantId": "demo-bank",
+  "configuration": {
+    "host": "postgres",
+    "port": 5432,
+    "database": "ontology_appliance",
+    "schemas": ["crm", "core_banking"],
+    "statementTimeoutMs": 30000
+  },
+  "secretRef": "oa-dev-postgres-readonly",
+  "watermarkField": "source_updated_at",
+  "enabled": true
+}

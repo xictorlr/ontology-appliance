@@ -1,0 +1,3 @@
+{"payment_id":"PAY-5001","from_account":"ES120001","to_account":"DE890001","amount":"125000.00","currency":"EUR","booked_at":"2026-06-18T11:10:00Z"}
+{"payment_id":"PAY-5002","from_account":"ES120001","to_account":"DE890001","amount":"17000.00","currency":"USD","booked_at":"2026-06-18T13:05:00Z"}
+{"payment_id":"PAY-5003","from_account":"ES120002","to_account":"DE890001","amount":"320.00","currency":"EUR","booked_at":"2026-06-19T08:45:00Z"}

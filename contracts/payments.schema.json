@@ -1,0 +1,52 @@
+{
+  "$id": "urn:ontology-appliance:demo-bank:schema:payments-ledger:0439bfd4fd9c595042add6fa1f6cdcae557a88f566c1e50eac8739e1e7c76d86",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "amount": {
+      "pattern": "^[0-9]+\\.[0-9]{2}$",
+      "type": "string",
+      "x-normalizedType": "decimal"
+    },
+    "booked_at": {
+      "format": "date-time",
+      "type": "string"
+    },
+    "currency": {
+      "pattern": "^[A-Z]{3}$",
+      "type": "string"
+    },
+    "from_account": {
+      "minLength": 1,
+      "type": "string"
+    },
+    "payment_id": {
+      "minLength": 1,
+      "type": "string"
+    },
+    "to_account": {
+      "minLength": 1,
+      "type": "string"
+    }
+  },
+  "required": [
+    "payment_id",
+    "from_account",
+    "to_account",
+    "amount",
+    "currency",
+    "booked_at"
+  ],
+  "title": "Synthetic payments ledger snapshot schema",
+  "type": "object",
+  "x-ontology-appliance-evidence": {
+    "extractorName": "ontology-appliance-synthetic-profiler",
+    "extractorVersion": "1.0.0",
+    "observedAt": "2026-06-19T08:45:00Z",
+    "snapshotId": "payments-ledger@sha256:0439bfd4fd9c595042add6fa1f6cdcae557a88f566c1e50eac8739e1e7c76d86",
+    "sourceId": "payments-ledger",
+    "sourceLocator": "data/synthetic/payments.jsonl#line=1",
+    "sourceSha256": "0439bfd4fd9c595042add6fa1f6cdcae557a88f566c1e50eac8739e1e7c76d86",
+    "tenantId": "demo-bank"
+  }
+}

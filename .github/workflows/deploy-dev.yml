@@ -1,0 +1,226 @@
+name: Deploy dev backends
+
+on:
+  workflow_run:
+    workflows: [CI]
+    types: [completed]
+  workflow_dispatch:
+    inputs:
+      deployment_scope:
+        description: Bootstrap only creates the gateway secret; full requires and tests App Hosting
+        required: true
+        type: choice
+        options: [full, bootstrap]
+        default: full
+      semantic_mode:
+        description: Serve the labeled demo candidate or an already Publisher-promoted release
+        required: true
+        type: choice
+        options: [candidate, published]
+        default: candidate
+
+permissions:
+  contents: read
+  id-token: write
+
+concurrency:
+  group: ontology-dev-mutation
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    if: >-
+      github.repository_owner != 'example' &&
+      (vars.CLOUD_DEPLOY_ENABLED == 'true' ||
+      (github.event_name == 'workflow_dispatch' && inputs.deployment_scope == 'bootstrap')) &&
+      ((github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main') ||
+      (github.event.workflow_run.conclusion == 'success' &&
+      github.event.workflow_run.event == 'push' &&
+      github.event.workflow_run.head_branch == 'main' &&
+      github.event.workflow_run.head_repository.full_name == github.repository))
+    runs-on: ubuntu-latest
+    environment: development
+    env:
+      RELEASE_SHA: ${{ github.event.workflow_run.head_sha || github.sha }}
+      DEPLOYMENT_SCOPE: ${{ github.event_name == 'workflow_dispatch' && inputs.deployment_scope || 'full' }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.event.workflow_run.head_sha || github.sha }}
+      - name: Refuse a replay of historical main
+        env:
+          EXPECTED_RELEASE_SHA: ${{ env.RELEASE_SHA }}
+        run: bash scripts/assert_current_main.sh
+      - name: Validate environment-scoped deployment configuration
+        shell: bash
+        env:
+          GCP_PROJECT_ID: ${{ vars.GCP_PROJECT_ID }}
+          GCP_WORKLOAD_IDENTITY_PROVIDER: ${{ vars.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+          GCP_DEPLOY_SERVICE_ACCOUNT: ${{ vars.GCP_DEPLOY_SERVICE_ACCOUNT }}
+          ARTIFACT_REGISTRY_IMAGE: ${{ vars.ARTIFACT_REGISTRY_IMAGE }}
+          GATEWAY_SERVICE_ACCOUNT: ${{ vars.GATEWAY_SERVICE_ACCOUNT }}
+          APPHOSTING_SERVICE_ACCOUNT: ${{ vars.APPHOSTING_SERVICE_ACCOUNT }}
+          FUNCTIONS_SERVICE_ACCOUNT: ${{ vars.FUNCTIONS_SERVICE_ACCOUNT }}
+          INPUT_BUCKET: ${{ vars.INPUT_BUCKET }}
+          ARTIFACT_BUCKET: ${{ vars.ARTIFACT_BUCKET }}
+          APP_HOSTING_URL: ${{ vars.APP_HOSTING_URL }}
+        run: |
+          for name in GCP_PROJECT_ID GCP_WORKLOAD_IDENTITY_PROVIDER \
+            GCP_DEPLOY_SERVICE_ACCOUNT ARTIFACT_REGISTRY_IMAGE \
+            GATEWAY_SERVICE_ACCOUNT APPHOSTING_SERVICE_ACCOUNT \
+            FUNCTIONS_SERVICE_ACCOUNT INPUT_BUCKET ARTIFACT_BUCKET; do
+            test -n "${!name}" || { echo "Missing environment variable: $name" >&2; exit 1; }
+          done
+          if [[ "$DEPLOYMENT_SCOPE" == "full" ]]; then
+            test -n "$APP_HOSTING_URL" || { echo "APP_HOSTING_URL is required for a full deploy." >&2; exit 1; }
+            [[ "$APP_HOSTING_URL" == https://* ]]
+          elif [[ "${{ inputs.semantic_mode }}" == "published" ]]; then
+            echo "Bootstrap cannot activate published semantics." >&2
+            exit 1
+          fi
+      - uses: pnpm/action-setup@0ebf47130e4866e96fce0953f49152a61190b271 # v6.0.9
+        with:
+          version: 9.12.3
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 22
+          cache: pnpm
+      - uses: actions/setup-java@03ad4de0992f5dab5e18fcb136590ce7c4a0ac95 # v5
+        with:
+          distribution: temurin
+          java-version: "21"
+      - run: pnpm install --frozen-lockfile
+      - name: Re-run release gates on the exact revision
+        env:
+          NEXT_PUBLIC_DEMO_MODE: "true"
+        run: pnpm verify
+      - uses: astral-sh/setup-uv@c771a70e6277c0a99b617c7a806ffedaca235ff9 # v9.0.0
+        with:
+          python-version: "3.12"
+          version: "0.11.30"
+          enable-cache: true
+          prune-cache: true
+      - name: Verify semantic gateway
+        working-directory: services/semantic-gateway
+        run: |
+          uv sync --dev --extra firebase --frozen
+          uv run ruff check . ../../scripts/check_semantic_publication.py ../../scripts/export_publication_review.py ../../scripts/manage_semantic_rollback.py
+          uv run pytest
+      - name: Build gateway image without cloud credentials
+        run: >-
+          docker build
+          --file services/semantic-gateway/Dockerfile
+          --tag "${{ vars.ARTIFACT_REGISTRY_IMAGE }}:${{ env.RELEASE_SHA }}"
+          .
+      - uses: google-github-actions/auth@7c6bc770dae815cd3e89ee6cdf493a5fab2cc093 # v3
+        with:
+          workload_identity_provider: ${{ vars.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ vars.GCP_DEPLOY_SERVICE_ACCOUNT }}
+      - uses: google-github-actions/setup-gcloud@aa5489c8933f4cc7a4f7d45035b3b1440c9c10db # v3
+      - name: Preserve governed semantic publication state
+        env:
+          ARTIFACT_BUCKET: ${{ vars.ARTIFACT_BUCKET }}
+          GCP_PROJECT_ID: ${{ vars.GCP_PROJECT_ID }}
+          REQUESTED_SEMANTIC_MODE: ${{ github.event_name == 'workflow_dispatch' && inputs.semantic_mode || '' }}
+        run: bash scripts/resolve_deploy_semantic_mode.sh
+      - name: Authenticate Docker to Artifact Registry
+        run: gcloud auth configure-docker europe-west4-docker.pkg.dev --quiet
+      - name: Push prebuilt gateway image
+        run: docker push "${{ vars.ARTIFACT_REGISTRY_IMAGE }}:${{ env.RELEASE_SHA }}"
+      - name: Deploy private demo-candidate gateway
+        if: env.SEMANTIC_MODE == 'candidate'
+        run: >-
+          gcloud run deploy oa-dev-semantic-gateway
+          --image "${{ vars.ARTIFACT_REGISTRY_IMAGE }}:${{ env.RELEASE_SHA }}"
+          --project "${{ vars.GCP_PROJECT_ID }}"
+          --region europe-west4
+          --no-allow-unauthenticated
+          --ingress all
+          --min 0
+          --max 3
+          --cpu 1
+          --memory 512Mi
+          --concurrency 8
+          --timeout 30
+          --service-account "${{ vars.GATEWAY_SERVICE_ACCOUNT }}"
+          --set-env-vars "GOOGLE_CLOUD_PROJECT=${{ vars.GCP_PROJECT_ID }},OA_ENV=production,OA_AUTH_MODE=firebase-session,OA_TENANT_ID=demo-bank,OA_ALLOW_DEMO_CANDIDATE=true,OA_SEMANTIC_TIMEOUT_SECONDS=5,OA_MAX_SEMANTIC_CONCURRENCY=2,VERIFIER_PROVIDER=mock,OPENAI_VERIFIER_MODE=mock,GENERATOR_PROVIDER=mock"
+      - name: Deploy private published gateway
+        if: env.SEMANTIC_MODE == 'published'
+        run: >-
+          gcloud run deploy oa-dev-semantic-gateway
+          --image "${{ vars.ARTIFACT_REGISTRY_IMAGE }}:${{ env.RELEASE_SHA }}"
+          --project "${{ vars.GCP_PROJECT_ID }}"
+          --region europe-west4
+          --no-allow-unauthenticated
+          --ingress all
+          --min 0
+          --max 3
+          --cpu 1
+          --memory 512Mi
+          --concurrency 8
+          --timeout 30
+          --service-account "${{ vars.GATEWAY_SERVICE_ACCOUNT }}"
+          --set-env-vars "GOOGLE_CLOUD_PROJECT=${{ vars.GCP_PROJECT_ID }},ONTOLOGY_ARTIFACT_BUCKET=${{ vars.ARTIFACT_BUCKET }},ONTOLOGY_ARTIFACT_POINTER=tenants/demo-bank/ontology/active.json,OA_ACTIVE_POINTER_GENERATION=${{ env.ACTIVE_POINTER_GENERATION }},OA_ENV=production,OA_AUTH_MODE=firebase-session,OA_TENANT_ID=demo-bank,OA_ALLOW_DEMO_CANDIDATE=false,OA_SEMANTIC_TIMEOUT_SECONDS=5,OA_MAX_SEMANTIC_CONCURRENCY=2,VERIFIER_PROVIDER=mock,OPENAI_VERIFIER_MODE=mock,GENERATOR_PROVIDER=mock"
+      - name: Restrict gateway invocation to approved runtimes
+        shell: bash
+        run: |
+          policy_file="${RUNNER_TEMP}/semantic-gateway-policy.yaml"
+          printf '%s\n' \
+            'bindings:' \
+            '- role: roles/run.invoker' \
+            '  members:' \
+            "  - serviceAccount:${{ vars.APPHOSTING_SERVICE_ACCOUNT }}" \
+            "  - serviceAccount:${{ vars.FUNCTIONS_SERVICE_ACCOUNT }}" \
+            'version: 1' > "$policy_file"
+          gcloud run services set-iam-policy oa-dev-semantic-gateway "$policy_file" \
+            --project "${{ vars.GCP_PROJECT_ID }}" \
+            --region europe-west4
+      - name: Publish gateway URL for App Hosting
+        shell: bash
+        run: |
+          gateway_url="$(gcloud run services describe oa-dev-semantic-gateway \
+            --project "${{ vars.GCP_PROJECT_ID }}" \
+            --region europe-west4 \
+            --format='value(status.url)')"
+          test -n "$gateway_url"
+          echo "GATEWAY_URL=$gateway_url" >> "$GITHUB_ENV"
+          printf '%s' "$gateway_url" | gcloud secrets versions add oa-dev-semantic-gateway-url \
+            --project "${{ vars.GCP_PROJECT_ID }}" \
+            --data-file=-
+          gcloud run services update oa-dev-semantic-gateway \
+            --project "${{ vars.GCP_PROJECT_ID }}" \
+            --region europe-west4 \
+            --update-env-vars "OA_AUTH_MODE=hybrid,OA_SERVICE_AUDIENCE=${gateway_url},OA_TRUSTED_SERVICE_ACCOUNTS=${{ vars.FUNCTIONS_SERVICE_ACCOUNT }}"
+      - name: Configure Firebase deployment targets
+        if: env.DEPLOYMENT_SCOPE == 'full'
+        shell: bash
+        run: |
+          pnpm exec firebase target:apply storage input "${{ vars.INPUT_BUCKET }}" \
+            --project "${{ vars.GCP_PROJECT_ID }}"
+          pnpm exec firebase target:apply storage artifacts "${{ vars.ARTIFACT_BUCKET }}" \
+            --project "${{ vars.GCP_PROJECT_ID }}"
+          env_file="functions/.env.${{ vars.GCP_PROJECT_ID }}"
+          printf '%s\n' \
+            "SOURCE_BUCKET=${{ vars.INPUT_BUCKET }}" \
+            "FUNCTIONS_SERVICE_ACCOUNT=${{ vars.FUNCTIONS_SERVICE_ACCOUNT }}" \
+            'ONTOLOGY_BASE_VERSION=2026.07.1-candidate' \
+            'DEFAULT_TENANT_ID=demo-bank' > "$env_file"
+      - name: Deploy Functions and Firebase policy
+        if: env.DEPLOYMENT_SCOPE == 'full'
+        env:
+          GOOGLE_CLOUD_PROJECT: ${{ vars.GCP_PROJECT_ID }}
+        run: pnpm run deploy:firebase -- --project "${{ vars.GCP_PROJECT_ID }}"
+      - name: Run cloud smoke tests
+        if: env.DEPLOYMENT_SCOPE == 'full'
+        env:
+          GCP_PROJECT_ID: ${{ vars.GCP_PROJECT_ID }}
+          GATEWAY_URL: ${{ env.GATEWAY_URL }}
+          APP_HOSTING_URL: ${{ vars.APP_HOSTING_URL }}
+          INPUT_BUCKET: ${{ vars.INPUT_BUCKET }}
+          RUN_FUNCTIONS_E2E: "true"
+        run: bash scripts/smoke_cloud_dev.sh
+      - name: Mark bootstrap as partial and not release-ready
+        if: env.DEPLOYMENT_SCOPE == 'bootstrap'
+        run: |
+          echo "### Bootstrap only — not a release GO" >> "$GITHUB_STEP_SUMMARY"
+          echo "The gateway URL secret now exists. Create and verify App Hosting, then run complete configuration and a full deploy." >> "$GITHUB_STEP_SUMMARY"

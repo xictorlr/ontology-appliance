@@ -1,0 +1,41 @@
+{
+  "$schema": "urn:ontology-appliance:schema:evidence-index:1",
+  "proposalId": "mapping-crm-cif",
+  "tenantId": "demo-bank",
+  "sourceEvidenceIndexSha256": "68e55a0369905fcf9ea6d48a234bfae2d66470f404419c851872caf702ed2f7f",
+  "evidence": [
+    {
+      "evidence_id": "evidence-crm-schema-cif",
+      "tenant_id": "demo-bank",
+      "source_id": "crm-parties",
+      "snapshot_id": "crm-parties@sha256:503d103ab015d2fb7720ba7e4aeed7f54e999426e22bc6e126fd663b79f5146a",
+      "locator": "contracts/crm.schema.json#/properties/cif_no",
+      "observed_at": "2026-07-22T13:51:12Z",
+      "extractor_version": "1.0.0",
+      "content_sha256": "1e06c3c81dc5f2c2d60ad063ff54428aaf3620d6d15e5ac3c4c3e26f826599cd"
+    },
+    {
+      "evidence_id": "evidence-crm-profile-cif",
+      "tenant_id": "demo-bank",
+      "source_id": "crm-parties",
+      "snapshot_id": "crm-parties@sha256:503d103ab015d2fb7720ba7e4aeed7f54e999426e22bc6e126fd663b79f5146a",
+      "locator": "profiles/crm/cif_no.json#/statistics",
+      "observed_at": "2026-07-22T13:51:12Z",
+      "extractor_version": "1.0.0",
+      "content_sha256": "4b361852e6ee0f9719317b0999022a31a52fa92bb1d31e44ae3d1569523896e3"
+    }
+  ],
+  "counterevidence": [
+    {
+      "evidence_id": "evidence-crm-cif-duplicate-0042",
+      "tenant_id": "demo-bank",
+      "source_id": "crm-parties",
+      "snapshot_id": "crm-parties@sha256:503d103ab015d2fb7720ba7e4aeed7f54e999426e22bc6e126fd663b79f5146a",
+      "locator": "data/synthetic/crm_parties.csv#row=6:field=cif_no,row=7:field=cif_no",
+      "observed_at": "2026-07-22T13:51:12Z",
+      "extractor_version": "1.0.0",
+      "content_sha256": "503d103ab015d2fb7720ba7e4aeed7f54e999426e22bc6e126fd663b79f5146a",
+      "claim": "CIF-0042 is reused by two historical merged party records."
+    }
+  ]
+}

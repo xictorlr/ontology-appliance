@@ -1,0 +1,53 @@
+{
+  "$id": "urn:ontology-appliance:demo-bank:schema:core-accounts:5048c0b5a286afecb3b7bdcc81891b54bda12ab151e7097fcf81b3f1b5bb974a",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "account_id": {
+      "minLength": 1,
+      "type": "string"
+    },
+    "account_number": {
+      "minLength": 1,
+      "type": "string"
+    },
+    "currency": {
+      "pattern": "^[A-Z]{3}$",
+      "type": "string"
+    },
+    "owner_party_id": {
+      "minLength": 1,
+      "type": "string"
+    },
+    "source_updated_at": {
+      "format": "date-time",
+      "type": "string"
+    },
+    "status": {
+      "enum": [
+        "EXTERNAL",
+        "OPEN"
+      ]
+    }
+  },
+  "required": [
+    "account_id",
+    "account_number",
+    "owner_party_id",
+    "status",
+    "currency",
+    "source_updated_at"
+  ],
+  "title": "Synthetic core-accounts snapshot schema",
+  "type": "object",
+  "x-ontology-appliance-evidence": {
+    "extractorName": "ontology-appliance-synthetic-profiler",
+    "extractorVersion": "1.0.0",
+    "observedAt": "2026-06-17T06:32:00Z",
+    "snapshotId": "core-accounts@sha256:5048c0b5a286afecb3b7bdcc81891b54bda12ab151e7097fcf81b3f1b5bb974a",
+    "sourceId": "core-accounts",
+    "sourceLocator": "data/synthetic/accounts.csv#header",
+    "sourceSha256": "5048c0b5a286afecb3b7bdcc81891b54bda12ab151e7097fcf81b3f1b5bb974a",
+    "tenantId": "demo-bank"
+  }
+}

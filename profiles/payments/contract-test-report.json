@@ -1,0 +1,61 @@
+{
+  "artifacts": [
+    {
+      "path": "data/contracts/payments-ledger.connector.json",
+      "sha256": "a7e5c8b70001719230e4c73b5d46d392fc9ec2a9f1567551014d3a9b908fe1fe"
+    },
+    {
+      "path": "contracts/payments.schema.json",
+      "sha256": "b22e6bff57437a51139bba144258c6c1026097276c44b0b41f50af8c22ea6593"
+    },
+    {
+      "path": "profiles/payments/snapshot.json",
+      "sha256": "7a8622bc08bfa3b0267b4d5f0e3a434ddfd118ac3a7d66734c2cea645a66c38e"
+    },
+    {
+      "path": "profiles/payments/profile.json",
+      "sha256": "895f48d8b265f2a65ef7f241ac057d8be035f22b4e3f5be48fb3b6c0be2ee7c7"
+    },
+    {
+      "path": "profiles/payments/evidence-index.json",
+      "sha256": "7de22c0c3f35b33cb7f6675e89919efa02faa3f6384e7db93fcfe73537ab506e"
+    }
+  ],
+  "checks": [
+    {
+      "detail": "The connector manifest fixes access_mode to read_only.",
+      "name": "read_only_access",
+      "passed": true
+    },
+    {
+      "detail": "The snapshot ID pins source content with SHA-256 0439bfd4fd9c595042add6fa1f6cdcae557a88f566c1e50eac8739e1e7c76d86.",
+      "name": "content_addressed_snapshot",
+      "passed": true
+    },
+    {
+      "detail": "The deterministic sample contains 3 records and 444 bytes within policy bounds.",
+      "name": "bounded_sample",
+      "passed": true
+    },
+    {
+      "detail": "All 12 evidence records have stable repository-relative locators and content hashes.",
+      "name": "stable_evidence",
+      "passed": true
+    },
+    {
+      "detail": "No connector fixture contains a credential and no adapter capability permits writes.",
+      "name": "credential_and_write_guard",
+      "passed": true
+    }
+  ],
+  "connectorId": "payments-ledger",
+  "contentSha256": "0439bfd4fd9c595042add6fa1f6cdcae557a88f566c1e50eac8739e1e7c76d86",
+  "executedAt": "2026-06-19T08:45:00Z",
+  "extractorName": "ontology-appliance-synthetic-profiler",
+  "extractorVersion": "1.0.0",
+  "observedAt": "2026-06-19T08:45:00Z",
+  "schemaVersion": "1.0",
+  "snapshotId": "payments-ledger@sha256:0439bfd4fd9c595042add6fa1f6cdcae557a88f566c1e50eac8739e1e7c76d86",
+  "sourceLocator": "data/synthetic/payments.jsonl",
+  "status": "PASSED"
+}

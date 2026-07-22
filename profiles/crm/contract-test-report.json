@@ -1,0 +1,70 @@
+{
+  "artifacts": [
+    {
+      "path": "contracts/crm.schema.json",
+      "sha256": "1e06c3c81dc5f2c2d60ad063ff54428aaf3620d6d15e5ac3c4c3e26f826599cd"
+    },
+    {
+      "path": "data/contracts/crm-parties.connector.json",
+      "sha256": "6dc8347f787e48091b728dd5e612ac99627412ef2944dcb2fc0e616dddc52ec9"
+    },
+    {
+      "path": "profiles/crm/cif_no.json",
+      "sha256": "4b361852e6ee0f9719317b0999022a31a52fa92bb1d31e44ae3d1569523896e3"
+    },
+    {
+      "path": "profiles/crm/evidence-index.json",
+      "sha256": "68e55a0369905fcf9ea6d48a234bfae2d66470f404419c851872caf702ed2f7f"
+    },
+    {
+      "path": "profiles/crm/profile.json",
+      "sha256": "2aa77321b494a07315f629eb38f1969a743e27784cde68bc6895a788df551c55"
+    },
+    {
+      "path": "profiles/crm/snapshot.json",
+      "sha256": "0ea9169f357d0e670b8ee4c265a5f03597ccca547fc8dc2fa807fc222a124c99"
+    }
+  ],
+  "checks": [
+    {
+      "detail": "The connector manifest fixes access_mode to read_only.",
+      "name": "read_only_access",
+      "passed": true
+    },
+    {
+      "detail": "The snapshot ID pins source content with SHA-256 503d103ab015d2fb7720ba7e4aeed7f54e999426e22bc6e126fd663b79f5146a.",
+      "name": "content_addressed_snapshot",
+      "passed": true
+    },
+    {
+      "detail": "The deterministic sample contains 6 records and 492 bytes within policy bounds.",
+      "name": "bounded_sample",
+      "passed": true
+    },
+    {
+      "detail": "All 18 evidence records have stable repository-relative locators and content hashes.",
+      "name": "stable_evidence",
+      "passed": true
+    },
+    {
+      "detail": "No connector fixture contains a credential and no adapter capability permits writes.",
+      "name": "credential_and_write_guard",
+      "passed": true
+    },
+    {
+      "detail": "CIF-0042 remains linked to rows 6 and 7 and blocks a global uniqueness inference.",
+      "name": "counterevidence_preserved",
+      "passed": true
+    }
+  ],
+  "connectorId": "crm-parties",
+  "contentSha256": "503d103ab015d2fb7720ba7e4aeed7f54e999426e22bc6e126fd663b79f5146a",
+  "executedAt": "2026-07-22T13:51:12Z",
+  "extractorName": "ontology-appliance-csv-profiler",
+  "extractorVersion": "1.0.0",
+  "observedAt": "2026-07-22T13:51:12Z",
+  "schemaVersion": "1.0",
+  "snapshotId": "crm-parties@sha256:503d103ab015d2fb7720ba7e4aeed7f54e999426e22bc6e126fd663b79f5146a",
+  "sourceLocator": "data/synthetic/crm_parties.csv",
+  "status": "PASSED"
+}

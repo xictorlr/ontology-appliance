@@ -1,0 +1,55 @@
+{
+  "access_mode": "read_only",
+  "capabilities": [
+    "schema",
+    "sample",
+    "profile",
+    "snapshot"
+  ],
+  "connector_id": "kyc-documents",
+  "evidence": {
+    "hash_algorithm": "sha256",
+    "locator_template": "data/synthetic/kyc/{document}#page={page}:line={line}"
+  },
+  "fields": [
+    {
+      "logical_type": "number",
+      "nullable": false,
+      "source_path": "Declared ownership"
+    },
+    {
+      "logical_type": "string",
+      "nullable": false,
+      "source_path": "Legal entity"
+    },
+    {
+      "logical_type": "string",
+      "nullable": false,
+      "source_path": "Registered country"
+    },
+    {
+      "logical_type": "string",
+      "nullable": false,
+      "source_path": "Review status"
+    },
+    {
+      "logical_type": "string",
+      "nullable": false,
+      "source_path": "Ultimate beneficial owner"
+    }
+  ],
+  "limits": {
+    "maximum_bytes": 65536,
+    "maximum_pages": 10,
+    "maximum_records": 100,
+    "timeout_seconds": 30
+  },
+  "schema_version": "1.0",
+  "source": {
+    "document_glob": "*.pdf",
+    "snapshot_strategy": "content_hash",
+    "uri": "data/synthetic/kyc/"
+  },
+  "source_type": "pdf",
+  "tenant_id": "demo-bank"
+}

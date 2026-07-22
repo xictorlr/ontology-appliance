@@ -1,0 +1,26 @@
+{
+  "accessMode": "read_only",
+  "content": {
+    "byteCount": 241,
+    "recordCount": 3,
+    "sha256": "5048c0b5a286afecb3b7bdcc81891b54bda12ab151e7097fcf81b3f1b5bb974a",
+    "sourceAssets": [
+      {
+        "byteCount": 241,
+        "mediaType": "text/csv",
+        "path": "data/synthetic/accounts.csv",
+        "sha256": "5048c0b5a286afecb3b7bdcc81891b54bda12ab151e7097fcf81b3f1b5bb974a"
+      }
+    ]
+  },
+  "extractorName": "ontology-appliance-synthetic-profiler",
+  "extractorVersion": "1.0.0",
+  "observedAt": "2026-06-17T06:32:00Z",
+  "profileLocator": "profiles/accounts/profile.json",
+  "schemaLocator": "contracts/accounts.schema.json",
+  "schemaVersion": "1.0",
+  "snapshotId": "core-accounts@sha256:5048c0b5a286afecb3b7bdcc81891b54bda12ab151e7097fcf81b3f1b5bb974a",
+  "sourceId": "core-accounts",
+  "sourceLocator": "data/synthetic/accounts.csv",
+  "tenantId": "demo-bank"
+}

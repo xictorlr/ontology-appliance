@@ -1,0 +1,42 @@
+runConfig:
+  cpu: 1
+  memoryMiB: 512
+  minInstances: 0
+  maxInstances: 3
+  concurrency: 40
+
+env:
+  - variable: APP_ENV
+    value: development
+    availability:
+      - BUILD
+      - RUNTIME
+  - variable: DEFAULT_TENANT_ID
+    value: demo-bank
+    availability:
+      - BUILD
+      - RUNTIME
+  - variable: DEMO_TENANT_ID
+    value: demo-bank
+    availability:
+      - BUILD
+      - RUNTIME
+  - variable: NEXT_PUBLIC_FIREBASE_AUTO_INIT
+    value: "true"
+    availability:
+      - BUILD
+      - RUNTIME
+  - variable: NEXT_PUBLIC_DEMO_MODE
+    value: "false"
+    availability:
+      - BUILD
+      - RUNTIME
+  - variable: NEXT_PUBLIC_GOOGLE_SIGN_IN_ENABLED
+    value: "false"
+    availability:
+      - BUILD
+      - RUNTIME
+  - variable: SEMANTIC_GATEWAY_URL
+    secret: oa-dev-semantic-gateway-url
+    availability:
+      - RUNTIME

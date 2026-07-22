@@ -1,0 +1,4 @@
+interface:
+  display_name: "Deploy Firebase Semantic Platform"
+  short_description: "Deploy the Firebase and Cloud Run platform"
+  default_prompt: "Use $deploy-firebase-semantic-platform to provision and release the development platform safely."

@@ -1,0 +1,13 @@
+{
+  "generatedAt": "2026-06-20T06:00:00Z",
+  "records": [
+    {
+      "id": "EU-998",
+      "name": "Alexei Petrov",
+      "countries": ["LV"],
+      "listedAt": "2026-05-14",
+      "program": "EU-DEMO",
+      "matchedPartyId": "P-1001"
+    }
+  ]
+}

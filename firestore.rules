@@ -1,0 +1,73 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function roles() {
+      return signedIn() && request.auth.token.roles is list
+        ? request.auth.token.roles
+        : [];
+    }
+
+    function hasRole(role) {
+      return role in roles();
+    }
+
+    function belongsToTenant(tenantId) {
+      return signedIn()
+        && request.auth.token.tenant_id is string
+        && request.auth.token.tenant_id == tenantId;
+    }
+
+    function isTenantReader(tenantId) {
+      return belongsToTenant(tenantId)
+        && (hasRole('admin') || hasRole('steward') || hasRole('auditor'));
+    }
+
+    // Tenant documents expose only non-sensitive product metadata to members.
+    match /tenants/{tenantId} {
+      allow read: if isTenantReader(tenantId);
+      allow write: if false;
+    }
+
+    match /tenants/{tenantId}/{collection}/{document} {
+      allow read: if isTenantReader(tenantId)
+        && collection in [
+          'ontologyVersions',
+          'concepts',
+          'relations',
+          'questions'
+        ];
+      // The BFF/control plane uses the Admin SDK and rechecks tenant + role.
+      allow write: if false;
+    }
+
+    match /tenants/{tenantId}/{collection}/{document}/{nested=**} {
+      allow read, write: if false;
+    }
+
+    match /tenants/{tenantId}/auditEvents/{eventId} {
+      allow read, write: if false;
+    }
+
+    match /tenants/{tenantId}/verificationRuns/{runId} {
+      allow read, write: if false;
+    }
+
+    // Internal orchestration state is never exposed to browser SDKs.
+    match /tenants/{tenantId}/taskExecutions/{executionId} {
+      allow read, write: if false;
+    }
+
+    match /tenants/{tenantId}/settings/{settingId} {
+      allow read, write: if false;
+    }
+
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

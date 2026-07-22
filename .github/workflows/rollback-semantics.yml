@@ -1,0 +1,237 @@
+name: Roll back published semantics
+
+on:
+  workflow_dispatch:
+    inputs:
+      target_manifest_object:
+        description: Previously active immutable manifest object (without gs://bucket/)
+        required: true
+        type: string
+      expected_current_generation:
+        description: Exact active.json generation observed and approved by the operator
+        required: true
+        type: string
+      ticket:
+        description: Incident/change ticket authorizing the rollback
+        required: true
+        type: string
+      reason:
+        description: Evidence-based rollback reason (10-500 characters)
+        required: true
+        type: string
+
+permissions:
+  contents: read
+  id-token: write
+
+concurrency:
+  group: ontology-dev-mutation
+  cancel-in-progress: false
+
+jobs:
+  rollback:
+    if: >-
+      github.repository_owner != 'example' &&
+      github.ref == 'refs/heads/main' &&
+      vars.CLOUD_DEPLOY_ENABLED == 'true'
+    runs-on: ubuntu-latest
+    environment: semantic-rollback
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.sha }}
+      - name: Refuse rollback orchestration from historical main
+        env:
+          EXPECTED_RELEASE_SHA: ${{ github.sha }}
+        run: bash scripts/assert_current_main.sh
+      - name: Validate protected rollback configuration and inputs
+        shell: bash
+        env:
+          GCP_PROJECT_ID: ${{ vars.GCP_PROJECT_ID }}
+          GCP_ROLLBACK_WORKLOAD_IDENTITY_PROVIDER: ${{ vars.GCP_ROLLBACK_WORKLOAD_IDENTITY_PROVIDER }}
+          GCP_SEMANTIC_ROLLOUT_WORKLOAD_IDENTITY_PROVIDER: ${{ vars.GCP_SEMANTIC_ROLLOUT_WORKLOAD_IDENTITY_PROVIDER }}
+          PUBLISHER_SERVICE_ACCOUNT: ${{ vars.PUBLISHER_SERVICE_ACCOUNT }}
+          GCP_DEPLOY_SERVICE_ACCOUNT: ${{ vars.GCP_DEPLOY_SERVICE_ACCOUNT }}
+          ARTIFACT_BUCKET: ${{ vars.ARTIFACT_BUCKET }}
+          GATEWAY_SERVICE: ${{ vars.GATEWAY_SERVICE }}
+          TARGET_MANIFEST_OBJECT: ${{ inputs.target_manifest_object }}
+          EXPECTED_CURRENT_GENERATION: ${{ inputs.expected_current_generation }}
+        run: |
+          for name in GCP_PROJECT_ID GCP_ROLLBACK_WORKLOAD_IDENTITY_PROVIDER \
+            GCP_SEMANTIC_ROLLOUT_WORKLOAD_IDENTITY_PROVIDER \
+            PUBLISHER_SERVICE_ACCOUNT GCP_DEPLOY_SERVICE_ACCOUNT \
+            ARTIFACT_BUCKET GATEWAY_SERVICE; do
+            test -n "${!name}" || { echo "Missing protected environment variable: $name" >&2; exit 1; }
+          done
+          test "$PUBLISHER_SERVICE_ACCOUNT" != "$GCP_DEPLOY_SERVICE_ACCOUNT"
+          [[ "$EXPECTED_CURRENT_GENERATION" =~ ^[0-9]+$ ]]
+          [[ "$TARGET_MANIFEST_OBJECT" == tenants/demo-bank/ontology/releases/*/manifest.json ]]
+          [[ "$TARGET_MANIFEST_OBJECT" != *".."* ]]
+      - uses: astral-sh/setup-uv@c771a70e6277c0a99b617c7a806ffedaca235ff9 # v9.0.0
+        with:
+          python-version: "3.12"
+          version: "0.11.30"
+          enable-cache: true
+          prune-cache: true
+      - name: Run rollback safety tests before cloud authentication
+        working-directory: services/semantic-gateway
+        run: |
+          uv sync --dev --frozen
+          uv run python ../../scripts/check_semantic_publication.py --self-test
+          uv run python ../../scripts/manage_semantic_rollback.py --self-test
+          uv run pytest tests/test_artifacts.py
+      - name: Authenticate the protected Publisher identity
+        uses: google-github-actions/auth@7c6bc770dae815cd3e89ee6cdf493a5fab2cc093 # v3
+        with:
+          workload_identity_provider: ${{ vars.GCP_ROLLBACK_WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ vars.PUBLISHER_SERVICE_ACCOUNT }}
+      - uses: google-github-actions/setup-gcloud@aa5489c8933f4cc7a4f7d45035b3b1440c9c10db # v3
+      - name: Record real rollback authorization
+        shell: bash
+        run: |
+          publisher_account="$(gcloud auth list --filter=status:ACTIVE --format='value(account)')"
+          test "$publisher_account" = "${{ vars.PUBLISHER_SERVICE_ACCOUNT }}"
+          echo "PUBLISHER_SUBJECT=serviceAccount:${publisher_account}" >> "$GITHUB_ENV"
+          echo "AUTHORIZED_AT=$(date -u +'%Y-%m-%dT%H:%M:%SZ')" >> "$GITHUB_ENV"
+      - name: Download and fully validate the immutable rollback target
+        shell: bash
+        env:
+          TARGET_MANIFEST_OBJECT: ${{ inputs.target_manifest_object }}
+        run: |
+          target_dir="${RUNNER_TEMP}/rollback-target"
+          mkdir -p "$target_dir"
+          target_uri="gs://${{ vars.ARTIFACT_BUCKET }}/${TARGET_MANIFEST_OBJECT}"
+          gcloud storage cp "$target_uri" "$target_dir/manifest.json" \
+            --project "${{ vars.GCP_PROJECT_ID }}"
+          mapfile -t relative_paths < <(
+            jq -er '.artifacts[].path, .supportingArtifacts[].path' "$target_dir/manifest.json" | sort -u
+          )
+          release_prefix="${TARGET_MANIFEST_OBJECT%/manifest.json}"
+          for relative_path in "${relative_paths[@]}"; do
+            [[ -n "$relative_path" && "$relative_path" != /* ]]
+            [[ ! "$relative_path" =~ (^|/)\.\.?(/|$) ]]
+            mkdir -p "$(dirname "$target_dir/$relative_path")"
+            gcloud storage cp \
+              "gs://${{ vars.ARTIFACT_BUCKET }}/${release_prefix}/${relative_path}" \
+              "$target_dir/$relative_path" \
+              --project "${{ vars.GCP_PROJECT_ID }}"
+          done
+          cd services/semantic-gateway
+          uv run python ../../scripts/check_semantic_publication.py \
+            "$target_dir/manifest.json" --mode published
+          echo "TARGET_DIR=$target_dir" >> "$GITHUB_ENV"
+          echo "TARGET_MANIFEST_SHA256=$(sha256sum "$target_dir/manifest.json" | awk '{print $1}')" >> "$GITHUB_ENV"
+          echo "TARGET_ONTOLOGY_VERSION=$(jq -er '.version' "$target_dir/manifest.json")" >> "$GITHUB_ENV"
+      - name: Prove prior activation and build an auditable CAS rollback
+        shell: bash
+        env:
+          TARGET_MANIFEST_OBJECT: ${{ inputs.target_manifest_object }}
+          EXPECTED_CURRENT_GENERATION: ${{ inputs.expected_current_generation }}
+          ROLLBACK_REASON: ${{ inputs.reason }}
+          ROLLBACK_TICKET: ${{ inputs.ticket }}
+        run: |
+          pointer_path="tenants/demo-bank/ontology/active.json"
+          pointer_uri="gs://${{ vars.ARTIFACT_BUCKET }}/${pointer_path}"
+          current_pointer="${RUNNER_TEMP}/current-active.json"
+          prior_pointer="${RUNNER_TEMP}/prior-active.json"
+          gcloud storage cat "$pointer_uri" --project "${{ vars.GCP_PROJECT_ID }}" > "$current_pointer"
+          observed_generation="$(gcloud storage objects describe "$pointer_uri" \
+            --project "${{ vars.GCP_PROJECT_ID }}" --format='value(generation)')"
+          test "$observed_generation" = "$EXPECTED_CURRENT_GENERATION"
+          test "$(jq -er '.manifestObject' "$current_pointer")" != "$TARGET_MANIFEST_OBJECT"
+
+          prior_generation=""
+          while IFS= read -r candidate_generation; do
+            [[ "$candidate_generation" =~ ^[0-9]+$ ]] || continue
+            [[ "$candidate_generation" != "$observed_generation" ]] || continue
+            candidate="$(gcloud storage cat "${pointer_uri}#${candidate_generation}" \
+              --project "${{ vars.GCP_PROJECT_ID }}" 2>/dev/null || true)"
+            if [[ -n "$candidate" ]] && jq -e \
+              --arg object "$TARGET_MANIFEST_OBJECT" \
+              --arg digest "$TARGET_MANIFEST_SHA256" \
+              '.manifestObject == $object and .manifestSha256 == $digest' \
+              <<<"$candidate" >/dev/null; then
+              printf '%s\n' "$candidate" > "$prior_pointer"
+              prior_generation="$candidate_generation"
+              break
+            fi
+          done < <(
+            gcloud storage ls --all-versions --json "$pointer_uri" \
+              --project "${{ vars.GCP_PROJECT_ID }}" |
+              jq -r --arg path "$pointer_path" \
+                '.. | objects | select(.name? == $path) | .generation // empty' |
+              sort -rn
+          )
+          test -n "$prior_generation" || {
+            echo "Target was not found in versioned active-pointer history." >&2
+            exit 1
+          }
+
+          rollback_id="${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}"
+          audit_object="tenants/demo-bank/ontology/rollbacks/${rollback_id}/rollback-audit.json"
+          audit_file="${RUNNER_TEMP}/rollback-audit.json"
+          pointer_file="${RUNNER_TEMP}/rollback-active.json"
+          activated_at="$(date -u +'%Y-%m-%dT%H:%M:%SZ')"
+          cd services/semantic-gateway
+          uv run python ../../scripts/manage_semantic_rollback.py \
+            --current-pointer "$current_pointer" \
+            --prior-pointer "$prior_pointer" \
+            --target-manifest "$TARGET_DIR/manifest.json" \
+            --target-manifest-object "$TARGET_MANIFEST_OBJECT" \
+            --expected-generation "$EXPECTED_CURRENT_GENERATION" \
+            --observed-generation "$observed_generation" \
+            --publisher-subject "$PUBLISHER_SUBJECT" \
+            --authorized-at "$AUTHORIZED_AT" \
+            --activated-at "$activated_at" \
+            --reason "$ROLLBACK_REASON" \
+            --ticket "$ROLLBACK_TICKET" \
+            --workflow-run "${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}" \
+            --prior-pointer-generation "$prior_generation" \
+            --audit-object "$audit_object" \
+            --audit-output "$audit_file" \
+            --pointer-output "$pointer_file"
+          echo "ROLLBACK_AUDIT_OBJECT=$audit_object" >> "$GITHUB_ENV"
+          echo "ROLLBACK_AUDIT_FILE=$audit_file" >> "$GITHUB_ENV"
+          echo "ROLLBACK_POINTER_FILE=$pointer_file" >> "$GITHUB_ENV"
+      - name: Persist audit first, then replace the pointer with generation CAS
+        id: activate
+        shell: bash
+        env:
+          EXPECTED_CURRENT_GENERATION: ${{ inputs.expected_current_generation }}
+        run: |
+          audit_uri="gs://${{ vars.ARTIFACT_BUCKET }}/${ROLLBACK_AUDIT_OBJECT}"
+          pointer_uri="gs://${{ vars.ARTIFACT_BUCKET }}/tenants/demo-bank/ontology/active.json"
+          gcloud storage cp "$ROLLBACK_AUDIT_FILE" "$audit_uri" \
+            --project "${{ vars.GCP_PROJECT_ID }}" --if-generation-match=0
+          gcloud storage cp "$ROLLBACK_POINTER_FILE" "$pointer_uri" \
+            --project "${{ vars.GCP_PROJECT_ID }}" \
+            --if-generation-match="$EXPECTED_CURRENT_GENERATION"
+          activated_generation="$(gcloud storage objects describe "$pointer_uri" \
+            --project "${{ vars.GCP_PROJECT_ID }}" --format='value(generation)')"
+          remote_pointer="$(gcloud storage cat "$pointer_uri" --project "${{ vars.GCP_PROJECT_ID }}")"
+          jq -e \
+            --arg object "${{ inputs.target_manifest_object }}" \
+            --arg digest "$TARGET_MANIFEST_SHA256" \
+            --arg audit "$ROLLBACK_AUDIT_OBJECT" \
+            '.operation == "ROLLBACK" and .manifestObject == $object and
+             .manifestSha256 == $digest and .rollbackAuditObject == $audit' \
+            <<<"$remote_pointer" >/dev/null
+          echo "pointer_generation=$activated_generation" >> "$GITHUB_OUTPUT"
+      - name: Switch to the separate deployment identity
+        uses: google-github-actions/auth@7c6bc770dae815cd3e89ee6cdf493a5fab2cc093 # v3
+        with:
+          workload_identity_provider: ${{ vars.GCP_SEMANTIC_ROLLOUT_WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ vars.GCP_DEPLOY_SERVICE_ACCOUNT }}
+      - name: Roll all gateway traffic onto the validated target
+        env:
+          GCP_PROJECT_ID: ${{ vars.GCP_PROJECT_ID }}
+          ARTIFACT_BUCKET: ${{ vars.ARTIFACT_BUCKET }}
+          GATEWAY_SERVICE: ${{ vars.GATEWAY_SERVICE }}
+          EXPECTED_POINTER_GENERATION: ${{ steps.activate.outputs.pointer_generation }}
+          EXPECTED_MANIFEST_OBJECT: ${{ inputs.target_manifest_object }}
+        run: |
+          active_account="$(gcloud auth list --filter=status:ACTIVE --format='value(account)')"
+          test "$active_account" = "${{ vars.GCP_DEPLOY_SERVICE_ACCOUNT }}"
+          export EXPECTED_MANIFEST_SHA256="$TARGET_MANIFEST_SHA256"
+          export EXPECTED_ONTOLOGY_VERSION="$TARGET_ONTOLOGY_VERSION"
+          bash scripts/rollout_semantic_gateway.sh

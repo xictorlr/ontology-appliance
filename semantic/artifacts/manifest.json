@@ -1,0 +1,92 @@
+{
+  "$schema": "urn:ontology-appliance:schema:artifact-manifest:1",
+  "version": "2026.07.1-demo-bank",
+  "tenantId": "demo-bank",
+  "ontologyVersion": "2026.07.1",
+  "namespace": "urn:ontology-appliance:demo-bank:",
+  "createdAt": "2026-07-22T13:51:12Z",
+  "materializeOwlRl": true,
+  "publication": {
+    "state": "CANDIDATE",
+    "servingMode": "DEMO_ONLY",
+    "isPublished": false,
+    "reviewLedgerPath": "publication-review.json",
+    "reviewLedgerSha256": "9d205a1809172dd8d3c199035b5370c30ff1a4961479312627ea695cb853ca1c"
+  },
+  "artifacts": [
+    {
+      "path": "ontology.ttl",
+      "sha256": "04f7d152b2d5ac89f65139d02f4729d8f8b845dbb0c8fa5a17dda3ac9eb54174",
+      "format": "turtle",
+      "kind": "graph"
+    },
+    {
+      "path": "demo-data.ttl",
+      "sha256": "94b0f4edb305c31e1136f449f49a3e8f87d9cfbdb0392c79425aa24258a09fef",
+      "format": "turtle",
+      "kind": "graph"
+    },
+    {
+      "path": "mappings.ttl",
+      "sha256": "6671eb7489e173afb6f5dc9f3b1a653beece868be6b10e4e05080d56db06d3ef",
+      "format": "turtle",
+      "kind": "graph"
+    },
+    {
+      "path": "provenance.nq",
+      "sha256": "79d4d4837f752229e47fe7e7a173ce9fc9d77fad14b3c19c7150da366b44a0bd",
+      "format": "nquads",
+      "kind": "provenance"
+    },
+    {
+      "path": "shapes.ttl",
+      "sha256": "36fac3cd9f754e9a9475459689ffbde64d03015d0e6b9333eff1e9213850f57d",
+      "format": "turtle",
+      "kind": "shapes"
+    }
+  ],
+  "supportingArtifacts": [
+    {
+      "role": "questions",
+      "path": "competency-questions.json",
+      "sha256": "e9d324ed2c07297ecd8bf6aa296943da90f9b680b2641cf0f271613d4b03b4c2",
+      "mediaType": "application/json"
+    },
+    {
+      "role": "proposal",
+      "proposalId": "mapping-crm-cif",
+      "path": "proposals/mapping-crm-cif.json",
+      "sha256": "9d7d55baa38796955eb6baae183820c51f7347a08907db2f04a6eeab7d7b4bb7",
+      "mediaType": "application/json"
+    },
+    {
+      "role": "verification",
+      "proposalId": "mapping-crm-cif",
+      "path": "verification/mapping-crm-cif.mock.json",
+      "sha256": "89fca75f85e2f2d93fe50c5217fb0b6c338164d85535030333141e4266eadc0f",
+      "mediaType": "application/json"
+    },
+    {
+      "role": "evidence-index",
+      "proposalId": "mapping-crm-cif",
+      "path": "evidence/mapping-crm-cif.index.json",
+      "sha256": "21e7c550f5f023203ed9008ffef04ccca6bbc83e38d4664b798b841cce5f2d60",
+      "mediaType": "application/json"
+    },
+    {
+      "role": "publication-review",
+      "path": "publication-review.json",
+      "sha256": "9d205a1809172dd8d3c199035b5370c30ff1a4961479312627ea695cb853ca1c",
+      "mediaType": "application/json"
+    }
+  ],
+  "stats": {
+    "concepts": 44,
+    "relations": 23,
+    "mappings": 100,
+    "structuredSources": 5,
+    "documentRepositories": 1,
+    "competencyQuestions": 5,
+    "passedCompetencyQuestions": 5
+  }
+}

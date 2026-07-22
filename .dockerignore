@@ -1,0 +1,13 @@
+**
+!services/
+!services/semantic-gateway/
+!services/semantic-gateway/pyproject.toml
+!services/semantic-gateway/uv.lock
+!services/semantic-gateway/src/
+!services/semantic-gateway/src/**
+!semantic/
+!semantic/artifacts/
+!semantic/artifacts/**
+**/__pycache__/
+**/*.py[cod]
+gha-creds-*.json

@@ -1,0 +1,116 @@
+{
+  "bounds": {
+    "maximumBytes": 65536,
+    "maximumRecords": 100,
+    "observedBytes": 444,
+    "observedRecords": 3
+  },
+  "extractorName": "ontology-appliance-synthetic-profiler",
+  "extractorVersion": "1.0.0",
+  "fields": {
+    "amount": {
+      "logicalType": "number",
+      "sourceLocator": "data/synthetic/payments.jsonl#json-path=$.amount",
+      "statistics": {
+        "distinctCount": 3,
+        "maximumDecimal": "125000.00",
+        "maximumLength": 9,
+        "minimumDecimal": "320.00",
+        "minimumLength": 6,
+        "nonNullCount": 3,
+        "nullCount": 0,
+        "nullRate": 0.0,
+        "sumDecimal": "142320.00",
+        "uniquenessRatio": 1.0
+      }
+    },
+    "booked_at": {
+      "logicalType": "datetime",
+      "sourceLocator": "data/synthetic/payments.jsonl#json-path=$.booked_at",
+      "statistics": {
+        "distinctCount": 3,
+        "maximumLength": 20,
+        "minimumLength": 20,
+        "nonNullCount": 3,
+        "nullCount": 0,
+        "nullRate": 0.0,
+        "uniquenessRatio": 1.0
+      }
+    },
+    "currency": {
+      "logicalType": "string",
+      "sourceLocator": "data/synthetic/payments.jsonl#json-path=$.currency",
+      "statistics": {
+        "distinctCount": 2,
+        "maximumLength": 3,
+        "minimumLength": 3,
+        "nonNullCount": 3,
+        "nullCount": 0,
+        "nullRate": 0.0,
+        "uniquenessRatio": 0.666667
+      }
+    },
+    "from_account": {
+      "logicalType": "string",
+      "sourceLocator": "data/synthetic/payments.jsonl#json-path=$.from_account",
+      "statistics": {
+        "distinctCount": 2,
+        "maximumLength": 8,
+        "minimumLength": 8,
+        "nonNullCount": 3,
+        "nullCount": 0,
+        "nullRate": 0.0,
+        "uniquenessRatio": 0.666667
+      }
+    },
+    "payment_id": {
+      "logicalType": "string",
+      "sourceLocator": "data/synthetic/payments.jsonl#json-path=$.payment_id",
+      "statistics": {
+        "distinctCount": 3,
+        "maximumLength": 8,
+        "minimumLength": 8,
+        "nonNullCount": 3,
+        "nullCount": 0,
+        "nullRate": 0.0,
+        "uniquenessRatio": 1.0
+      }
+    },
+    "to_account": {
+      "logicalType": "string",
+      "sourceLocator": "data/synthetic/payments.jsonl#json-path=$.to_account",
+      "statistics": {
+        "distinctCount": 1,
+        "maximumLength": 8,
+        "minimumLength": 8,
+        "nonNullCount": 3,
+        "nullCount": 0,
+        "nullRate": 0.0,
+        "uniquenessRatio": 0.333333
+      }
+    }
+  },
+  "observedAt": "2026-06-19T08:45:00Z",
+  "relationshipEvidence": {
+    "currencyCounts": {
+      "EUR": 2,
+      "USD": 1
+    },
+    "distinctDestinationAccountCount": 1,
+    "distinctSourceAccountCount": 2,
+    "sourceDestinationPairCounts": {
+      "ES120001->DE890001": 2,
+      "ES120002->DE890001": 1
+    }
+  },
+  "schemaVersion": "1.0",
+  "snapshotId": "payments-ledger@sha256:0439bfd4fd9c595042add6fa1f6cdcae557a88f566c1e50eac8739e1e7c76d86",
+  "sourceContentSha256": "0439bfd4fd9c595042add6fa1f6cdcae557a88f566c1e50eac8739e1e7c76d86",
+  "sourceId": "payments-ledger",
+  "sourceLocator": "data/synthetic/payments.jsonl",
+  "statistics": {
+    "fieldCount": 6,
+    "recordCount": 3
+  },
+  "tenantId": "demo-bank"
+}

@@ -1,0 +1,102 @@
+{
+  "bounds": {
+    "maximumBytes": 65536,
+    "maximumPages": 10,
+    "maximumRecords": 100,
+    "observedBytes": 1054,
+    "observedPages": 1,
+    "observedRecords": 1
+  },
+  "extractorName": "ontology-appliance-synthetic-profiler",
+  "extractorVersion": "1.0.0",
+  "fields": {
+    "declaredOwnership": {
+      "logicalType": "number",
+      "sourceLabel": "Declared ownership",
+      "sourceLocator": "data/synthetic/kyc/LE-2001.pdf#page=1:line=5",
+      "statistics": {
+        "distinctCount": 1,
+        "maximumLength": 3,
+        "minimumLength": 3,
+        "nonNullCount": 1,
+        "nullCount": 0,
+        "nullRate": 0.0,
+        "uniquenessRatio": 1.0
+      }
+    },
+    "legalEntity": {
+      "logicalType": "string",
+      "sourceLabel": "Legal entity",
+      "sourceLocator": "data/synthetic/kyc/LE-2001.pdf#page=1:line=2",
+      "statistics": {
+        "distinctCount": 1,
+        "maximumLength": 31,
+        "minimumLength": 31,
+        "nonNullCount": 1,
+        "nullCount": 0,
+        "nullRate": 0.0,
+        "uniquenessRatio": 1.0
+      }
+    },
+    "registeredCountry": {
+      "logicalType": "string",
+      "sourceLabel": "Registered country",
+      "sourceLocator": "data/synthetic/kyc/LE-2001.pdf#page=1:line=3",
+      "statistics": {
+        "distinctCount": 1,
+        "maximumLength": 2,
+        "minimumLength": 2,
+        "nonNullCount": 1,
+        "nullCount": 0,
+        "nullRate": 0.0,
+        "uniquenessRatio": 1.0
+      }
+    },
+    "reviewStatus": {
+      "logicalType": "string",
+      "sourceLabel": "Review status",
+      "sourceLocator": "data/synthetic/kyc/LE-2001.pdf#page=1:line=6",
+      "statistics": {
+        "distinctCount": 1,
+        "maximumLength": 30,
+        "minimumLength": 30,
+        "nonNullCount": 1,
+        "nullCount": 0,
+        "nullRate": 0.0,
+        "uniquenessRatio": 1.0
+      }
+    },
+    "ultimateBeneficialOwner": {
+      "logicalType": "string",
+      "sourceLabel": "Ultimate beneficial owner",
+      "sourceLocator": "data/synthetic/kyc/LE-2001.pdf#page=1:line=4",
+      "statistics": {
+        "distinctCount": 1,
+        "maximumLength": 22,
+        "minimumLength": 22,
+        "nonNullCount": 1,
+        "nullCount": 0,
+        "nullRate": 0.0,
+        "uniquenessRatio": 1.0
+      }
+    }
+  },
+  "observedAt": "2026-06-20T06:30:00Z",
+  "relationshipEvidence": {
+    "declaredOwnershipPercent": 68,
+    "documentEntityCount": 1,
+    "documentUboCount": 1
+  },
+  "schemaVersion": "1.0",
+  "snapshotId": "kyc-documents@sha256:8aa24ffe6183c52c49a93b026298164886548eb2860184203609ddd0aa038769",
+  "sourceContentSha256": "8aa24ffe6183c52c49a93b026298164886548eb2860184203609ddd0aa038769",
+  "sourceId": "kyc-documents",
+  "sourceLocator": "data/synthetic/kyc/LE-2001.pdf",
+  "statistics": {
+    "extractedFieldCount": 5,
+    "nonBlankLineCount": 6,
+    "pageCount": 1,
+    "recordCount": 1
+  },
+  "tenantId": "demo-bank"
+}

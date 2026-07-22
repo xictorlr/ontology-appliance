@@ -1,0 +1,360 @@
+{
+  "evidence": [
+    {
+      "claim": {
+        "byteCount": 241,
+        "recordCount": 3
+      },
+      "classification": "INTERNAL",
+      "contentSha256": "5048c0b5a286afecb3b7bdcc81891b54bda12ab151e7097fcf81b3f1b5bb974a",
+      "evidenceId": "evidence-core-accounts-26de8bc1e6f9e38c",
+      "extractorName": "ontology-appliance-synthetic-profiler",
+      "extractorVersion": "1.0.0",
+      "locator": "data/synthetic/accounts.csv",
+      "normalizedCoordinates": {
+        "artifact": "source-snapshot"
+      },
+      "observedAt": "2026-06-17T06:32:00Z",
+      "policyTags": [
+        "read-only",
+        "snapshot",
+        "synthetic"
+      ],
+      "snapshotId": "core-accounts@sha256:5048c0b5a286afecb3b7bdcc81891b54bda12ab151e7097fcf81b3f1b5bb974a",
+      "sourceId": "core-accounts",
+      "tenantId": "demo-bank"
+    },
+    {
+      "claim": {
+        "profileStatistics": {
+          "fieldCount": 6,
+          "recordCount": 3
+        }
+      },
+      "classification": "INTERNAL",
+      "contentSha256": "fd5ef93417fa15b684903d47d84eaad1e7ce115564a71735e585dc8cab1dcf51",
+      "evidenceId": "evidence-core-accounts-88b3e1a8397ff5af",
+      "extractorName": "ontology-appliance-synthetic-profiler",
+      "extractorVersion": "1.0.0",
+      "locator": "profiles/accounts/profile.json#/statistics",
+      "normalizedCoordinates": {
+        "profilePointer": "/statistics"
+      },
+      "observedAt": "2026-06-17T06:32:00Z",
+      "policyTags": [
+        "bounded-profile",
+        "read-only",
+        "synthetic"
+      ],
+      "snapshotId": "core-accounts@sha256:5048c0b5a286afecb3b7bdcc81891b54bda12ab151e7097fcf81b3f1b5bb974a",
+      "sourceId": "core-accounts",
+      "tenantId": "demo-bank"
+    },
+    {
+      "claim": {
+        "profileStatistics": {
+          "distinctCount": 3,
+          "maximumLength": 6,
+          "minimumLength": 5,
+          "nonNullCount": 3,
+          "nullCount": 0,
+          "nullRate": 0.0,
+          "uniquenessRatio": 1.0
+        }
+      },
+      "classification": "INTERNAL",
+      "contentSha256": "a2c2167445faeca1a6b0c0aded43c2a9205344c4d71210078d785093b3bf0990",
+      "evidenceId": "evidence-core-accounts-ac82aca214a31944",
+      "extractorName": "ontology-appliance-synthetic-profiler",
+      "extractorVersion": "1.0.0",
+      "locator": "data/synthetic/accounts.csv#column=account_id",
+      "normalizedCoordinates": {
+        "field": "account_id",
+        "profilePointer": "/fields/account_id/statistics"
+      },
+      "observedAt": "2026-06-17T06:32:00Z",
+      "policyTags": [
+        "bounded-profile",
+        "read-only",
+        "synthetic"
+      ],
+      "snapshotId": "core-accounts@sha256:5048c0b5a286afecb3b7bdcc81891b54bda12ab151e7097fcf81b3f1b5bb974a",
+      "sourceId": "core-accounts",
+      "tenantId": "demo-bank"
+    },
+    {
+      "claim": {
+        "profileStatistics": {
+          "distinctCount": 3,
+          "maximumLength": 8,
+          "minimumLength": 8,
+          "nonNullCount": 3,
+          "nullCount": 0,
+          "nullRate": 0.0,
+          "uniquenessRatio": 1.0
+        }
+      },
+      "classification": "INTERNAL",
+      "contentSha256": "828618240cb77fdcaa1f02906337e095aba9fe00dc3060d8d834d867f02d57f5",
+      "evidenceId": "evidence-core-accounts-bdf3d04b4108ccd6",
+      "extractorName": "ontology-appliance-synthetic-profiler",
+      "extractorVersion": "1.0.0",
+      "locator": "data/synthetic/accounts.csv#column=account_number",
+      "normalizedCoordinates": {
+        "field": "account_number",
+        "profilePointer": "/fields/account_number/statistics"
+      },
+      "observedAt": "2026-06-17T06:32:00Z",
+      "policyTags": [
+        "bounded-profile",
+        "read-only",
+        "synthetic"
+      ],
+      "snapshotId": "core-accounts@sha256:5048c0b5a286afecb3b7bdcc81891b54bda12ab151e7097fcf81b3f1b5bb974a",
+      "sourceId": "core-accounts",
+      "tenantId": "demo-bank"
+    },
+    {
+      "claim": {
+        "profileStatistics": {
+          "distinctCount": 3,
+          "maximumLength": 7,
+          "minimumLength": 7,
+          "nonNullCount": 3,
+          "nullCount": 0,
+          "nullRate": 0.0,
+          "uniquenessRatio": 1.0
+        }
+      },
+      "classification": "INTERNAL",
+      "contentSha256": "a65b0c951f77b5ff47bed2288ee6d63affb487b6c2d473807a781100a44575f5",
+      "evidenceId": "evidence-core-accounts-a380a5624972dfc8",
+      "extractorName": "ontology-appliance-synthetic-profiler",
+      "extractorVersion": "1.0.0",
+      "locator": "data/synthetic/accounts.csv#column=owner_party_id",
+      "normalizedCoordinates": {
+        "field": "owner_party_id",
+        "profilePointer": "/fields/owner_party_id/statistics"
+      },
+      "observedAt": "2026-06-17T06:32:00Z",
+      "policyTags": [
+        "bounded-profile",
+        "read-only",
+        "synthetic"
+      ],
+      "snapshotId": "core-accounts@sha256:5048c0b5a286afecb3b7bdcc81891b54bda12ab151e7097fcf81b3f1b5bb974a",
+      "sourceId": "core-accounts",
+      "tenantId": "demo-bank"
+    },
+    {
+      "claim": {
+        "profileStatistics": {
+          "distinctCount": 2,
+          "maximumLength": 8,
+          "minimumLength": 4,
+          "nonNullCount": 3,
+          "nullCount": 0,
+          "nullRate": 0.0,
+          "uniquenessRatio": 0.666667
+        }
+      },
+      "classification": "INTERNAL",
+      "contentSha256": "294591bf552d3a14a5d57c2ca88e8e0f57a931f8c3ff04b4fd70dde6643fbd5c",
+      "evidenceId": "evidence-core-accounts-b7ef06e17d1fa68e",
+      "extractorName": "ontology-appliance-synthetic-profiler",
+      "extractorVersion": "1.0.0",
+      "locator": "data/synthetic/accounts.csv#column=status",
+      "normalizedCoordinates": {
+        "field": "status",
+        "profilePointer": "/fields/status/statistics"
+      },
+      "observedAt": "2026-06-17T06:32:00Z",
+      "policyTags": [
+        "bounded-profile",
+        "read-only",
+        "synthetic"
+      ],
+      "snapshotId": "core-accounts@sha256:5048c0b5a286afecb3b7bdcc81891b54bda12ab151e7097fcf81b3f1b5bb974a",
+      "sourceId": "core-accounts",
+      "tenantId": "demo-bank"
+    },
+    {
+      "claim": {
+        "profileStatistics": {
+          "distinctCount": 1,
+          "maximumLength": 3,
+          "minimumLength": 3,
+          "nonNullCount": 3,
+          "nullCount": 0,
+          "nullRate": 0.0,
+          "uniquenessRatio": 0.333333
+        }
+      },
+      "classification": "INTERNAL",
+      "contentSha256": "ca05b77a956721b7d3d08a0f3db382f6fb00566fd552c554d35782167221a272",
+      "evidenceId": "evidence-core-accounts-358d128a31553a1b",
+      "extractorName": "ontology-appliance-synthetic-profiler",
+      "extractorVersion": "1.0.0",
+      "locator": "data/synthetic/accounts.csv#column=currency",
+      "normalizedCoordinates": {
+        "field": "currency",
+        "profilePointer": "/fields/currency/statistics"
+      },
+      "observedAt": "2026-06-17T06:32:00Z",
+      "policyTags": [
+        "bounded-profile",
+        "read-only",
+        "synthetic"
+      ],
+      "snapshotId": "core-accounts@sha256:5048c0b5a286afecb3b7bdcc81891b54bda12ab151e7097fcf81b3f1b5bb974a",
+      "sourceId": "core-accounts",
+      "tenantId": "demo-bank"
+    },
+    {
+      "claim": {
+        "profileStatistics": {
+          "distinctCount": 3,
+          "maximumLength": 20,
+          "minimumLength": 20,
+          "nonNullCount": 3,
+          "nullCount": 0,
+          "nullRate": 0.0,
+          "uniquenessRatio": 1.0
+        }
+      },
+      "classification": "INTERNAL",
+      "contentSha256": "468b989bf6c97587a62faeb5f911a52d04950cc05a54e38efd5fafde57dbae94",
+      "evidenceId": "evidence-core-accounts-c50f55b3c8720ea4",
+      "extractorName": "ontology-appliance-synthetic-profiler",
+      "extractorVersion": "1.0.0",
+      "locator": "data/synthetic/accounts.csv#column=source_updated_at",
+      "normalizedCoordinates": {
+        "field": "source_updated_at",
+        "profilePointer": "/fields/source_updated_at/statistics"
+      },
+      "observedAt": "2026-06-17T06:32:00Z",
+      "policyTags": [
+        "bounded-profile",
+        "read-only",
+        "synthetic"
+      ],
+      "snapshotId": "core-accounts@sha256:5048c0b5a286afecb3b7bdcc81891b54bda12ab151e7097fcf81b3f1b5bb974a",
+      "sourceId": "core-accounts",
+      "tenantId": "demo-bank"
+    },
+    {
+      "claim": {
+        "includedInDeterministicSample": true
+      },
+      "classification": "INTERNAL",
+      "contentSha256": "3e1eb8e59e1e4eac94e49f7468482c845c52be824b5dd50c172460c7e01a4704",
+      "evidenceId": "evidence-core-accounts-31582d8b65b99e9e",
+      "extractorName": "ontology-appliance-synthetic-profiler",
+      "extractorVersion": "1.0.0",
+      "locator": "data/synthetic/accounts.csv#row=2",
+      "normalizedCoordinates": {
+        "row": 2,
+        "sampleOrdinal": 1
+      },
+      "observedAt": "2026-06-17T06:32:00Z",
+      "policyTags": [
+        "bounded-sample",
+        "read-only",
+        "synthetic"
+      ],
+      "snapshotId": "core-accounts@sha256:5048c0b5a286afecb3b7bdcc81891b54bda12ab151e7097fcf81b3f1b5bb974a",
+      "sourceId": "core-accounts",
+      "tenantId": "demo-bank"
+    },
+    {
+      "claim": {
+        "includedInDeterministicSample": true
+      },
+      "classification": "INTERNAL",
+      "contentSha256": "c47ed353b4eb4d62d3dbd42a75045d138f1183be8dddac40ee2830137082efe6",
+      "evidenceId": "evidence-core-accounts-6b29377d7342a201",
+      "extractorName": "ontology-appliance-synthetic-profiler",
+      "extractorVersion": "1.0.0",
+      "locator": "data/synthetic/accounts.csv#row=3",
+      "normalizedCoordinates": {
+        "row": 3,
+        "sampleOrdinal": 2
+      },
+      "observedAt": "2026-06-17T06:32:00Z",
+      "policyTags": [
+        "bounded-sample",
+        "read-only",
+        "synthetic"
+      ],
+      "snapshotId": "core-accounts@sha256:5048c0b5a286afecb3b7bdcc81891b54bda12ab151e7097fcf81b3f1b5bb974a",
+      "sourceId": "core-accounts",
+      "tenantId": "demo-bank"
+    },
+    {
+      "claim": {
+        "includedInDeterministicSample": true
+      },
+      "classification": "INTERNAL",
+      "contentSha256": "8bc5249768183c4efd4fc92a95f7f2ed1c6249af49b7f07500d3ce5538c2060f",
+      "evidenceId": "evidence-core-accounts-41913859b5549945",
+      "extractorName": "ontology-appliance-synthetic-profiler",
+      "extractorVersion": "1.0.0",
+      "locator": "data/synthetic/accounts.csv#row=4",
+      "normalizedCoordinates": {
+        "row": 4,
+        "sampleOrdinal": 3
+      },
+      "observedAt": "2026-06-17T06:32:00Z",
+      "policyTags": [
+        "bounded-sample",
+        "read-only",
+        "synthetic"
+      ],
+      "snapshotId": "core-accounts@sha256:5048c0b5a286afecb3b7bdcc81891b54bda12ab151e7097fcf81b3f1b5bb974a",
+      "sourceId": "core-accounts",
+      "tenantId": "demo-bank"
+    },
+    {
+      "claim": {
+        "relationshipEvidence": {
+          "currencyCounts": {
+            "EUR": 3
+          },
+          "distinctOwnerPartyCount": 3,
+          "externalAccountCount": 1,
+          "statusCounts": {
+            "EXTERNAL": 1,
+            "OPEN": 2
+          }
+        }
+      },
+      "classification": "INTERNAL",
+      "contentSha256": "886a90250a7b9289fcbbda7828bc8eeae11f660dabd8c645c6b7f43517d89982",
+      "evidenceId": "evidence-core-accounts-975b5da9fcb35150",
+      "extractorName": "ontology-appliance-synthetic-profiler",
+      "extractorVersion": "1.0.0",
+      "locator": "profiles/accounts/profile.json#/relationshipEvidence",
+      "normalizedCoordinates": {
+        "profilePointer": "/relationshipEvidence"
+      },
+      "observedAt": "2026-06-17T06:32:00Z",
+      "policyTags": [
+        "read-only",
+        "relationship-profile",
+        "synthetic"
+      ],
+      "snapshotId": "core-accounts@sha256:5048c0b5a286afecb3b7bdcc81891b54bda12ab151e7097fcf81b3f1b5bb974a",
+      "sourceId": "core-accounts",
+      "tenantId": "demo-bank"
+    }
+  ],
+  "extractorName": "ontology-appliance-synthetic-profiler",
+  "extractorVersion": "1.0.0",
+  "observedAt": "2026-06-17T06:32:00Z",
+  "schemaVersion": "1.0",
+  "snapshotId": "core-accounts@sha256:5048c0b5a286afecb3b7bdcc81891b54bda12ab151e7097fcf81b3f1b5bb974a",
+  "sourceContentSha256": "5048c0b5a286afecb3b7bdcc81891b54bda12ab151e7097fcf81b3f1b5bb974a",
+  "sourceId": "core-accounts",
+  "sourceLocator": "data/synthetic/accounts.csv",
+  "tenantId": "demo-bank"
+}

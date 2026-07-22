@@ -1,0 +1,59 @@
+{
+  "access_mode": "read_only",
+  "capabilities": [
+    "schema",
+    "sample",
+    "profile",
+    "snapshot"
+  ],
+  "connector_id": "payments-ledger",
+  "evidence": {
+    "hash_algorithm": "sha256",
+    "locator_template": "data/synthetic/payments.jsonl#line={line}:json-path={field}"
+  },
+  "fields": [
+    {
+      "logical_type": "string",
+      "nullable": false,
+      "source_path": "payment_id"
+    },
+    {
+      "logical_type": "string",
+      "nullable": false,
+      "source_path": "from_account"
+    },
+    {
+      "logical_type": "string",
+      "nullable": false,
+      "source_path": "to_account"
+    },
+    {
+      "logical_type": "number",
+      "nullable": false,
+      "source_path": "amount",
+      "source_representation": "string"
+    },
+    {
+      "logical_type": "string",
+      "nullable": false,
+      "source_path": "currency"
+    },
+    {
+      "logical_type": "datetime",
+      "nullable": false,
+      "source_path": "booked_at"
+    }
+  ],
+  "limits": {
+    "maximum_bytes": 65536,
+    "maximum_records": 100,
+    "timeout_seconds": 30
+  },
+  "schema_version": "1.0",
+  "source": {
+    "snapshot_strategy": "content_hash",
+    "uri": "data/synthetic/payments.jsonl"
+  },
+  "source_type": "jsonl",
+  "tenant_id": "demo-bank"
+}

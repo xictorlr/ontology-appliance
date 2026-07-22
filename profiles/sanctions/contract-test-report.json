@@ -1,0 +1,61 @@
+{
+  "artifacts": [
+    {
+      "path": "data/contracts/sanctions-api.connector.json",
+      "sha256": "5cb01327e8b39c424b3578ffe2af85938f5430672ba7bfed1180669abc3ec2b8"
+    },
+    {
+      "path": "contracts/sanctions.schema.json",
+      "sha256": "c9801e5bef1bd345b0289aaaf8f17093a3a9feeb084f2b182b76410c0d5aae65"
+    },
+    {
+      "path": "profiles/sanctions/snapshot.json",
+      "sha256": "5739f81ab923cf9208bec29e92fa60910f92e94462569d5068ef87a5dba80aaa"
+    },
+    {
+      "path": "profiles/sanctions/profile.json",
+      "sha256": "7d5bb30ba1d5323dcef690bc6281426e6dc77b920dbf1e346eff8223cb1efe4d"
+    },
+    {
+      "path": "profiles/sanctions/evidence-index.json",
+      "sha256": "5809ce6c1bcf264c68eccf2650db2082a3b154fc39dd746a102cec4fc18b2601"
+    }
+  ],
+  "checks": [
+    {
+      "detail": "The connector manifest fixes access_mode to read_only.",
+      "name": "read_only_access",
+      "passed": true
+    },
+    {
+      "detail": "The snapshot ID pins source content with SHA-256 8cdd1cb5067a14aa427a98701b8f0187850a5d90dfa246384e688cc9bf261ef8.",
+      "name": "content_addressed_snapshot",
+      "passed": true
+    },
+    {
+      "detail": "The deterministic sample contains 1 records and 1656 bytes within policy bounds.",
+      "name": "bounded_sample",
+      "passed": true
+    },
+    {
+      "detail": "All 11 evidence records have stable repository-relative locators and content hashes.",
+      "name": "stable_evidence",
+      "passed": true
+    },
+    {
+      "detail": "No connector fixture contains a credential and no adapter capability permits writes.",
+      "name": "credential_and_write_guard",
+      "passed": true
+    }
+  ],
+  "connectorId": "sanctions-api",
+  "contentSha256": "8cdd1cb5067a14aa427a98701b8f0187850a5d90dfa246384e688cc9bf261ef8",
+  "executedAt": "2026-06-20T06:00:00Z",
+  "extractorName": "ontology-appliance-synthetic-profiler",
+  "extractorVersion": "1.0.0",
+  "observedAt": "2026-06-20T06:00:00Z",
+  "schemaVersion": "1.0",
+  "snapshotId": "sanctions-api@sha256:8cdd1cb5067a14aa427a98701b8f0187850a5d90dfa246384e688cc9bf261ef8",
+  "sourceLocator": "data/contracts/sanctions.openapi.yaml + data/synthetic/sanctions.json",
+  "status": "PASSED"
+}

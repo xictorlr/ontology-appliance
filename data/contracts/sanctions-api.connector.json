@@ -1,0 +1,59 @@
+{
+  "access_mode": "read_only",
+  "capabilities": [
+    "schema",
+    "sample",
+    "profile",
+    "snapshot"
+  ],
+  "connector_id": "sanctions-api",
+  "evidence": {
+    "hash_algorithm": "sha256",
+    "locator_template": "data/synthetic/sanctions.json#/records/{record}/{field}"
+  },
+  "fields": [
+    {
+      "logical_type": "array",
+      "nullable": false,
+      "source_path": "records[].countries"
+    },
+    {
+      "logical_type": "string",
+      "nullable": false,
+      "source_path": "records[].id"
+    },
+    {
+      "logical_type": "string",
+      "nullable": false,
+      "source_path": "records[].name"
+    },
+    {
+      "logical_type": "date",
+      "nullable": false,
+      "source_path": "records[].listedAt"
+    },
+    {
+      "logical_type": "string",
+      "nullable": false,
+      "source_path": "records[].program"
+    },
+    {
+      "logical_type": "string",
+      "nullable": false,
+      "source_path": "records[].matchedPartyId"
+    }
+  ],
+  "limits": {
+    "maximum_bytes": 65536,
+    "maximum_records": 100,
+    "timeout_seconds": 30
+  },
+  "schema_version": "1.0",
+  "source": {
+    "response_fixture": "data/synthetic/sanctions.json",
+    "snapshot_strategy": "content_hash",
+    "uri": "data/contracts/sanctions.openapi.yaml"
+  },
+  "source_type": "openapi",
+  "tenant_id": "demo-bank"
+}

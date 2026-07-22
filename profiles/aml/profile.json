@@ -1,0 +1,126 @@
+{
+  "bounds": {
+    "maximumBytes": 65536,
+    "maximumRecords": 100,
+    "observedBytes": 252,
+    "observedRecords": 2
+  },
+  "extractorName": "ontology-appliance-synthetic-profiler",
+  "extractorVersion": "1.0.0",
+  "fields": {
+    "case_id": {
+      "logicalType": "string",
+      "sourceLocator": "data/synthetic/aml_cases.csv#column=case_id",
+      "statistics": {
+        "distinctCount": 2,
+        "maximumLength": 6,
+        "minimumLength": 6,
+        "nonNullCount": 2,
+        "nullCount": 0,
+        "nullRate": 0.0,
+        "uniquenessRatio": 1.0
+      }
+    },
+    "country": {
+      "logicalType": "string",
+      "sourceLocator": "data/synthetic/aml_cases.csv#column=country",
+      "statistics": {
+        "distinctCount": 2,
+        "maximumLength": 2,
+        "minimumLength": 2,
+        "nonNullCount": 2,
+        "nullCount": 0,
+        "nullRate": 0.0,
+        "uniquenessRatio": 1.0
+      }
+    },
+    "match_features": {
+      "logicalType": "string",
+      "sourceLocator": "data/synthetic/aml_cases.csv#column=match_features",
+      "statistics": {
+        "distinctCount": 2,
+        "maximumLength": 36,
+        "minimumLength": 22,
+        "nonNullCount": 2,
+        "nullCount": 0,
+        "nullRate": 0.0,
+        "uniquenessRatio": 1.0
+      }
+    },
+    "matched_party_id": {
+      "logicalType": "string",
+      "sourceLocator": "data/synthetic/aml_cases.csv#column=matched_party_id",
+      "statistics": {
+        "distinctCount": 2,
+        "maximumLength": 6,
+        "minimumLength": 6,
+        "nonNullCount": 2,
+        "nullCount": 0,
+        "nullRate": 0.0,
+        "uniquenessRatio": 1.0
+      }
+    },
+    "opened_at": {
+      "logicalType": "datetime",
+      "sourceLocator": "data/synthetic/aml_cases.csv#column=opened_at",
+      "statistics": {
+        "distinctCount": 2,
+        "maximumLength": 20,
+        "minimumLength": 20,
+        "nonNullCount": 2,
+        "nullCount": 0,
+        "nullRate": 0.0,
+        "uniquenessRatio": 1.0
+      }
+    },
+    "party_name": {
+      "logicalType": "string",
+      "sourceLocator": "data/synthetic/aml_cases.csv#column=party_name",
+      "statistics": {
+        "distinctCount": 2,
+        "maximumLength": 11,
+        "minimumLength": 9,
+        "nonNullCount": 2,
+        "nullCount": 0,
+        "nullRate": 0.0,
+        "uniquenessRatio": 1.0
+      }
+    },
+    "risk_level": {
+      "logicalType": "string",
+      "sourceLocator": "data/synthetic/aml_cases.csv#column=risk_level",
+      "statistics": {
+        "distinctCount": 2,
+        "maximumLength": 4,
+        "minimumLength": 3,
+        "nonNullCount": 2,
+        "nullCount": 0,
+        "nullRate": 0.0,
+        "uniquenessRatio": 1.0
+      }
+    }
+  },
+  "observedAt": "2026-06-20T12:10:00Z",
+  "relationshipEvidence": {
+    "distinctMatchedPartyCount": 2,
+    "matchFeatureCounts": {
+      "country": 2,
+      "document": 1,
+      "name": 2
+    },
+    "riskLevelCounts": {
+      "HIGH": 1,
+      "LOW": 1
+    }
+  },
+  "schemaVersion": "1.0",
+  "snapshotId": "aml-cases@sha256:7fce6a969a484aa2a1222c1f45a382a3f9f9f9d5d4f44b97b5dbcd9b562981cb",
+  "sourceContentSha256": "7fce6a969a484aa2a1222c1f45a382a3f9f9f9d5d4f44b97b5dbcd9b562981cb",
+  "sourceId": "aml-cases",
+  "sourceLocator": "data/synthetic/aml_cases.csv",
+  "statistics": {
+    "fieldCount": 7,
+    "recordCount": 2
+  },
+  "tenantId": "demo-bank"
+}

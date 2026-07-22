@@ -1,0 +1,114 @@
+{
+  "bounds": {
+    "maximumBytes": 65536,
+    "maximumRecords": 100,
+    "observedBytes": 1656,
+    "observedRecords": 1
+  },
+  "extractorName": "ontology-appliance-synthetic-profiler",
+  "extractorVersion": "1.0.0",
+  "fields": {
+    "records[].countries": {
+      "logicalType": "array",
+      "sourceLocator": "data/synthetic/sanctions.json#/records/*/countries",
+      "statistics": {
+        "distinctCount": 1,
+        "maximumLength": 2,
+        "minimumLength": 2,
+        "nonNullCount": 1,
+        "nullCount": 0,
+        "nullRate": 0.0,
+        "uniquenessRatio": 1.0
+      }
+    },
+    "records[].id": {
+      "logicalType": "string",
+      "sourceLocator": "data/synthetic/sanctions.json#/records/*/id",
+      "statistics": {
+        "distinctCount": 1,
+        "maximumLength": 6,
+        "minimumLength": 6,
+        "nonNullCount": 1,
+        "nullCount": 0,
+        "nullRate": 0.0,
+        "uniquenessRatio": 1.0
+      }
+    },
+    "records[].listedAt": {
+      "logicalType": "date",
+      "sourceLocator": "data/synthetic/sanctions.json#/records/*/listedAt",
+      "statistics": {
+        "distinctCount": 1,
+        "maximumLength": 10,
+        "minimumLength": 10,
+        "nonNullCount": 1,
+        "nullCount": 0,
+        "nullRate": 0.0,
+        "uniquenessRatio": 1.0
+      }
+    },
+    "records[].matchedPartyId": {
+      "logicalType": "string",
+      "sourceLocator": "data/synthetic/sanctions.json#/records/*/matchedPartyId",
+      "statistics": {
+        "distinctCount": 1,
+        "maximumLength": 6,
+        "minimumLength": 6,
+        "nonNullCount": 1,
+        "nullCount": 0,
+        "nullRate": 0.0,
+        "uniquenessRatio": 1.0
+      }
+    },
+    "records[].name": {
+      "logicalType": "string",
+      "sourceLocator": "data/synthetic/sanctions.json#/records/*/name",
+      "statistics": {
+        "distinctCount": 1,
+        "maximumLength": 13,
+        "minimumLength": 13,
+        "nonNullCount": 1,
+        "nullCount": 0,
+        "nullRate": 0.0,
+        "uniquenessRatio": 1.0
+      }
+    },
+    "records[].program": {
+      "logicalType": "string",
+      "sourceLocator": "data/synthetic/sanctions.json#/records/*/program",
+      "statistics": {
+        "distinctCount": 1,
+        "maximumLength": 7,
+        "minimumLength": 7,
+        "nonNullCount": 1,
+        "nullCount": 0,
+        "nullRate": 0.0,
+        "uniquenessRatio": 1.0
+      }
+    }
+  },
+  "observedAt": "2026-06-20T06:00:00Z",
+  "relationshipEvidence": {
+    "countryCounts": {
+      "LV": 1
+    },
+    "distinctMatchedPartyCount": 1,
+    "programCounts": {
+      "EU-DEMO": 1
+    }
+  },
+  "schemaVersion": "1.0",
+  "snapshotId": "sanctions-api@sha256:8cdd1cb5067a14aa427a98701b8f0187850a5d90dfa246384e688cc9bf261ef8",
+  "sourceContentSha256": "8cdd1cb5067a14aa427a98701b8f0187850a5d90dfa246384e688cc9bf261ef8",
+  "sourceId": "sanctions-api",
+  "sourceLocator": "data/contracts/sanctions.openapi.yaml + data/synthetic/sanctions.json",
+  "statistics": {
+    "apiOperationCount": 1,
+    "apiOperations": {
+      "get": 1
+    },
+    "apiPathCount": 1,
+    "recordCount": 1
+  },
+  "tenantId": "demo-bank"
+}

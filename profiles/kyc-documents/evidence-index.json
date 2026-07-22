@@ -1,0 +1,417 @@
+{
+  "evidence": [
+    {
+      "claim": {
+        "byteCount": 1054,
+        "documentCount": 1,
+        "pageCount": 1
+      },
+      "classification": "INTERNAL",
+      "contentSha256": "8aa24ffe6183c52c49a93b026298164886548eb2860184203609ddd0aa038769",
+      "evidenceId": "evidence-kyc-documents-fb6d6c0424593a43",
+      "extractorName": "ontology-appliance-synthetic-profiler",
+      "extractorVersion": "1.0.0",
+      "locator": "data/synthetic/kyc/LE-2001.pdf",
+      "normalizedCoordinates": {
+        "document": "LE-2001.pdf",
+        "pageCount": 1
+      },
+      "observedAt": "2026-06-20T06:30:00Z",
+      "policyTags": [
+        "document",
+        "read-only",
+        "snapshot",
+        "synthetic"
+      ],
+      "snapshotId": "kyc-documents@sha256:8aa24ffe6183c52c49a93b026298164886548eb2860184203609ddd0aa038769",
+      "sourceId": "kyc-documents",
+      "tenantId": "demo-bank"
+    },
+    {
+      "claim": {
+        "profileStatistics": {
+          "extractedFieldCount": 5,
+          "nonBlankLineCount": 6,
+          "pageCount": 1,
+          "recordCount": 1
+        }
+      },
+      "classification": "INTERNAL",
+      "contentSha256": "4896f12e25c3cdaea02e763984d132b91ddcc419272ad3fe527b96c647b0b545",
+      "evidenceId": "evidence-kyc-documents-9cc4eb8875e83f26",
+      "extractorName": "ontology-appliance-synthetic-profiler",
+      "extractorVersion": "1.0.0",
+      "locator": "profiles/kyc-documents/profile.json#/statistics",
+      "normalizedCoordinates": {
+        "profilePointer": "/statistics"
+      },
+      "observedAt": "2026-06-20T06:30:00Z",
+      "policyTags": [
+        "bounded-profile",
+        "document",
+        "read-only",
+        "synthetic"
+      ],
+      "snapshotId": "kyc-documents@sha256:8aa24ffe6183c52c49a93b026298164886548eb2860184203609ddd0aa038769",
+      "sourceId": "kyc-documents",
+      "tenantId": "demo-bank"
+    },
+    {
+      "claim": {
+        "extractedSpan": true,
+        "label": "document-banner"
+      },
+      "classification": "INTERNAL",
+      "contentSha256": "030f1eafdcff7f3c699e8b88fc092d7d91863caa42d76565568bc6da8e5d3bb2",
+      "evidenceId": "evidence-kyc-documents-ff29d6ab856356b0",
+      "extractorName": "ontology-appliance-synthetic-profiler",
+      "extractorVersion": "1.0.0",
+      "locator": "data/synthetic/kyc/LE-2001.pdf#page=1:line=1",
+      "normalizedCoordinates": {
+        "document": "LE-2001.pdf",
+        "line": 1,
+        "page": 1
+      },
+      "observedAt": "2026-06-20T06:30:00Z",
+      "policyTags": [
+        "document-span",
+        "read-only",
+        "synthetic"
+      ],
+      "snapshotId": "kyc-documents@sha256:8aa24ffe6183c52c49a93b026298164886548eb2860184203609ddd0aa038769",
+      "sourceId": "kyc-documents",
+      "tenantId": "demo-bank"
+    },
+    {
+      "claim": {
+        "extractedSpan": true,
+        "label": "Legal entity"
+      },
+      "classification": "INTERNAL",
+      "contentSha256": "647a191ccdf82ebed557f980afe4f765e70c460af7b76d2037d2432621276be4",
+      "evidenceId": "evidence-kyc-documents-70ec6cb6e02c02fd",
+      "extractorName": "ontology-appliance-synthetic-profiler",
+      "extractorVersion": "1.0.0",
+      "locator": "data/synthetic/kyc/LE-2001.pdf#page=1:line=2",
+      "normalizedCoordinates": {
+        "document": "LE-2001.pdf",
+        "line": 2,
+        "page": 1
+      },
+      "observedAt": "2026-06-20T06:30:00Z",
+      "policyTags": [
+        "document-span",
+        "read-only",
+        "synthetic"
+      ],
+      "snapshotId": "kyc-documents@sha256:8aa24ffe6183c52c49a93b026298164886548eb2860184203609ddd0aa038769",
+      "sourceId": "kyc-documents",
+      "tenantId": "demo-bank"
+    },
+    {
+      "claim": {
+        "extractedSpan": true,
+        "label": "Registered country"
+      },
+      "classification": "INTERNAL",
+      "contentSha256": "4cd61ea0e94dd4dfe480460566c5749154d455fd63b8933befb689b71cf19235",
+      "evidenceId": "evidence-kyc-documents-e84131e5e9d80d0d",
+      "extractorName": "ontology-appliance-synthetic-profiler",
+      "extractorVersion": "1.0.0",
+      "locator": "data/synthetic/kyc/LE-2001.pdf#page=1:line=3",
+      "normalizedCoordinates": {
+        "document": "LE-2001.pdf",
+        "line": 3,
+        "page": 1
+      },
+      "observedAt": "2026-06-20T06:30:00Z",
+      "policyTags": [
+        "document-span",
+        "read-only",
+        "synthetic"
+      ],
+      "snapshotId": "kyc-documents@sha256:8aa24ffe6183c52c49a93b026298164886548eb2860184203609ddd0aa038769",
+      "sourceId": "kyc-documents",
+      "tenantId": "demo-bank"
+    },
+    {
+      "claim": {
+        "extractedSpan": true,
+        "label": "Ultimate beneficial owner"
+      },
+      "classification": "INTERNAL",
+      "contentSha256": "80ce7b64b3a8b1847c1abfa45830efe1913fa45426a9d35a907a2747579b3ef7",
+      "evidenceId": "evidence-kyc-documents-c75530b1f0d9cb73",
+      "extractorName": "ontology-appliance-synthetic-profiler",
+      "extractorVersion": "1.0.0",
+      "locator": "data/synthetic/kyc/LE-2001.pdf#page=1:line=4",
+      "normalizedCoordinates": {
+        "document": "LE-2001.pdf",
+        "line": 4,
+        "page": 1
+      },
+      "observedAt": "2026-06-20T06:30:00Z",
+      "policyTags": [
+        "document-span",
+        "read-only",
+        "synthetic"
+      ],
+      "snapshotId": "kyc-documents@sha256:8aa24ffe6183c52c49a93b026298164886548eb2860184203609ddd0aa038769",
+      "sourceId": "kyc-documents",
+      "tenantId": "demo-bank"
+    },
+    {
+      "claim": {
+        "extractedSpan": true,
+        "label": "Declared ownership"
+      },
+      "classification": "INTERNAL",
+      "contentSha256": "db8bb048eaf56ba1d84291740922f6f48f1aa4357d4c8dafa6deedb6f9108286",
+      "evidenceId": "evidence-kyc-documents-407eedcfc0f28c3d",
+      "extractorName": "ontology-appliance-synthetic-profiler",
+      "extractorVersion": "1.0.0",
+      "locator": "data/synthetic/kyc/LE-2001.pdf#page=1:line=5",
+      "normalizedCoordinates": {
+        "document": "LE-2001.pdf",
+        "line": 5,
+        "page": 1
+      },
+      "observedAt": "2026-06-20T06:30:00Z",
+      "policyTags": [
+        "document-span",
+        "read-only",
+        "synthetic"
+      ],
+      "snapshotId": "kyc-documents@sha256:8aa24ffe6183c52c49a93b026298164886548eb2860184203609ddd0aa038769",
+      "sourceId": "kyc-documents",
+      "tenantId": "demo-bank"
+    },
+    {
+      "claim": {
+        "extractedSpan": true,
+        "label": "Review status"
+      },
+      "classification": "INTERNAL",
+      "contentSha256": "20fe610a18bff61a5f21a20d36419985b729341129bbbb3d23fe3403a6e3d391",
+      "evidenceId": "evidence-kyc-documents-53081e200b6caaa6",
+      "extractorName": "ontology-appliance-synthetic-profiler",
+      "extractorVersion": "1.0.0",
+      "locator": "data/synthetic/kyc/LE-2001.pdf#page=1:line=6",
+      "normalizedCoordinates": {
+        "document": "LE-2001.pdf",
+        "line": 6,
+        "page": 1
+      },
+      "observedAt": "2026-06-20T06:30:00Z",
+      "policyTags": [
+        "document-span",
+        "read-only",
+        "synthetic"
+      ],
+      "snapshotId": "kyc-documents@sha256:8aa24ffe6183c52c49a93b026298164886548eb2860184203609ddd0aa038769",
+      "sourceId": "kyc-documents",
+      "tenantId": "demo-bank"
+    },
+    {
+      "claim": {
+        "profileStatistics": {
+          "distinctCount": 1,
+          "maximumLength": 31,
+          "minimumLength": 31,
+          "nonNullCount": 1,
+          "nullCount": 0,
+          "nullRate": 0.0,
+          "uniquenessRatio": 1.0
+        }
+      },
+      "classification": "INTERNAL",
+      "contentSha256": "e455ae9092e0014063fe46cbced4543ba47ad7953b55bb68d70b171dc9e83062",
+      "evidenceId": "evidence-kyc-documents-61f9c593c2bb3ee4",
+      "extractorName": "ontology-appliance-synthetic-profiler",
+      "extractorVersion": "1.0.0",
+      "locator": "data/synthetic/kyc/LE-2001.pdf#page=1:line=2",
+      "normalizedCoordinates": {
+        "field": "legalEntity",
+        "profilePointer": "/fields/legalEntity/statistics"
+      },
+      "observedAt": "2026-06-20T06:30:00Z",
+      "policyTags": [
+        "bounded-profile",
+        "document",
+        "read-only",
+        "synthetic"
+      ],
+      "snapshotId": "kyc-documents@sha256:8aa24ffe6183c52c49a93b026298164886548eb2860184203609ddd0aa038769",
+      "sourceId": "kyc-documents",
+      "tenantId": "demo-bank"
+    },
+    {
+      "claim": {
+        "profileStatistics": {
+          "distinctCount": 1,
+          "maximumLength": 2,
+          "minimumLength": 2,
+          "nonNullCount": 1,
+          "nullCount": 0,
+          "nullRate": 0.0,
+          "uniquenessRatio": 1.0
+        }
+      },
+      "classification": "INTERNAL",
+      "contentSha256": "281404a15f159870e35f42a2b95329020b68995502fcfff84d99f5a05c8ddf0d",
+      "evidenceId": "evidence-kyc-documents-70d68bc79b338e36",
+      "extractorName": "ontology-appliance-synthetic-profiler",
+      "extractorVersion": "1.0.0",
+      "locator": "data/synthetic/kyc/LE-2001.pdf#page=1:line=3",
+      "normalizedCoordinates": {
+        "field": "registeredCountry",
+        "profilePointer": "/fields/registeredCountry/statistics"
+      },
+      "observedAt": "2026-06-20T06:30:00Z",
+      "policyTags": [
+        "bounded-profile",
+        "document",
+        "read-only",
+        "synthetic"
+      ],
+      "snapshotId": "kyc-documents@sha256:8aa24ffe6183c52c49a93b026298164886548eb2860184203609ddd0aa038769",
+      "sourceId": "kyc-documents",
+      "tenantId": "demo-bank"
+    },
+    {
+      "claim": {
+        "profileStatistics": {
+          "distinctCount": 1,
+          "maximumLength": 22,
+          "minimumLength": 22,
+          "nonNullCount": 1,
+          "nullCount": 0,
+          "nullRate": 0.0,
+          "uniquenessRatio": 1.0
+        }
+      },
+      "classification": "INTERNAL",
+      "contentSha256": "5cf9a3a00cc58e76e6f910730cd5b5fcbdfebb3b23fa504a3ab5acccae5b7d4c",
+      "evidenceId": "evidence-kyc-documents-45470a32638434cc",
+      "extractorName": "ontology-appliance-synthetic-profiler",
+      "extractorVersion": "1.0.0",
+      "locator": "data/synthetic/kyc/LE-2001.pdf#page=1:line=4",
+      "normalizedCoordinates": {
+        "field": "ultimateBeneficialOwner",
+        "profilePointer": "/fields/ultimateBeneficialOwner/statistics"
+      },
+      "observedAt": "2026-06-20T06:30:00Z",
+      "policyTags": [
+        "bounded-profile",
+        "document",
+        "read-only",
+        "synthetic"
+      ],
+      "snapshotId": "kyc-documents@sha256:8aa24ffe6183c52c49a93b026298164886548eb2860184203609ddd0aa038769",
+      "sourceId": "kyc-documents",
+      "tenantId": "demo-bank"
+    },
+    {
+      "claim": {
+        "profileStatistics": {
+          "distinctCount": 1,
+          "maximumLength": 3,
+          "minimumLength": 3,
+          "nonNullCount": 1,
+          "nullCount": 0,
+          "nullRate": 0.0,
+          "uniquenessRatio": 1.0
+        }
+      },
+      "classification": "INTERNAL",
+      "contentSha256": "99fb88ddfee32b283e147d11534d8d67c6cf1e2a15de7436975c0b7b3d98f0a4",
+      "evidenceId": "evidence-kyc-documents-633f1e19663ec6f5",
+      "extractorName": "ontology-appliance-synthetic-profiler",
+      "extractorVersion": "1.0.0",
+      "locator": "data/synthetic/kyc/LE-2001.pdf#page=1:line=5",
+      "normalizedCoordinates": {
+        "field": "declaredOwnership",
+        "profilePointer": "/fields/declaredOwnership/statistics"
+      },
+      "observedAt": "2026-06-20T06:30:00Z",
+      "policyTags": [
+        "bounded-profile",
+        "document",
+        "read-only",
+        "synthetic"
+      ],
+      "snapshotId": "kyc-documents@sha256:8aa24ffe6183c52c49a93b026298164886548eb2860184203609ddd0aa038769",
+      "sourceId": "kyc-documents",
+      "tenantId": "demo-bank"
+    },
+    {
+      "claim": {
+        "profileStatistics": {
+          "distinctCount": 1,
+          "maximumLength": 30,
+          "minimumLength": 30,
+          "nonNullCount": 1,
+          "nullCount": 0,
+          "nullRate": 0.0,
+          "uniquenessRatio": 1.0
+        }
+      },
+      "classification": "INTERNAL",
+      "contentSha256": "33c279ee27df67ab1e2ec5598fd3e01993dfbfb1ddd48eced50c141071decfb9",
+      "evidenceId": "evidence-kyc-documents-d9ba6cf006d86134",
+      "extractorName": "ontology-appliance-synthetic-profiler",
+      "extractorVersion": "1.0.0",
+      "locator": "data/synthetic/kyc/LE-2001.pdf#page=1:line=6",
+      "normalizedCoordinates": {
+        "field": "reviewStatus",
+        "profilePointer": "/fields/reviewStatus/statistics"
+      },
+      "observedAt": "2026-06-20T06:30:00Z",
+      "policyTags": [
+        "bounded-profile",
+        "document",
+        "read-only",
+        "synthetic"
+      ],
+      "snapshotId": "kyc-documents@sha256:8aa24ffe6183c52c49a93b026298164886548eb2860184203609ddd0aa038769",
+      "sourceId": "kyc-documents",
+      "tenantId": "demo-bank"
+    },
+    {
+      "claim": {
+        "relationshipEvidence": {
+          "declaredOwnershipPercent": 68,
+          "documentEntityCount": 1,
+          "documentUboCount": 1
+        }
+      },
+      "classification": "INTERNAL",
+      "contentSha256": "e05ff5e42090c5ced698258ad04a90fb7fdc9c060eb7998609b8c734b1a25255",
+      "evidenceId": "evidence-kyc-documents-db7b799f3c145b3a",
+      "extractorName": "ontology-appliance-synthetic-profiler",
+      "extractorVersion": "1.0.0",
+      "locator": "profiles/kyc-documents/profile.json#/relationshipEvidence",
+      "normalizedCoordinates": {
+        "profilePointer": "/relationshipEvidence"
+      },
+      "observedAt": "2026-06-20T06:30:00Z",
+      "policyTags": [
+        "read-only",
+        "relationship-profile",
+        "synthetic"
+      ],
+      "snapshotId": "kyc-documents@sha256:8aa24ffe6183c52c49a93b026298164886548eb2860184203609ddd0aa038769",
+      "sourceId": "kyc-documents",
+      "tenantId": "demo-bank"
+    }
+  ],
+  "extractorName": "ontology-appliance-synthetic-profiler",
+  "extractorVersion": "1.0.0",
+  "observedAt": "2026-06-20T06:30:00Z",
+  "schemaVersion": "1.0",
+  "snapshotId": "kyc-documents@sha256:8aa24ffe6183c52c49a93b026298164886548eb2860184203609ddd0aa038769",
+  "sourceContentSha256": "8aa24ffe6183c52c49a93b026298164886548eb2860184203609ddd0aa038769",
+  "sourceId": "kyc-documents",
+  "sourceLocator": "data/synthetic/kyc/LE-2001.pdf",
+  "tenantId": "demo-bank"
+}

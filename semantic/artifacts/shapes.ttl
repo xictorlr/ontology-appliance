@@ -1,0 +1,121 @@
+@prefix oa: <urn:ontology-appliance:vocab:> .
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+oa:AccountShape a sh:NodeShape ;
+    sh:targetClass oa:Account ;
+    sh:property [
+        sh:path oa:accountNumber ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:datatype xsd:string ;
+        sh:message "Every account must have exactly one string account number."@en
+    ] ;
+    sh:property [
+        sh:path oa:ownedBy ;
+        sh:minCount 1 ;
+        sh:class oa:LegalEntity ;
+        sh:nodeKind sh:IRI ;
+        sh:message "Every account must reference its owning legal entity."@en
+    ] .
+
+oa:PaymentShape a sh:NodeShape ;
+    sh:targetClass oa:Payment ;
+    sh:property [
+        sh:path oa:fromAccount ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:class oa:Account ;
+        sh:nodeKind sh:IRI
+    ] ;
+    sh:property [
+        sh:path oa:amount ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:datatype xsd:decimal ;
+        sh:minExclusive 0
+    ] ;
+    sh:property [
+        sh:path oa:currency ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:datatype xsd:string ;
+        sh:pattern "^[A-Z]{3}$"
+    ] .
+
+oa:SanctionsEntryShape a sh:NodeShape ;
+    sh:targetClass oa:SanctionsEntry ;
+    sh:property [
+        sh:path oa:targetsParty ;
+        sh:minCount 1 ;
+        sh:class oa:Party ;
+        sh:nodeKind sh:IRI
+    ] .
+
+oa:MappingProposalShape a sh:NodeShape ;
+    sh:targetClass oa:MappingProposal ;
+    sh:property [ sh:path oa:fieldName ; sh:minCount 1 ; sh:maxCount 1 ; sh:datatype xsd:string ] ;
+    sh:property [ sh:path oa:mapsToConcept ; sh:minCount 1 ; sh:maxCount 1 ; sh:nodeKind sh:IRI ] ;
+    sh:property [ sh:path oa:evidence ; sh:minCount 1 ; sh:class oa:EvidenceArtifact ; sh:nodeKind sh:IRI ] ;
+    sh:property [ sh:path oa:counterevidence ; sh:minCount 1 ; sh:class oa:EvidenceArtifact ; sh:nodeKind sh:IRI ] ;
+    sh:property [ sh:path oa:riskLevel ; sh:minCount 1 ; sh:maxCount 1 ; sh:in ( "low" "medium" "high" ) ] ;
+    sh:property [ sh:path oa:sourceSnapshotId ; sh:minCount 1 ; sh:datatype xsd:string ] ;
+    sh:property [ sh:path oa:transformation ; sh:minCount 1 ; sh:maxCount 1 ; sh:datatype xsd:string ] ;
+    sh:property [ sh:path oa:generationTrace ; sh:minCount 1 ; sh:maxCount 1 ; sh:class oa:GenerationTrace ; sh:nodeKind sh:IRI ] ;
+    sh:property [ sh:path oa:verificationTrace ; sh:minCount 1 ; sh:maxCount 1 ; sh:class oa:VerificationRun ; sh:nodeKind sh:IRI ] ;
+    sh:property [ sh:path oa:confidenceLexical ; sh:minCount 1 ; sh:maxCount 1 ; sh:datatype xsd:decimal ; sh:minInclusive 0 ; sh:maxInclusive 1 ] ;
+    sh:property [ sh:path oa:confidenceStructural ; sh:minCount 1 ; sh:maxCount 1 ; sh:datatype xsd:decimal ; sh:minInclusive 0 ; sh:maxInclusive 1 ] ;
+    sh:property [ sh:path oa:confidenceInstance ; sh:minCount 1 ; sh:maxCount 1 ; sh:datatype xsd:decimal ; sh:minInclusive 0 ; sh:maxInclusive 1 ] ;
+    sh:property [ sh:path oa:confidenceExternal ; sh:minCount 1 ; sh:maxCount 1 ; sh:datatype xsd:decimal ; sh:minInclusive 0 ; sh:maxInclusive 1 ] ;
+    sh:property [ sh:path oa:confidenceModel ; sh:minCount 1 ; sh:maxCount 1 ; sh:datatype xsd:decimal ; sh:minInclusive 0 ; sh:maxInclusive 1 ] ;
+    sh:property [ sh:path oa:confidenceEvidenceCoverage ; sh:minCount 1 ; sh:maxCount 1 ; sh:datatype xsd:decimal ; sh:minInclusive 0 ; sh:maxInclusive 1 ] ;
+    sh:property [
+        sh:path oa:proposalStatus ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:in ( "PENDING_VERIFICATION" "AUTO_APPROVED" "HUMAN_REVIEW" "REJECTED" "QUARANTINED" "ABSTAINED" "PUBLISHED" )
+    ] .
+
+oa:EvidenceArtifactShape a sh:NodeShape ;
+    sh:targetClass oa:EvidenceArtifact ;
+    sh:property [ sh:path oa:tenantId ; sh:minCount 1 ; sh:maxCount 1 ; sh:datatype xsd:string ; sh:hasValue "demo-bank" ] ;
+    sh:property [ sh:path oa:sourceId ; sh:minCount 1 ; sh:maxCount 1 ; sh:datatype xsd:string ] ;
+    sh:property [ sh:path oa:snapshotId ; sh:minCount 1 ; sh:maxCount 1 ; sh:datatype xsd:string ] ;
+    sh:property [ sh:path oa:locator ; sh:minCount 1 ; sh:maxCount 1 ; sh:datatype xsd:string ] ;
+    sh:property [ sh:path oa:observedAt ; sh:minCount 1 ; sh:maxCount 1 ; sh:datatype xsd:dateTime ] ;
+    sh:property [ sh:path oa:extractorName ; sh:minCount 1 ; sh:maxCount 1 ; sh:datatype xsd:string ] ;
+    sh:property [ sh:path oa:extractorVersion ; sh:minCount 1 ; sh:maxCount 1 ; sh:datatype xsd:string ] ;
+    sh:property [
+        sh:path oa:contentSha256 ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:datatype xsd:string ;
+        sh:pattern "^[0-9a-f]{64}$"
+    ] ;
+    sh:property [ sh:path oa:classification ; sh:minCount 1 ; sh:maxCount 1 ; sh:in ( "PUBLIC" "INTERNAL" "CONFIDENTIAL" "RESTRICTED" ) ] ;
+    sh:property [ sh:path oa:claim ; sh:minCount 1 ; sh:maxCount 1 ; sh:datatype xsd:string ] .
+
+oa:GenerationTraceShape a sh:NodeShape ;
+    sh:targetClass oa:GenerationTrace ;
+    sh:property [ sh:path oa:generationMode ; sh:minCount 1 ; sh:maxCount 1 ; sh:in ( "deterministic" "model" ) ] ;
+    sh:property [ sh:path oa:generatorProvider ; sh:minCount 1 ; sh:maxCount 1 ; sh:datatype xsd:string ] ;
+    sh:property [ sh:path oa:generatorModel ; sh:minCount 1 ; sh:maxCount 1 ; sh:datatype xsd:string ] ;
+    sh:property [ sh:path oa:modelParticipated ; sh:minCount 1 ; sh:maxCount 1 ; sh:datatype xsd:boolean ] ;
+    sh:property [ sh:path oa:promptVersion ; sh:minCount 1 ; sh:maxCount 1 ; sh:datatype xsd:string ] ;
+    sh:property [ sh:path oa:algorithmVersion ; sh:minCount 1 ; sh:maxCount 1 ; sh:datatype xsd:string ] ;
+    sh:property [
+        sh:path oa:deterministicInputHash ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:datatype xsd:string ;
+        sh:pattern "^[0-9a-f]{64}$"
+    ] .
+
+oa:VerificationRunShape a sh:NodeShape ;
+    sh:targetClass oa:VerificationRun ;
+    sh:property [ sh:path oa:verificationMode ; sh:minCount 1 ; sh:maxCount 1 ; sh:in ( "mock" "live" ) ] ;
+    sh:property [ sh:path oa:verifierProvider ; sh:minCount 1 ; sh:maxCount 1 ; sh:datatype xsd:string ] ;
+    sh:property [ sh:path oa:verifierModel ; sh:minCount 1 ; sh:maxCount 1 ; sh:datatype xsd:string ] ;
+    sh:property [ sh:path oa:promptVersion ; sh:minCount 1 ; sh:maxCount 1 ; sh:datatype xsd:string ] ;
+    sh:property [ sh:path oa:independentAgreementAvailable ; sh:minCount 1 ; sh:maxCount 1 ; sh:datatype xsd:boolean ] ;
+    sh:property [ sh:path oa:verificationReasonCode ; sh:minCount 1 ; sh:datatype xsd:string ] .

@@ -1,0 +1,27 @@
+{
+  "$schema": "urn:ontology-appliance:schema:publication-review:1",
+  "bundleVersion": "2026.07.1-demo-bank",
+  "tenantId": "demo-bank",
+  "ontologyVersion": "2026.07.1",
+  "state": "CANDIDATE",
+  "coverage": "PARTIAL",
+  "mappingPopulation": {
+    "total": 100,
+    "approved": 0,
+    "published": 0,
+    "humanReview": 100
+  },
+  "decisions": [
+    {
+      "mappingId": "mapping-crm-cif",
+      "status": "HUMAN_REVIEW",
+      "verificationRunId": "verification-mapping-crm-cif-mock-20260722",
+      "reviewer": null,
+      "reasonCodes": [
+        "MOCK_REQUIRES_HUMAN",
+        "RISK_REQUIRES_HUMAN"
+      ]
+    }
+  ],
+  "unresolvedPolicy": "Every mapping without an immutable independent review decision remains HUMAN_REVIEW and is ineligible for publication."
+}

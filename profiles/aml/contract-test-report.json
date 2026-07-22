@@ -1,0 +1,61 @@
+{
+  "artifacts": [
+    {
+      "path": "data/contracts/aml-cases.connector.json",
+      "sha256": "91ce0891caf3b94f43b406a3861888bc9afc30c265b6b4bed3bc1816263f3705"
+    },
+    {
+      "path": "contracts/aml-cases.schema.json",
+      "sha256": "2ea7f4048a8cc152d65d1f742f83b9562dd7a22069fadaa8bb8217702b67e56f"
+    },
+    {
+      "path": "profiles/aml/snapshot.json",
+      "sha256": "ea489ae41b6bf4b55b3194e3a0742fe1b7f888efc99c457c11040cf80d707d27"
+    },
+    {
+      "path": "profiles/aml/profile.json",
+      "sha256": "1a1d3f5bdc206e07da4e76425a220db5badbcafaedfcad0c67063f0c4e270b3d"
+    },
+    {
+      "path": "profiles/aml/evidence-index.json",
+      "sha256": "b8ab5259334fce9cf6be34598a745b392c5de68b94b0bcf84397475f5458a6ce"
+    }
+  ],
+  "checks": [
+    {
+      "detail": "The connector manifest fixes access_mode to read_only.",
+      "name": "read_only_access",
+      "passed": true
+    },
+    {
+      "detail": "The snapshot ID pins source content with SHA-256 7fce6a969a484aa2a1222c1f45a382a3f9f9f9d5d4f44b97b5dbcd9b562981cb.",
+      "name": "content_addressed_snapshot",
+      "passed": true
+    },
+    {
+      "detail": "The deterministic sample contains 2 records and 252 bytes within policy bounds.",
+      "name": "bounded_sample",
+      "passed": true
+    },
+    {
+      "detail": "All 12 evidence records have stable repository-relative locators and content hashes.",
+      "name": "stable_evidence",
+      "passed": true
+    },
+    {
+      "detail": "No connector fixture contains a credential and no adapter capability permits writes.",
+      "name": "credential_and_write_guard",
+      "passed": true
+    }
+  ],
+  "connectorId": "aml-cases",
+  "contentSha256": "7fce6a969a484aa2a1222c1f45a382a3f9f9f9d5d4f44b97b5dbcd9b562981cb",
+  "executedAt": "2026-06-20T12:10:00Z",
+  "extractorName": "ontology-appliance-synthetic-profiler",
+  "extractorVersion": "1.0.0",
+  "observedAt": "2026-06-20T12:10:00Z",
+  "schemaVersion": "1.0",
+  "snapshotId": "aml-cases@sha256:7fce6a969a484aa2a1222c1f45a382a3f9f9f9d5d4f44b97b5dbcd9b562981cb",
+  "sourceLocator": "data/synthetic/aml_cases.csv",
+  "status": "PASSED"
+}

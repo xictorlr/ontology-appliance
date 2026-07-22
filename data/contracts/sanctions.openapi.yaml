@@ -1,0 +1,44 @@
+openapi: 3.1.0
+info:
+  title: Synthetic Sanctions Source
+  version: 1.0.0
+paths:
+  /records:
+    get:
+      operationId: listSanctionsRecords
+      parameters:
+        - in: query
+          name: updatedSince
+          schema:
+            type: string
+            format: date-time
+      responses:
+        "200":
+          description: Synthetic sanctions records
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: false
+                required: [generatedAt, records]
+                properties:
+                  generatedAt:
+                    type: string
+                    format: date-time
+                  records:
+                    type: array
+                    items:
+                      type: object
+                      additionalProperties: false
+                      required: [id, name, countries, listedAt, program, matchedPartyId]
+                      properties:
+                        id: {type: string}
+                        name: {type: string}
+                        countries:
+                          type: array
+                          items: {type: string}
+                        listedAt:
+                          type: string
+                          format: date
+                        program: {type: string}
+                        matchedPartyId: {type: string}

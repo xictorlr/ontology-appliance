@@ -1,0 +1,13 @@
+project_id         = "ontology-appliance-dev-REPLACE_ME"
+billing_account_id = "000000-000000-000000"
+
+# Set one of these only if project creation policy requires it.
+folder_id       = null
+organization_id = null
+
+budget_notification_emails = [
+  "owner@example.com",
+]
+
+# Enables keyless GitHub Actions only for main in this private repository.
+github_repository = "REPLACE_OWNER/ontology-appliance"

@@ -1,0 +1,26 @@
+{
+  "accessMode": "read_only",
+  "content": {
+    "byteCount": 252,
+    "recordCount": 2,
+    "sha256": "7fce6a969a484aa2a1222c1f45a382a3f9f9f9d5d4f44b97b5dbcd9b562981cb",
+    "sourceAssets": [
+      {
+        "byteCount": 252,
+        "mediaType": "text/csv",
+        "path": "data/synthetic/aml_cases.csv",
+        "sha256": "7fce6a969a484aa2a1222c1f45a382a3f9f9f9d5d4f44b97b5dbcd9b562981cb"
+      }
+    ]
+  },
+  "extractorName": "ontology-appliance-synthetic-profiler",
+  "extractorVersion": "1.0.0",
+  "observedAt": "2026-06-20T12:10:00Z",
+  "profileLocator": "profiles/aml/profile.json",
+  "schemaLocator": "contracts/aml-cases.schema.json",
+  "schemaVersion": "1.0",
+  "snapshotId": "aml-cases@sha256:7fce6a969a484aa2a1222c1f45a382a3f9f9f9d5d4f44b97b5dbcd9b562981cb",
+  "sourceId": "aml-cases",
+  "sourceLocator": "data/synthetic/aml_cases.csv",
+  "tenantId": "demo-bank"
+}

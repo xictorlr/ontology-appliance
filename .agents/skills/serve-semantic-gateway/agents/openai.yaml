@@ -1,0 +1,4 @@
+interface:
+  display_name: "Serve Semantic Gateway"
+  short_description: "Build the governed semantic API gateway"
+  default_prompt: "Use $serve-semantic-gateway to implement the read-only semantic gateway and its contracts."
