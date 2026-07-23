@@ -103,7 +103,10 @@ resource "google_firebase_project" "this" {
 
 resource "google_org_policy_policy" "disable_default_sa_auto_grants" {
   provider = google.quota_project
-  count    = var.enabled ? 1 : 0
+  # Creating a project policy still requires a permission whose lowest grant
+  # level is the organization. Standalone projects cannot receive that
+  # permission, including through a project custom role.
+  count = var.enabled && local.organization_scoped ? 1 : 0
 
   name   = "projects/${google_project.this[0].number}/policies/iam.automaticIamGrantsForDefaultServiceAccounts"
   parent = "projects/${google_project.this[0].number}"
@@ -136,6 +139,9 @@ resource "google_project_iam_member_remove" "compute_default_editor" {
     prevent_destroy = true
   }
 
+  # Organization-scoped projects first block future automatic grants.
+  # Standalone projects have no policy instance and enforce exact absence on
+  # each Terraform apply through this negative IAM resource.
   depends_on = [google_org_policy_policy.disable_default_sa_auto_grants]
 }
 

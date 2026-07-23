@@ -147,10 +147,16 @@ def main() -> None:
         'resource "google_org_policy_policy" "disable_default_sa_auto_grants"'
     )
     org_policy_end = platform_tf.index("\n}\n", org_policy_start)
-    if "provider = google.quota_project" not in platform_tf[
-        org_policy_start:org_policy_end
-    ]:
+    org_policy_resource = platform_tf[org_policy_start:org_policy_end]
+    if "provider = google.quota_project" not in org_policy_resource:
         raise SystemExit("Organization Policy must use the environment quota project")
+    if (
+        "count = var.enabled && local.organization_scoped ? 1 : 0"
+        not in org_policy_resource
+    ):
+        raise SystemExit(
+            "Organization Policy must be limited to projects with an organization parent"
+        )
     if 'resource "google_project_default_service_accounts"' in platform_tf:
         raise SystemExit(
             "Default service-account DEPRIVILEGE would also strip explicit project roles"
