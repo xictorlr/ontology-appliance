@@ -5,7 +5,7 @@ set -euo pipefail
 # preserve a published ontology whenever the governed active pointer exists.
 
 : "${ARTIFACT_BUCKET:?Set ARTIFACT_BUCKET.}"
-: "${DEPLOYMENT_SCOPE:?Set DEPLOYMENT_SCOPE to bootstrap or full.}"
+: "${DEPLOYMENT_SCOPE:?Set DEPLOYMENT_SCOPE to bootstrap, backend, or full.}"
 : "${GCP_PROJECT_ID:?Set GCP_PROJECT_ID.}"
 : "${GITHUB_ENV:?Set GITHUB_ENV to the GitHub Actions environment file.}"
 
@@ -18,8 +18,8 @@ pointer_uri="gs://${ARTIFACT_BUCKET}/${pointer_name}"
   exit 2
 }
 case "$DEPLOYMENT_SCOPE" in
-  bootstrap | full) ;;
-  *) echo "DEPLOYMENT_SCOPE must be bootstrap or full." >&2; exit 2 ;;
+  bootstrap | backend | full) ;;
+  *) echo "DEPLOYMENT_SCOPE must be bootstrap, backend, or full." >&2; exit 2 ;;
 esac
 case "$requested_mode" in
   "" | candidate | published) ;;
@@ -70,8 +70,8 @@ else
   semantic_mode="$requested_mode"
 fi
 
-if [[ "$DEPLOYMENT_SCOPE" == "bootstrap" && "$semantic_mode" != "candidate" ]]; then
-  echo "Bootstrap cannot activate or preserve published semantics." >&2
+if [[ "$DEPLOYMENT_SCOPE" != "full" && "$semantic_mode" != "candidate" ]]; then
+  echo "A partial deployment cannot activate or preserve published semantics." >&2
   exit 1
 fi
 

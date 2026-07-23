@@ -7,10 +7,10 @@ on:
   workflow_dispatch:
     inputs:
       deployment_scope:
-        description: Bootstrap only creates the gateway secret; full requires and tests App Hosting
+        description: Bootstrap creates the gateway secret; backend adds Functions/rules; full requires App Hosting
         required: true
         type: choice
-        options: [full, bootstrap]
+        options: [full, backend, bootstrap]
         default: full
       semantic_mode:
         description: Serve the labeled demo candidate or an already Publisher-promoted release
@@ -32,7 +32,7 @@ jobs:
     if: >-
       github.repository_owner != 'example' &&
       (vars.CLOUD_DEPLOY_ENABLED == 'true' ||
-      (github.event_name == 'workflow_dispatch' && inputs.deployment_scope == 'bootstrap')) &&
+      (github.event_name == 'workflow_dispatch' && inputs.deployment_scope != 'full')) &&
       ((github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main') ||
       (github.event.workflow_run.conclusion == 'success' &&
       github.event.workflow_run.event == 'push' &&
@@ -75,7 +75,7 @@ jobs:
             test -n "$APP_HOSTING_URL" || { echo "APP_HOSTING_URL is required for a full deploy." >&2; exit 1; }
             [[ "$APP_HOSTING_URL" == https://* ]]
           elif [[ "${{ inputs.semantic_mode }}" == "published" ]]; then
-            echo "Bootstrap cannot activate published semantics." >&2
+            echo "A partial deployment cannot activate published semantics." >&2
             exit 1
           fi
       - uses: pnpm/action-setup@0ebf47130e4866e96fce0953f49152a61190b271 # v6.0.9
@@ -190,9 +190,12 @@ jobs:
           gcloud run services update oa-dev-semantic-gateway \
             --project "${{ vars.GCP_PROJECT_ID }}" \
             --region europe-west4 \
+            --min 0 \
+            --max 3 \
+            --concurrency 8 \
             --update-env-vars "OA_AUTH_MODE=hybrid,OA_SERVICE_AUDIENCE=${gateway_url},OA_TRUSTED_SERVICE_ACCOUNTS=${{ vars.FUNCTIONS_SERVICE_ACCOUNT }}"
       - name: Configure Firebase deployment targets
-        if: env.DEPLOYMENT_SCOPE == 'full'
+        if: env.DEPLOYMENT_SCOPE != 'bootstrap'
         shell: bash
         run: |
           pnpm exec firebase target:apply storage input "${{ vars.INPUT_BUCKET }}" \
@@ -206,21 +209,35 @@ jobs:
             'ONTOLOGY_BASE_VERSION=2026.07.1-candidate' \
             'DEFAULT_TENANT_ID=demo-bank' > "$env_file"
       - name: Deploy Functions and Firebase policy
-        if: env.DEPLOYMENT_SCOPE == 'full'
+        if: env.DEPLOYMENT_SCOPE != 'bootstrap'
         env:
           GOOGLE_CLOUD_PROJECT: ${{ vars.GCP_PROJECT_ID }}
         run: pnpm run deploy:firebase -- --project "${{ vars.GCP_PROJECT_ID }}"
-      - name: Run cloud smoke tests
+      - name: Run backend cloud smoke tests
+        if: env.DEPLOYMENT_SCOPE == 'backend'
+        env:
+          GCP_PROJECT_ID: ${{ vars.GCP_PROJECT_ID }}
+          GATEWAY_URL: ${{ env.GATEWAY_URL }}
+          INPUT_BUCKET: ${{ vars.INPUT_BUCKET }}
+          REQUIRE_APP_HOSTING: "false"
+          RUN_FUNCTIONS_E2E: "true"
+        run: bash scripts/smoke_cloud_dev.sh
+      - name: Run full cloud smoke tests
         if: env.DEPLOYMENT_SCOPE == 'full'
         env:
           GCP_PROJECT_ID: ${{ vars.GCP_PROJECT_ID }}
           GATEWAY_URL: ${{ env.GATEWAY_URL }}
           APP_HOSTING_URL: ${{ vars.APP_HOSTING_URL }}
           INPUT_BUCKET: ${{ vars.INPUT_BUCKET }}
+          REQUIRE_APP_HOSTING: "true"
           RUN_FUNCTIONS_E2E: "true"
         run: bash scripts/smoke_cloud_dev.sh
-      - name: Mark bootstrap as partial and not release-ready
-        if: env.DEPLOYMENT_SCOPE == 'bootstrap'
+      - name: Mark partial deployment as not release-ready
+        if: env.DEPLOYMENT_SCOPE != 'full'
         run: |
-          echo "### Bootstrap only — not a release GO" >> "$GITHUB_STEP_SUMMARY"
-          echo "The gateway URL secret now exists. Create and verify App Hosting, then run complete configuration and a full deploy." >> "$GITHUB_STEP_SUMMARY"
+          echo "### ${DEPLOYMENT_SCOPE^} only — not a release GO" >> "$GITHUB_STEP_SUMMARY"
+          if [[ "$DEPLOYMENT_SCOPE" == "backend" ]]; then
+            echo "The private gateway, Functions, Firebase policy, and backend smoke tests passed. Create and verify App Hosting, then run complete configuration and a full deploy." >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "The gateway URL secret now exists. Create and verify App Hosting, then run complete configuration and a full deploy." >> "$GITHUB_STEP_SUMMARY"
+          fi

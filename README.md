@@ -135,6 +135,11 @@ Use this cycle-free order:
    `semantic_mode=candidate`. This deploys the private gateway and creates its
    Secret Manager URL version; it deliberately skips Functions, rules, and cloud
    smoke tests.
+   If App Hosting is temporarily blocked by repository prerequisites, a manual
+   `deployment_scope=backend` run may then deploy Functions and Firebase policy
+   and execute gateway/Functions cloud smoke tests. This remains a partial,
+   candidate-only deployment: it neither enables automatic deploys nor declares
+   a release GO.
 5. Create and verify the App Hosting backend against the Terraform-managed Web
    App and service account:
 

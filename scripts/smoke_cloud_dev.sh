@@ -3,13 +3,23 @@ set -euo pipefail
 
 : "${GCP_PROJECT_ID:?Set GCP_PROJECT_ID.}"
 : "${GATEWAY_URL:?Set GATEWAY_URL.}"
-: "${APP_HOSTING_URL:?Set APP_HOSTING_URL.}"
 : "${INPUT_BUCKET:?Set INPUT_BUCKET.}"
 
-[[ "$APP_HOSTING_URL" == https://* ]] || {
-  echo "APP_HOSTING_URL must use HTTPS." >&2
-  exit 2
-}
+require_app_hosting="${REQUIRE_APP_HOSTING:-true}"
+case "$require_app_hosting" in
+  true)
+    : "${APP_HOSTING_URL:?Set APP_HOSTING_URL.}"
+    [[ "$APP_HOSTING_URL" == https://* ]] || {
+      echo "APP_HOSTING_URL must use HTTPS." >&2
+      exit 2
+    }
+    ;;
+  false) ;;
+  *)
+    echo "REQUIRE_APP_HOSTING must be true or false." >&2
+    exit 2
+    ;;
+esac
 
 region="${GCP_REGION:-europe-west4}"
 service="${GATEWAY_SERVICE:-oa-dev-semantic-gateway}"
@@ -81,7 +91,9 @@ for queue_name in processIngestionTask processVerificationTask processDriftTask;
     --format='value(state)' | grep -Fxq RUNNING
 done
 
-curl --fail --silent --show-error --location --output /dev/null "$APP_HOSTING_URL"
+if [[ "$require_app_hosting" == "true" ]]; then
+  curl --fail --silent --show-error --location --output /dev/null "$APP_HOSTING_URL"
+fi
 
 firestore_url="https://firestore.googleapis.com/v1/projects/${GCP_PROJECT_ID}/databases/(default)/documents"
 

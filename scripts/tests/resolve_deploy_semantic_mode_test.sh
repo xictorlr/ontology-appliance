@@ -75,6 +75,29 @@ if run_resolver "$suite_root/multiple.env" \
   echo "Expected an unexpected pointer listing to fail closed." >&2
   exit 1
 fi
+backend_env="$suite_root/backend.env"
+env \
+  PATH="$suite_root/bin:$PATH" \
+  ARTIFACT_BUCKET=oa-dev-artifacts \
+  DEPLOYMENT_SCOPE=backend \
+  GCP_PROJECT_ID=ontology-appliance-dev-test \
+  REQUESTED_SEMANTIC_MODE=candidate \
+  MOCK_POINTER_MODE=absent \
+  GITHUB_ENV="$backend_env" \
+  bash "$repo_root/scripts/resolve_deploy_semantic_mode.sh" >/dev/null
+grep -Fqx 'SEMANTIC_MODE=candidate' "$backend_env"
+if env \
+  PATH="$suite_root/bin:$PATH" \
+  ARTIFACT_BUCKET=oa-dev-artifacts \
+  DEPLOYMENT_SCOPE=backend \
+  GCP_PROJECT_ID=ontology-appliance-dev-test \
+  REQUESTED_SEMANTIC_MODE=published \
+  MOCK_POINTER_MODE=present \
+  GITHUB_ENV="$suite_root/backend-published.env" \
+  bash "$repo_root/scripts/resolve_deploy_semantic_mode.sh" >/dev/null 2>&1; then
+  echo "Expected backend published mode to fail." >&2
+  exit 1
+fi
 if env \
   PATH="$suite_root/bin:$PATH" \
   ARTIFACT_BUCKET=oa-dev-artifacts \
