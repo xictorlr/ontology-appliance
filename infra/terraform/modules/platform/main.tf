@@ -102,7 +102,8 @@ resource "google_firebase_project" "this" {
 }
 
 resource "google_org_policy_policy" "disable_default_sa_auto_grants" {
-  count = var.enabled ? 1 : 0
+  provider = google.quota_project
+  count    = var.enabled ? 1 : 0
 
   name   = "projects/${google_project.this[0].number}/policies/iam.automaticIamGrantsForDefaultServiceAccounts"
   parent = "projects/${google_project.this[0].number}"
