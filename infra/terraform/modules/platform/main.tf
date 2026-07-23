@@ -83,6 +83,15 @@ resource "google_project_service" "required" {
   disable_on_destroy = false
 }
 
+resource "google_project_service" "org_policy" {
+  provider = google.no_user_project_override
+  count    = var.enabled ? 1 : 0
+
+  project            = google_project.this[0].project_id
+  service            = "orgpolicy.googleapis.com"
+  disable_on_destroy = false
+}
+
 resource "google_firebase_project" "this" {
   provider = google-beta
   count    = var.enabled ? 1 : 0
@@ -90,6 +99,58 @@ resource "google_firebase_project" "this" {
   project = google_project.this[0].project_id
 
   depends_on = [google_project_service.required]
+}
+
+resource "google_org_policy_policy" "disable_default_sa_auto_grants" {
+  count = var.enabled ? 1 : 0
+
+  name   = "projects/${google_project.this[0].number}/policies/iam.automaticIamGrantsForDefaultServiceAccounts"
+  parent = "projects/${google_project.this[0].number}"
+
+  spec {
+    rules {
+      enforce = "TRUE"
+    }
+  }
+
+  lifecycle {
+    prevent_destroy = true
+  }
+
+  depends_on = [google_project_service.org_policy]
+}
+
+# Remove only the exact automatic Editor grants. The provider's broader
+# google_project_default_service_accounts DEPRIVILEGE action removes every
+# project-level role from the default identities, including the explicit
+# Cloud Build role below, so it is intentionally not used here.
+resource "google_project_iam_member_remove" "compute_default_editor" {
+  count = var.enabled ? 1 : 0
+
+  project = google_project.this[0].project_id
+  role    = "roles/editor"
+  member  = "serviceAccount:${google_project.this[0].number}-compute@developer.gserviceaccount.com"
+
+  lifecycle {
+    prevent_destroy = true
+  }
+
+  depends_on = [google_org_policy_policy.disable_default_sa_auto_grants]
+}
+
+resource "google_project_iam_member_remove" "app_engine_default_editor" {
+  count = var.enabled ? 1 : 0
+
+  project = google_project.this[0].project_id
+  role    = "roles/editor"
+  member  = "serviceAccount:${google_project.this[0].project_id}@appspot.gserviceaccount.com"
+
+  lifecycle {
+    prevent_destroy = true
+  }
+
+  # Serialize project IAM writes to avoid etag races.
+  depends_on = [google_project_iam_member_remove.compute_default_editor]
 }
 
 resource "google_firebase_web_app" "web" {
@@ -361,7 +422,7 @@ data "google_compute_default_service_account" "functions_build" {
 
   project = google_project.this[0].project_id
 
-  depends_on = [google_project_service.required]
+  depends_on = [google_project_service.required["compute.googleapis.com"]]
 }
 
 resource "google_project_iam_member" "functions_build_builder" {
@@ -632,7 +693,7 @@ data "google_storage_project_service_account" "gcs" {
 
   project = google_project.this[0].project_id
 
-  depends_on = [google_project_service.required]
+  depends_on = [google_project_service.required["storage.googleapis.com"]]
 }
 
 resource "google_project_iam_member" "storage_event_publisher" {

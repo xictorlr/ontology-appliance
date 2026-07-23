@@ -153,6 +153,15 @@ environment project explicitly as the quota project, avoiding accidental use of
 the Google-owned ADC client project while keeping project creation on the
 non-override provider.
 
+Google can automatically grant `roles/editor` to the default Compute and App
+Engine service accounts in standalone projects. Terraform enforces the
+`iam.automaticIamGrantsForDefaultServiceAccounts` project policy and keeps the
+automatic Compute and App Engine `roles/editor` memberships explicitly absent
+without deleting the default identities or controlling unrelated Editor
+members. The Compute identity retains its explicit Cloud Build role. This
+prevents the default service accounts from inheriting the buckets' legacy
+project-editor object access without stripping narrowly scoped roles.
+
 The task queues and daily Scheduler job are created by Firebase from the
 Functions v2 declarations; Terraform intentionally does not create duplicates.
 The deployment identity has `roles/cloudtasks.queueAdmin` (queue configuration,

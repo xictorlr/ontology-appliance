@@ -124,6 +124,34 @@ def main() -> None:
                 "App Hosting artifact deny must block mutation without removing read access"
             )
 
+    for default_sa_boundary in (
+        '"orgpolicy.googleapis.com"',
+        'resource "google_project_service" "org_policy"',
+        'resource "google_org_policy_policy" "disable_default_sa_auto_grants"',
+        "iam.automaticIamGrantsForDefaultServiceAccounts",
+        'resource "google_project_iam_member_remove" "compute_default_editor"',
+        'resource "google_project_iam_member_remove" "app_engine_default_editor"',
+        'role    = "roles/editor"',
+        'member  = "serviceAccount:${google_project.this[0].number}-compute@developer.gserviceaccount.com"',
+        'member  = "serviceAccount:${google_project.this[0].project_id}@appspot.gserviceaccount.com"',
+        "depends_on = [google_org_policy_policy.disable_default_sa_auto_grants]",
+        "depends_on = [google_project_iam_member_remove.compute_default_editor]",
+        'depends_on = [google_project_service.required["compute.googleapis.com"]]',
+        'depends_on = [google_project_service.required["storage.googleapis.com"]]',
+    ):
+        if default_sa_boundary not in platform_tf:
+            raise SystemExit(
+                f"Default service-account privilege boundary is missing: {default_sa_boundary}"
+            )
+    if 'resource "google_project_default_service_accounts"' in platform_tf:
+        raise SystemExit(
+            "Default service-account DEPRIVILEGE would also strip explicit project roles"
+        )
+    if 'resource "google_project_iam_binding" "default_service_accounts_no_editor"' in platform_tf:
+        raise SystemExit(
+            "Default service-account Editor removal must target exact memberships"
+        )
+
     apphosting_create = require("scripts/create_apphosting_backend.sh").read_text()
     for guardrail in (
         'APPHOSTING_REGION:-europe-west4',
