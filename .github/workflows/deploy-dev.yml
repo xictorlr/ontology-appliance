@@ -212,7 +212,11 @@ jobs:
         if: env.DEPLOYMENT_SCOPE != 'bootstrap'
         env:
           GOOGLE_CLOUD_PROJECT: ${{ vars.GCP_PROJECT_ID }}
-        run: pnpm run deploy:firebase -- --project "${{ vars.GCP_PROJECT_ID }}"
+        run: |
+          pnpm --filter @ontology-appliance/functions build
+          pnpm exec firebase deploy \
+            --only functions,firestore:rules,firestore:indexes,storage \
+            --project "${{ vars.GCP_PROJECT_ID }}"
       - name: Run backend cloud smoke tests
         if: env.DEPLOYMENT_SCOPE == 'backend'
         env:
