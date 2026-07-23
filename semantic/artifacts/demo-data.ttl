@@ -95,3 +95,4 @@ res:sanctions-entry-eu-998 a oa:SanctionsEntry ;
     oa:sourceSystem "EU_SANCTIONS" ;
     oa:sourceRecordId "EU-998" ;
     oa:evidence res:evidence-sanctions-eu-998 .
+

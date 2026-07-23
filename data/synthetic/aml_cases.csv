@@ -1,3 +1,4 @@
 case_id,party_name,country,matched_party_id,match_features,risk_level,opened_at
 AML-77,A. Petrov,LV,P-1001,"name:0.91|country:1.00|document:0.98",HIGH,2026-06-20T12:00:00Z
 AML-78,Marta Rossi,IT,P-1002,"name:1.00|country:1.00",LOW,2026-06-20T12:10:00Z
+

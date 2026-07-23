@@ -5,3 +5,4 @@ Registered country: GB
 Ultimate beneficial owner: Alexei Petrov (P-1001)
 Declared ownership: 68%
 Review status: pending enhanced due diligence
+
