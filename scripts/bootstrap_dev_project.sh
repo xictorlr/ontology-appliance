@@ -284,6 +284,7 @@ fi
 
 gcloud services enable \
   cloudresourcemanager.googleapis.com \
+  compute.googleapis.com \
   serviceusage.googleapis.com \
   storage.googleapis.com \
   --project "$GCP_PROJECT_ID"

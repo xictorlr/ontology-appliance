@@ -188,6 +188,8 @@ run_bootstrap() {
 
 new_root="$(make_scenario new)"
 run_bootstrap "$new_root" >/dev/null
+grep -Fq 'services enable cloudresourcemanager.googleapis.com compute.googleapis.com serviceusage.googleapis.com storage.googleapis.com' \
+  "${new_root}/state/mutations"
 grep -Fqx 'project_id         = "ontology-appliance-dev-unit"' \
   "${new_root}/repo/infra/terraform/environments/dev/terraform.tfvars"
 grep -Fq 'projects create ontology-appliance-dev-unit' "${new_root}/state/mutations"
