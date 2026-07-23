@@ -141,6 +141,12 @@ elif [[ "$*" == *" state list"* ]]; then
       echo 'module.platform.google_project.this[0]'
       echo 'module.platform.google_firebase_project.this[0]'
       ;;
+    both-with-data)
+      echo 'module.platform.data.google_compute_default_service_account.functions_build[0]'
+      echo 'module.platform.data.google_storage_project_service_account.gcs[0]'
+      echo 'module.platform.google_project.this[0]'
+      echo 'module.platform.google_firebase_project.this[0]'
+      ;;
     project-unrelated)
       echo 'module.platform.google_project.this[0]'
       echo 'module.platform.google_storage_bucket.unrelated[0]'
@@ -363,6 +369,22 @@ if MOCK_PROJECT_MODE=terraform-firebase MOCK_TF_STATE_MODE=project-unrelated \
   CONFIRM_ADOPT_EXISTING_FIREBASE_PROJECT_ID=ontology-appliance-dev-unit \
   run_bootstrap "$foreign_resource_state_root" RESUME_BOOTSTRAP=true >/dev/null 2>&1; then
   echo "Expected adoption into Terraform state with a foreign resource to fail." >&2
+  exit 1
+fi
+
+expected_data_state_root="$(make_scenario adoption-expected-data-state)"
+touch \
+  "${expected_data_state_root}/state/project-exists" \
+  "${expected_data_state_root}/state/bucket-exists"
+printf 'billingAccounts/ABCDEF-123456-ABCDEF\n' \
+  >"${expected_data_state_root}/state/billing-linked"
+MOCK_PROJECT_MODE=terraform-firebase MOCK_TF_STATE_MODE=both-with-data \
+ADOPT_EXISTING_FIREBASE_PROJECT=true \
+CONFIRM_ADOPT_EXISTING_FIREBASE_PROJECT_ID=ontology-appliance-dev-unit \
+  run_bootstrap "$expected_data_state_root" RESUME_BOOTSTRAP=true >/dev/null
+if rg -q ' import module\.platform\.google_(project|firebase_project)\.this' \
+  "${expected_data_state_root}/state/mutations"; then
+  echo "Expected data sources must not trigger duplicate ownership imports." >&2
   exit 1
 fi
 

@@ -350,6 +350,8 @@ if ! state_resources="$(terraform -chdir="$terraform_dir" state list -no-color 2
 fi
 project_state_address='module.platform.google_project.this[0]'
 firebase_state_address='module.platform.google_firebase_project.this[0]'
+compute_data_state_address='module.platform.data.google_compute_default_service_account.functions_build[0]'
+storage_data_state_address='module.platform.data.google_storage_project_service_account.gcs[0]'
 project_in_state=false
 firebase_in_state=false
 
@@ -357,9 +359,12 @@ if [[ "$adopt_existing_firebase_project" == "true" ]]; then
   unexpected_state_resources="$(awk \
     -v project_address="$project_state_address" \
     -v firebase_address="$firebase_state_address" \
-    'NF && $0 != project_address && $0 != firebase_address' <<<"$state_resources")"
+    -v compute_data_address="$compute_data_state_address" \
+    -v storage_data_address="$storage_data_state_address" \
+    'NF && $0 != project_address && $0 != firebase_address && \
+      $0 != compute_data_address && $0 != storage_data_address' <<<"$state_resources")"
   if [[ -n "$unexpected_state_resources" ]]; then
-    echo "Adoption requires empty state or only the confirmed project/Firebase resources." >&2
+    echo "Adoption requires empty state or only the confirmed project/Firebase resources and their expected read-only data sources." >&2
     echo "$unexpected_state_resources" >&2
     exit 1
   fi
