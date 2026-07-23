@@ -43,6 +43,8 @@ budget_email="${BUDGET_NOTIFICATION_EMAIL:-$active_account}"
 folder_id="${GCP_FOLDER_ID:-}"
 organization_id="${GCP_ORGANIZATION_ID:-}"
 resume_bootstrap="${RESUME_BOOTSTRAP:-false}"
+adopt_existing_firebase_project="${ADOPT_EXISTING_FIREBASE_PROJECT:-false}"
+confirm_adopt_existing_firebase_project_id="${CONFIRM_ADOPT_EXISTING_FIREBASE_PROJECT_ID:-}"
 tfvars_path="${terraform_dir}/terraform.tfvars"
 backend_path="${terraform_dir}/backend.hcl"
 
@@ -73,6 +75,22 @@ fi
 
 if [[ "$resume_bootstrap" != "true" && "$resume_bootstrap" != "false" ]]; then
   echo "RESUME_BOOTSTRAP must be true or false." >&2
+  exit 1
+fi
+
+if [[ "$adopt_existing_firebase_project" != "true" && \
+  "$adopt_existing_firebase_project" != "false" ]]; then
+  echo "ADOPT_EXISTING_FIREBASE_PROJECT must be true or false." >&2
+  exit 1
+fi
+
+if [[ "$adopt_existing_firebase_project" == "true" ]]; then
+  if [[ "$confirm_adopt_existing_firebase_project_id" != "$GCP_PROJECT_ID" ]]; then
+    echo "CONFIRM_ADOPT_EXISTING_FIREBASE_PROJECT_ID must exactly match GCP_PROJECT_ID." >&2
+    exit 1
+  fi
+elif [[ -n "$confirm_adopt_existing_firebase_project_id" ]]; then
+  echo "CONFIRM_ADOPT_EXISTING_FIREBASE_PROJECT_ID is valid only with ADOPT_EXISTING_FIREBASE_PROJECT=true." >&2
   exit 1
 fi
 
@@ -161,21 +179,46 @@ else
 fi
 
 project_json=""
+project_exists=false
+live_firebase_project=false
+normalize_project_name=false
+billing_json=""
+linked_billing=""
+expected_billing="billingAccounts/${BILLING_ACCOUNT_ID}"
 if project_json="$(gcloud projects describe "$GCP_PROJECT_ID" --format=json 2>/dev/null)"; then
-  if [[ "$resume_bootstrap" != "true" ]]; then
+  project_exists=true
+  if [[ "$adopt_existing_firebase_project" != "true" && "$resume_bootstrap" != "true" ]]; then
     echo "The project already exists. Set RESUME_BOOTSTRAP=true only to resume this exact bootstrap." >&2
     exit 1
   fi
-  if ! jq -e --arg project_name "Ontology Appliance Dev" '
-    .lifecycleState == "ACTIVE" and
-    .name == $project_name and
-    .labels.application == "ontology-appliance" and
-    .labels.environment == "dev" and
-    .labels.managed_by == "terraform"
-  ' >/dev/null <<<"$project_json"; then
-    echo "The existing project does not match the exact Ontology Appliance bootstrap identity." >&2
-    exit 1
+
+  if [[ "$adopt_existing_firebase_project" == "true" ]]; then
+    if ! jq -e --arg project_id "$GCP_PROJECT_ID" '
+      .projectId == $project_id and
+      .lifecycleState == "ACTIVE" and
+      .labels.firebase == "enabled"
+    ' >/dev/null <<<"$project_json"; then
+      echo "Adoption requires an ACTIVE project with the exact firebase=enabled label." >&2
+      exit 1
+    fi
+    live_firebase_project=true
+  else
+    if ! jq -e --arg project_id "$GCP_PROJECT_ID" --arg project_name "Ontology Appliance Dev" '
+      .projectId == $project_id and
+      .lifecycleState == "ACTIVE" and
+      .name == $project_name and
+      .labels.application == "ontology-appliance" and
+      .labels.environment == "dev" and
+      .labels.managed_by == "terraform"
+    ' >/dev/null <<<"$project_json"; then
+      echo "The existing project does not match the exact Ontology Appliance bootstrap identity." >&2
+      exit 1
+    fi
+    if jq -e '.labels.firebase == "enabled"' >/dev/null <<<"$project_json"; then
+      live_firebase_project=true
+    fi
   fi
+
   if [[ -n "$folder_id" ]] && ! jq -e --arg id "$folder_id" \
     '.parent.type == "folder" and .parent.id == $id' >/dev/null <<<"$project_json"; then
     echo "The existing project is not in the confirmed folder." >&2
@@ -191,8 +234,28 @@ if project_json="$(gcloud projects describe "$GCP_PROJECT_ID" --format=json 2>/d
     echo "The existing project has a parent; confirm it with GCP_FOLDER_ID or GCP_ORGANIZATION_ID." >&2
     exit 1
   fi
-  echo "Using the existing, correctly labeled project $GCP_PROJECT_ID."
+
+  billing_json="$(gcloud billing projects describe "$GCP_PROJECT_ID" --format=json)"
+  linked_billing="$(jq -r '.billingAccountName // empty' <<<"$billing_json")"
+  if [[ "$adopt_existing_firebase_project" == "true" ]]; then
+    if [[ "$linked_billing" != "$expected_billing" ]] || \
+      ! jq -e '.billingEnabled == true' >/dev/null <<<"$billing_json"; then
+      echo "Adoption requires the project to have the exact confirmed billing account enabled." >&2
+      exit 1
+    fi
+    if ! jq -e --arg project_name "Ontology Appliance Dev" \
+      '.name == $project_name' >/dev/null <<<"$project_json"; then
+      normalize_project_name=true
+    fi
+    echo "Adopting the existing, confirmed Firebase project $GCP_PROJECT_ID."
+  else
+    echo "Using the existing, correctly labeled project $GCP_PROJECT_ID."
+  fi
 else
+  if [[ "$adopt_existing_firebase_project" == "true" ]]; then
+    echo "ADOPT_EXISTING_FIREBASE_PROJECT=true requires the confirmed project to already exist." >&2
+    exit 1
+  fi
   create_arguments=(
     projects create "$GCP_PROJECT_ID"
     "--name=Ontology Appliance Dev"
@@ -207,14 +270,15 @@ else
   echo "Created project $GCP_PROJECT_ID."
 fi
 
-billing_json="$(gcloud billing projects describe "$GCP_PROJECT_ID" --format=json)"
-linked_billing="$(jq -r '.billingAccountName // empty' <<<"$billing_json")"
-expected_billing="billingAccounts/${BILLING_ACCOUNT_ID}"
+if [[ "$project_exists" != "true" ]]; then
+  billing_json="$(gcloud billing projects describe "$GCP_PROJECT_ID" --format=json)"
+  linked_billing="$(jq -r '.billingAccountName // empty' <<<"$billing_json")"
+fi
 if [[ -n "$linked_billing" && "$linked_billing" != "$expected_billing" ]]; then
   echo "Project is already linked to a different billing account; refusing to relink it." >&2
   exit 1
 fi
-if [[ "$linked_billing" != "$expected_billing" ]]; then
+if [[ "$adopt_existing_firebase_project" != "true" && "$linked_billing" != "$expected_billing" ]]; then
   gcloud billing projects link "$GCP_PROJECT_ID" --billing-account="$BILLING_ACCOUNT_ID"
 fi
 
@@ -283,20 +347,68 @@ if ! state_resources="$(terraform -chdir="$terraform_dir" state list -no-color 2
     exit 1
   fi
 fi
-if grep -Fxq 'module.platform.google_project.this[0]' <<<"$state_resources"; then
+project_state_address='module.platform.google_project.this[0]'
+firebase_state_address='module.platform.google_firebase_project.this[0]'
+project_in_state=false
+firebase_in_state=false
+
+if [[ "$adopt_existing_firebase_project" == "true" ]]; then
+  unexpected_state_resources="$(awk \
+    -v project_address="$project_state_address" \
+    -v firebase_address="$firebase_state_address" \
+    'NF && $0 != project_address && $0 != firebase_address' <<<"$state_resources")"
+  if [[ -n "$unexpected_state_resources" ]]; then
+    echo "Adoption requires empty state or only the confirmed project/Firebase resources." >&2
+    echo "$unexpected_state_resources" >&2
+    exit 1
+  fi
+fi
+
+if grep -Fxq "$project_state_address" <<<"$state_resources"; then
+  project_in_state=true
   state_project="$(terraform -chdir="$terraform_dir" state show -no-color \
-    'module.platform.google_project.this[0]' | awk -F'"' '/^[[:space:]]*project_id[[:space:]]*=/{print $2; exit}')"
+    "$project_state_address" | awk -F'"' '/^[[:space:]]*project_id[[:space:]]*=/{print $2; exit}')"
   if [[ "$state_project" != "$GCP_PROJECT_ID" ]]; then
     echo "Remote state owns a different project; refusing to continue." >&2
     exit 1
   fi
   echo "Terraform already owns the project resource."
-else
+fi
+
+if grep -Fxq "$firebase_state_address" <<<"$state_resources"; then
+  firebase_in_state=true
+  state_firebase_project="$(terraform -chdir="$terraform_dir" state show -no-color \
+    "$firebase_state_address" | awk -F'"' '/^[[:space:]]*project[[:space:]]*=/{print $2; exit}')"
+  if [[ "$state_firebase_project" != "$GCP_PROJECT_ID" ]]; then
+    echo "Remote state owns a Firebase resource for a different project; refusing to continue." >&2
+    exit 1
+  fi
+  if [[ "$project_in_state" != "true" ]]; then
+    echo "Remote state contains Firebase ownership without project ownership; refusing to continue." >&2
+    exit 1
+  fi
+  if [[ "$live_firebase_project" != "true" ]]; then
+    echo "Remote state contains Firebase ownership but the live project lacks firebase=enabled." >&2
+    exit 1
+  fi
+  echo "Terraform already owns the Firebase project resource."
+fi
+
+if [[ "$project_in_state" != "true" ]]; then
   if [[ -n "$state_resources" ]]; then
     echo "Remote state is non-empty but does not own the confirmed project; refusing import." >&2
     exit 1
   fi
-  terraform -chdir="$terraform_dir" import 'module.platform.google_project.this[0]' "$GCP_PROJECT_ID"
+  terraform -chdir="$terraform_dir" import "$project_state_address" "$GCP_PROJECT_ID"
+fi
+
+if [[ "$live_firebase_project" == "true" && "$firebase_in_state" != "true" ]]; then
+  terraform -chdir="$terraform_dir" import "$firebase_state_address" "$GCP_PROJECT_ID"
+fi
+
+if [[ "$normalize_project_name" == "true" ]]; then
+  gcloud projects update "$GCP_PROJECT_ID" --name="Ontology Appliance Dev"
+  echo "Normalized the adopted project display name to Ontology Appliance Dev."
 fi
 
 echo "Bootstrap complete. Review this plan before applying anything else:"

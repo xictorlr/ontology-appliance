@@ -35,19 +35,54 @@ elif [[ "$1 $2" == "projects describe" ]]; then
   if [[ "$*" == *"value(projectNumber)"* ]]; then
     echo "123456789012"
   else
-    cat <<JSON
-{"projectId":"${GCP_PROJECT_ID}","projectNumber":"123456789012","name":"Ontology Appliance Dev","lifecycleState":"ACTIVE","labels":{"application":"ontology-appliance","environment":"dev","managed_by":"terraform"}}
-JSON
+    project_id="${MOCK_LIVE_PROJECT_ID:-$GCP_PROJECT_ID}"
+    project_name="${MOCK_PROJECT_NAME:-Ontology Appliance Dev}"
+    lifecycle_state="ACTIVE"
+    labels='{"application":"ontology-appliance","environment":"dev","managed_by":"terraform"}'
+    parent=""
+    case "${MOCK_PROJECT_MODE:-terraform}" in
+      firebase)
+        labels='{"firebase":"enabled"}'
+        ;;
+      terraform-firebase)
+        labels='{"application":"ontology-appliance","environment":"dev","managed_by":"terraform","firebase":"enabled"}'
+        ;;
+      inactive-firebase)
+        lifecycle_state="DELETE_REQUESTED"
+        labels='{"firebase":"enabled"}'
+        ;;
+      non-firebase)
+        labels='{"application":"other"}'
+        ;;
+    esac
+    case "${MOCK_PROJECT_PARENT:-none}" in
+      folder)
+        parent=',"parent":{"type":"folder","id":"1234567890"}'
+        ;;
+      organization)
+        parent=',"parent":{"type":"organization","id":"9876543210"}'
+        ;;
+    esac
+    printf \
+      '{"projectId":"%s","projectNumber":"123456789012","name":"%s","lifecycleState":"%s","labels":%s%s}\n' \
+      "$project_id" "$project_name" "$lifecycle_state" "$labels" "$parent"
   fi
 elif [[ "$1 $2" == "projects create" ]]; then
   record "$*"
   touch "${MOCK_STATE_DIR}/project-exists"
+elif [[ "$1 $2" == "projects update" ]]; then
+  record "$*"
 elif [[ "$1 $2 $3" == "billing projects describe" ]]; then
   linked=""
   if [[ -f "${MOCK_STATE_DIR}/billing-linked" ]]; then
     linked="$(<"${MOCK_STATE_DIR}/billing-linked")"
   fi
-  printf '{"billingAccountName":"%s"}\n' "$linked"
+  billing_enabled=false
+  if [[ -n "$linked" ]]; then
+    billing_enabled=true
+  fi
+  printf '{"billingAccountName":"%s","billingEnabled":%s}\n' \
+    "$linked" "${MOCK_BILLING_ENABLED:-$billing_enabled}"
 elif [[ "$1 $2 $3" == "billing projects link" ]]; then
   record "$*"
   for argument in "$@"; do
@@ -98,6 +133,17 @@ elif [[ "$*" == *" state list"* ]]; then
     imported|project)
       echo 'module.platform.google_project.this[0]'
       ;;
+    both)
+      echo 'module.platform.google_project.this[0]'
+      echo 'module.platform.google_firebase_project.this[0]'
+      ;;
+    project-unrelated)
+      echo 'module.platform.google_project.this[0]'
+      echo 'module.platform.google_storage_bucket.unrelated[0]'
+      ;;
+    firebase)
+      echo 'module.platform.google_firebase_project.this[0]'
+      ;;
     unrelated)
       echo 'module.platform.google_storage_bucket.unrelated[0]'
       ;;
@@ -107,7 +153,11 @@ elif [[ "$*" == *" state list"* ]]; then
       ;;
   esac
 elif [[ "$*" == *" state show "* ]]; then
-  printf '    project_id = "%s"\n' "${MOCK_STATE_PROJECT_ID:-$GCP_PROJECT_ID}"
+  if [[ "$*" == *"google_firebase_project"* ]]; then
+    printf '    project = "%s"\n' "${MOCK_STATE_FIREBASE_PROJECT_ID:-$GCP_PROJECT_ID}"
+  else
+    printf '    project_id = "%s"\n' "${MOCK_STATE_PROJECT_ID:-$GCP_PROJECT_ID}"
+  fi
 elif [[ "$*" == *" import "* ]]; then
   printf '%s\n' "$*" >>"${MOCK_STATE_DIR}/mutations"
   touch "${MOCK_STATE_DIR}/tf-imported"
@@ -149,6 +199,164 @@ MOCK_TF_STATE_MODE=imported run_bootstrap "$new_root" RESUME_BOOTSTRAP=true >/de
 printf 'billingAccounts/FFFFFF-FFFFFF-FFFFFF\n' >"${new_root}/state/billing-linked"
 if MOCK_TF_STATE_MODE=imported run_bootstrap "$new_root" RESUME_BOOTSTRAP=true >/dev/null 2>&1; then
   echo "Expected a different linked billing account to be rejected." >&2
+  exit 1
+fi
+
+default_existing_root="$(make_scenario default-existing-firebase)"
+touch "${default_existing_root}/state/project-exists"
+printf 'billingAccounts/ABCDEF-123456-ABCDEF\n' \
+  >"${default_existing_root}/state/billing-linked"
+if MOCK_PROJECT_MODE=firebase \
+  run_bootstrap "$default_existing_root" >/dev/null 2>&1; then
+  echo "Expected an existing Firebase project to be rejected without explicit adoption." >&2
+  exit 1
+fi
+if [[ -s "${default_existing_root}/state/mutations" ]]; then
+  echo "Default existing-project rejection must happen before cloud mutations." >&2
+  exit 1
+fi
+
+unconfirmed_root="$(make_scenario unconfirmed-adoption)"
+touch "${unconfirmed_root}/state/project-exists"
+printf 'billingAccounts/ABCDEF-123456-ABCDEF\n' >"${unconfirmed_root}/state/billing-linked"
+if MOCK_PROJECT_MODE=firebase ADOPT_EXISTING_FIREBASE_PROJECT=true \
+  run_bootstrap "$unconfirmed_root" >/dev/null 2>&1; then
+  echo "Expected adoption without the exact second project-ID confirmation to fail." >&2
+  exit 1
+fi
+
+adopt_root="$(make_scenario adopt-existing-firebase)"
+touch "${adopt_root}/state/project-exists"
+printf 'billingAccounts/ABCDEF-123456-ABCDEF\n' >"${adopt_root}/state/billing-linked"
+MOCK_PROJECT_MODE=firebase \
+MOCK_PROJECT_NAME=ontology-apliance \
+ADOPT_EXISTING_FIREBASE_PROJECT=true \
+CONFIRM_ADOPT_EXISTING_FIREBASE_PROJECT_ID=ontology-appliance-dev-unit \
+  run_bootstrap "$adopt_root" >/dev/null
+if grep -Fq 'projects create' "${adopt_root}/state/mutations"; then
+  echo "Adoption must never create a replacement project." >&2
+  exit 1
+fi
+grep -Fq \
+  'projects update ontology-appliance-dev-unit --name=Ontology Appliance Dev' \
+  "${adopt_root}/state/mutations"
+grep -Fq \
+  ' import module.platform.google_project.this[0] ontology-appliance-dev-unit' \
+  "${adopt_root}/state/mutations"
+grep -Fq \
+  ' import module.platform.google_firebase_project.this[0] ontology-appliance-dev-unit' \
+  "${adopt_root}/state/mutations"
+
+nonfirebase_root="$(make_scenario nonfirebase-adoption)"
+touch "${nonfirebase_root}/state/project-exists"
+printf 'billingAccounts/ABCDEF-123456-ABCDEF\n' >"${nonfirebase_root}/state/billing-linked"
+if MOCK_PROJECT_MODE=non-firebase \
+  ADOPT_EXISTING_FIREBASE_PROJECT=true \
+  CONFIRM_ADOPT_EXISTING_FIREBASE_PROJECT_ID=ontology-appliance-dev-unit \
+  run_bootstrap "$nonfirebase_root" >/dev/null 2>&1; then
+  echo "Expected adoption of a project without firebase=enabled to fail." >&2
+  exit 1
+fi
+
+inactive_root="$(make_scenario inactive-adoption)"
+touch "${inactive_root}/state/project-exists"
+printf 'billingAccounts/ABCDEF-123456-ABCDEF\n' >"${inactive_root}/state/billing-linked"
+if MOCK_PROJECT_MODE=inactive-firebase \
+  ADOPT_EXISTING_FIREBASE_PROJECT=true \
+  CONFIRM_ADOPT_EXISTING_FIREBASE_PROJECT_ID=ontology-appliance-dev-unit \
+  run_bootstrap "$inactive_root" >/dev/null 2>&1; then
+  echo "Expected adoption of a non-ACTIVE Firebase project to fail." >&2
+  exit 1
+fi
+
+adoption_billing_root="$(make_scenario adoption-billing)"
+touch "${adoption_billing_root}/state/project-exists"
+printf 'billingAccounts/FFFFFF-FFFFFF-FFFFFF\n' \
+  >"${adoption_billing_root}/state/billing-linked"
+if MOCK_PROJECT_MODE=firebase \
+  ADOPT_EXISTING_FIREBASE_PROJECT=true \
+  CONFIRM_ADOPT_EXISTING_FIREBASE_PROJECT_ID=ontology-appliance-dev-unit \
+  run_bootstrap "$adoption_billing_root" >/dev/null 2>&1; then
+  echo "Expected adoption with a different linked billing account to fail." >&2
+  exit 1
+fi
+if [[ -s "${adoption_billing_root}/state/mutations" ]]; then
+  echo "Billing mismatch must be rejected before adoption mutates the project." >&2
+  exit 1
+fi
+
+parent_root="$(make_scenario adoption-parent)"
+touch "${parent_root}/state/project-exists"
+printf 'billingAccounts/ABCDEF-123456-ABCDEF\n' >"${parent_root}/state/billing-linked"
+if MOCK_PROJECT_MODE=firebase MOCK_PROJECT_PARENT=folder \
+  ADOPT_EXISTING_FIREBASE_PROJECT=true \
+  CONFIRM_ADOPT_EXISTING_FIREBASE_PROJECT_ID=ontology-appliance-dev-unit \
+  run_bootstrap "$parent_root" >/dev/null 2>&1; then
+  echo "Expected adoption with an unconfirmed project parent to fail." >&2
+  exit 1
+fi
+
+project_only_state_root="$(make_scenario adoption-project-only-state)"
+touch \
+  "${project_only_state_root}/state/project-exists" \
+  "${project_only_state_root}/state/bucket-exists"
+printf 'billingAccounts/ABCDEF-123456-ABCDEF\n' \
+  >"${project_only_state_root}/state/billing-linked"
+MOCK_PROJECT_MODE=terraform-firebase \
+MOCK_TF_STATE_MODE=project \
+ADOPT_EXISTING_FIREBASE_PROJECT=true \
+CONFIRM_ADOPT_EXISTING_FIREBASE_PROJECT_ID=ontology-appliance-dev-unit \
+  run_bootstrap "$project_only_state_root" RESUME_BOOTSTRAP=true >/dev/null
+if grep -Fq \
+  ' import module.platform.google_project.this[0]' \
+  "${project_only_state_root}/state/mutations"; then
+  echo "A coherently owned project must not be imported twice." >&2
+  exit 1
+fi
+grep -Fq \
+  ' import module.platform.google_firebase_project.this[0] ontology-appliance-dev-unit' \
+  "${project_only_state_root}/state/mutations"
+
+firebase_only_state_root="$(make_scenario adoption-firebase-only-state)"
+touch \
+  "${firebase_only_state_root}/state/project-exists" \
+  "${firebase_only_state_root}/state/bucket-exists"
+printf 'billingAccounts/ABCDEF-123456-ABCDEF\n' \
+  >"${firebase_only_state_root}/state/billing-linked"
+if MOCK_PROJECT_MODE=terraform-firebase MOCK_TF_STATE_MODE=firebase \
+  ADOPT_EXISTING_FIREBASE_PROJECT=true \
+  CONFIRM_ADOPT_EXISTING_FIREBASE_PROJECT_ID=ontology-appliance-dev-unit \
+  run_bootstrap "$firebase_only_state_root" RESUME_BOOTSTRAP=true >/dev/null 2>&1; then
+  echo "Expected Firebase-only Terraform ownership to be rejected as incoherent." >&2
+  exit 1
+fi
+
+foreign_firebase_state_root="$(make_scenario adoption-foreign-firebase-state)"
+touch \
+  "${foreign_firebase_state_root}/state/project-exists" \
+  "${foreign_firebase_state_root}/state/bucket-exists"
+printf 'billingAccounts/ABCDEF-123456-ABCDEF\n' \
+  >"${foreign_firebase_state_root}/state/billing-linked"
+if MOCK_PROJECT_MODE=terraform-firebase MOCK_TF_STATE_MODE=both \
+  MOCK_STATE_FIREBASE_PROJECT_ID=another-project \
+  ADOPT_EXISTING_FIREBASE_PROJECT=true \
+  CONFIRM_ADOPT_EXISTING_FIREBASE_PROJECT_ID=ontology-appliance-dev-unit \
+  run_bootstrap "$foreign_firebase_state_root" RESUME_BOOTSTRAP=true >/dev/null 2>&1; then
+  echo "Expected Terraform Firebase ownership for another project to be rejected." >&2
+  exit 1
+fi
+
+foreign_resource_state_root="$(make_scenario adoption-foreign-resource-state)"
+touch \
+  "${foreign_resource_state_root}/state/project-exists" \
+  "${foreign_resource_state_root}/state/bucket-exists"
+printf 'billingAccounts/ABCDEF-123456-ABCDEF\n' \
+  >"${foreign_resource_state_root}/state/billing-linked"
+if MOCK_PROJECT_MODE=terraform-firebase MOCK_TF_STATE_MODE=project-unrelated \
+  ADOPT_EXISTING_FIREBASE_PROJECT=true \
+  CONFIRM_ADOPT_EXISTING_FIREBASE_PROJECT_ID=ontology-appliance-dev-unit \
+  run_bootstrap "$foreign_resource_state_root" RESUME_BOOTSTRAP=true >/dev/null 2>&1; then
+  echo "Expected adoption into Terraform state with a foreign resource to fail." >&2
   exit 1
 fi
 

@@ -103,6 +103,8 @@ python3 scripts/validate_repo.py
 
 The default target is a new Firebase/GCP project named
 `ontology-appliance-dev-<unique-suffix>` in `europe-west4`, using Blaze billing.
+An operator-created Firebase project can instead be adopted only through the
+separate exact-ID gate documented in [`infra/README.md`](./infra/README.md).
 The bootstrap owns only the project shell and Terraform state bucket; Terraform
 owns durable cloud resources, Firebase CLI owns Rules/Functions, GitHub Actions
 owns the private Cloud Run gateway, and the guarded App Hosting API scripts own

@@ -1,7 +1,8 @@
 # Ontology Appliance infrastructure
 
-The guarded bootstrap creates the new Firebase/GCP project shell and its remote
-state bucket. Terraform then adopts that project and owns the durable cloud
+The guarded bootstrap creates a new Firebase/GCP project shell, or explicitly
+adopts one existing Firebase project after exact identity checks, and creates
+its remote state bucket. Terraform then owns that project and the durable cloud
 resources in `europe-west4`. Firebase CLI owns Functions, Firestore
 indexes/rules, and Storage rules. The guarded REST scripts own the App Hosting
 backend, traffic policy, pinned builds, and rollouts; the one-time private
@@ -19,11 +20,35 @@ resource has two owners.
    `GCP_PROJECT_ID=... BILLING_ACCOUNT_ID=... CONFIRM_GCP_PROJECT_ID=... scripts/bootstrap_dev_project.sh`
 
    Set `GCP_FOLDER_ID` or `GCP_ORGANIZATION_ID` only when organizational policy
-   requires a parent. The script refuses an existing project unless it already
-   carries the exact appliance/dev/bootstrap identity, and it never relinks an
-   existing project from a different billing account. After a partial failure,
-   inspect the ignored configuration and existing resources before retrying the
-   same confirmed inputs with `RESUME_BOOTSTRAP=true`.
+   requires a parent. By default the script refuses every pre-existing project.
+   To adopt a Firebase project that the operator has deliberately created, use
+   the separate adoption gate and repeat its exact ID a second time:
+
+   ```bash
+   GCP_PROJECT_ID=ontology-apliance \
+   BILLING_ACCOUNT_ID=<exact-enabled-billing-account> \
+   CONFIRM_GCP_PROJECT_ID=ontology-apliance \
+   ADOPT_EXISTING_FIREBASE_PROJECT=true \
+   CONFIRM_ADOPT_EXISTING_FIREBASE_PROJECT_ID=ontology-apliance \
+   scripts/bootstrap_dev_project.sh
+   ```
+
+   Adoption requires the live project to be `ACTIVE`, carry the exact
+   `firebase=enabled` label, already use the selected enabled billing account,
+   and have exactly the confirmed folder, organization, or no parent. It does
+   not require the `application`, `environment`, or `managed_by` labels that
+   Terraform will add in the reviewed apply. Only after all identity checks does
+   it normalize the visible name to `Ontology Appliance Dev`. Empty state is
+   imported into both `google_project.this` and `google_firebase_project.this`;
+   a partial state may contain only those same-project resources and all other
+   or cross-project ownership is rejected. The script never relinks an adopted
+   project.
+
+   After a partial failure, inspect the ignored configuration and existing
+   resources before retrying the same confirmed inputs with
+   `RESUME_BOOTSTRAP=true`; keep both adoption variables on a pre-apply adoption
+   retry. Once a reviewed Terraform apply has established the appliance labels,
+   normal bootstrap resume no longer needs adoption mode.
 2. Review the generated ignored `terraform.tfvars` and `backend.hcl` files.
 3. Run and review
    `terraform -chdir=infra/terraform/environments/dev plan -out=dev.tfplan`;
