@@ -4,6 +4,7 @@ module "platform" {
   providers = {
     google                          = google
     google.no_user_project_override = google.no_user_project_override
+    google.quota_project            = google.quota_project
     google-beta                     = google-beta
   }
 

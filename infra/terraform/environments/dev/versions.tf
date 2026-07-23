@@ -24,6 +24,12 @@ provider "google" {
   user_project_override = false
 }
 
+provider "google" {
+  alias                 = "quota_project"
+  billing_project       = var.project_id
+  user_project_override = true
+}
+
 provider "google-beta" {
   user_project_override = true
 }

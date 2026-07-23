@@ -54,7 +54,8 @@ locals {
     "semantic-gateway-url",
   ])
 
-  github_wif_enabled = var.enabled && trimspace(var.github_repository) != ""
+  github_wif_enabled  = var.enabled && trimspace(var.github_repository) != ""
+  organization_scoped = var.folder_id != null || var.organization_id != null
 }
 
 resource "google_project" "this" {
@@ -185,6 +186,9 @@ resource "google_identity_platform_config" "auth" {
       enabled           = true
       password_required = false
     }
+    phone_number {
+      enabled = false
+    }
   }
 
   depends_on = [google_project_service.required]
@@ -273,8 +277,8 @@ resource "google_storage_bucket" "artifacts" {
 
 # The App Hosting compute identity needs Firebase's project-level Compute Runner
 # role for its own build and runtime buckets. Tag the governed artifact bucket so
-# a project-level IAM deny policy can remove only its mutation permissions here,
-# without affecting App Hosting-managed storage elsewhere in the project.
+# its allow binding can exclude that bucket. Organization-scoped projects also
+# add a Deny policy as defense in depth.
 resource "google_tags_tag_key" "artifact_access_boundary" {
   count = var.enabled ? 1 : 0
 
@@ -432,8 +436,10 @@ resource "google_project_iam_member" "apphosting_session_issuer" {
 # App Hosting uses the backend service account for both Cloud Build and the
 # managed Cloud Run runtime. This is the Firebase-defined minimum role for a
 # user-supplied compute identity; application permissions stay separate below.
-# The tag-conditioned deny policy is created first, so this project-level role
-# cannot mutate canonical artifacts even during initial provisioning.
+# The conditional binding excludes the tagged canonical artifact bucket from
+# this otherwise project-level role. Organization-scoped projects add a Deny
+# policy as defense in depth; standalone projects cannot grant Deny Admin
+# because Google only exposes that role at organization level.
 resource "google_project_iam_member" "apphosting_compute_runner" {
   count = var.enabled ? 1 : 0
 
@@ -441,12 +447,21 @@ resource "google_project_iam_member" "apphosting_compute_runner" {
   role    = "roles/firebaseapphosting.computeRunner"
   member  = "serviceAccount:${google_service_account.runtime["apphosting"].email}"
 
-  depends_on = [google_iam_deny_policy.apphosting_artifact_mutation]
+  condition {
+    title       = "exclude_governed_artifact_bucket"
+    description = "App Hosting may use its managed build buckets but never the canonical ontology artifact bucket."
+    expression  = "!resource.matchTagId('${google_tags_tag_key.artifact_access_boundary[0].id}', '${google_tags_tag_value.publisher_only[0].id}')"
+  }
+
+  depends_on = [
+    google_iam_deny_policy.apphosting_artifact_mutation,
+    google_tags_location_tag_binding.artifact_publisher_only,
+  ]
 }
 
 resource "google_iam_deny_policy" "apphosting_artifact_mutation" {
   provider = google-beta
-  count    = var.enabled ? 1 : 0
+  count    = var.enabled && local.organization_scoped ? 1 : 0
 
   parent          = urlencode("cloudresourcemanager.googleapis.com/projects/${google_project.this[0].project_id}")
   name            = "${local.name_prefix}-apphosting-artifact-mutation"
@@ -695,7 +710,7 @@ resource "google_monitoring_notification_channel" "budget_email" {
 }
 
 resource "google_billing_budget" "monthly" {
-  provider = google.no_user_project_override
+  provider = google.quota_project
   count    = var.enabled ? 1 : 0
 
   billing_account = var.billing_account_id
@@ -794,7 +809,7 @@ resource "google_iam_workload_identity_pool_provider" "github_rollback" {
   project                            = google_project.this[0].project_id
   workload_identity_pool_id          = google_iam_workload_identity_pool.github[0].workload_identity_pool_id
   workload_identity_pool_provider_id = "github-rollback"
-  display_name                       = "GitHub semantic rollback Publisher"
+  display_name                       = "GitHub semantic rollback"
   attribute_condition                = "assertion.repository == '${var.github_repository}' && assertion.ref == 'refs/heads/${var.github_branch}' && assertion.environment == 'semantic-rollback' && assertion.workflow_ref == '${var.github_repository}/.github/workflows/rollback-semantics.yml@refs/heads/${var.github_branch}'"
   attribute_mapping = {
     "google.subject"        = "assertion.sub"

@@ -7,6 +7,7 @@ terraform {
       version = "~> 7.0"
       configuration_aliases = [
         google.no_user_project_override,
+        google.quota_project,
       ]
     }
     google-beta = {

@@ -135,16 +135,23 @@ explicit autoscaling caps.
 
 App Hosting's required project-level Compute Runner role contains Cloud Storage
 write permissions for its managed build/runtime buckets. Terraform therefore
-tags only the canonical ontology artifact bucket `publisher-only` and creates a
-tag-conditioned project IAM Deny before granting Compute Runner. The App Hosting
-identity keeps its required storage access elsewhere but cannot create, replace,
-move, restore, retain, or delete canonical artifacts. After deployment, verify
+tags only the canonical ontology artifact bucket `publisher-only` and grants
+Compute Runner through a tag-conditioned binding that excludes that bucket.
+Projects inside a folder or organization also create a tag-conditioned IAM Deny
+as defense in depth; Google exposes Deny Admin only at organization level, so a
+standalone personal project cannot create that second control. In both modes the
+App Hosting identity keeps its required storage access elsewhere but cannot use
+the Compute Runner grant against canonical artifacts. After deployment, verify
 both sides: an App Hosting build must still succeed and an impersonated mutation
-against the artifact bucket must fail. Tag attachment and IAM Deny are cloud
-resources and are created only by a reviewed Terraform apply. The checked-in
-configuration and local validation create no billable usage; after apply,
-Google Cloud charges a monthly fee for a tag attached to a bucket, so include
-that line item in the reviewed cost decision.
+against the artifact bucket must fail. The checked-in configuration and local
+validation create no billable usage; after apply, Google Cloud charges a monthly
+fee for a tag attached to a bucket, so include that line item in the reviewed
+cost decision.
+
+The Billing Budget API is client-based. Its dedicated provider sends the
+environment project explicitly as the quota project, avoiding accidental use of
+the Google-owned ADC client project while keeping project creation on the
+non-override provider.
 
 The task queues and daily Scheduler job are created by Firebase from the
 Functions v2 declarations; Terraform intentionally does not create duplicates.
