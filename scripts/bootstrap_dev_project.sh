@@ -291,7 +291,7 @@ gcloud services enable \
 
 project_number="$(gcloud projects describe "$GCP_PROJECT_ID" --format='value(projectNumber)')"
 bucket_json=""
-if bucket_json="$(gcloud storage buckets describe "gs://${state_bucket}" --format=json 2>/dev/null)"; then
+if bucket_json="$(gcloud storage buckets describe "gs://${state_bucket}" --raw --format=json 2>/dev/null)"; then
   if [[ "$resume_bootstrap" != "true" ]]; then
     echo "The Terraform state bucket already exists; explicit bootstrap resume is required." >&2
     exit 1

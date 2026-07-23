@@ -93,6 +93,10 @@ elif [[ "$1 $2 $3" == "billing projects link" ]]; then
 elif [[ "$1 $2" == "services enable" ]]; then
   record "$*"
 elif [[ "$1 $2 $3" == "storage buckets describe" ]]; then
+  [[ "$*" == *" --raw "* ]] || {
+    echo "Bucket identity checks must use raw API metadata." >&2
+    exit 69
+  }
   [[ -f "${MOCK_STATE_DIR}/bucket-exists" ]] || exit 1
   bucket_project="123456789012"
   labels='"application":"ontology-appliance","environment":"dev","purpose":"terraform-state","managed_by":"bootstrap"'
