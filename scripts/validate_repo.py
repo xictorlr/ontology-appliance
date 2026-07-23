@@ -95,8 +95,10 @@ def main() -> None:
         "location        = var.region",
         'resource "google_iam_deny_policy" "apphosting_artifact_mutation"',
         'provider = google-beta',
+        "count    = var.enabled && local.organization_scoped ? 1 : 0",
         '"principal://iam.googleapis.com/projects/-/serviceAccounts/${google_service_account.runtime["apphosting"].email}"',
-        "resource.matchTagId('${google_tags_tag_key.artifact_access_boundary[0].id}', '${google_tags_tag_value.publisher_only[0].id}')",
+        "expression  = \"resource.matchTagId('${google_tags_tag_key.artifact_access_boundary[0].id}', '${google_tags_tag_value.publisher_only[0].id}')\"",
+        "expression  = \"!resource.matchTagId('${google_tags_tag_key.artifact_access_boundary[0].id}', '${google_tags_tag_value.publisher_only[0].id}')\"",
         '"storage.googleapis.com/objects.create"',
         '"storage.googleapis.com/objects.delete"',
         '"storage.googleapis.com/objects.move"',
@@ -104,7 +106,9 @@ def main() -> None:
         '"storage.googleapis.com/objects.setRetention"',
         '"storage.googleapis.com/objects.update"',
         'role    = "roles/firebaseapphosting.computeRunner"',
-        "depends_on = [google_iam_deny_policy.apphosting_artifact_mutation]",
+        "google_iam_deny_policy.apphosting_artifact_mutation,",
+        "google_tags_location_tag_binding.artifact_publisher_only,",
+        'title       = "exclude_governed_artifact_bucket"',
     )
     for boundary in required_iam_boundaries:
         if boundary not in platform_tf:
