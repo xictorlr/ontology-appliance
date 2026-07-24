@@ -90,6 +90,8 @@ jobs:
           distribution: temurin
           java-version: "21"
       - run: pnpm install --frozen-lockfile
+      - name: Verify Firebase conditional IAM compatibility
+        run: pnpm firebase:iam-v3:check
       - name: Re-run release gates on the exact revision
         env:
           NEXT_PUBLIC_DEMO_MODE: "true"

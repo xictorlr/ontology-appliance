@@ -16,6 +16,9 @@
       "postcss": "8.5.12",
       "sharp": "0.35.3",
       "uuid": "11.1.1"
+    },
+    "patchedDependencies": {
+      "firebase-tools@14.26.0": "patches/firebase-tools@14.26.0.patch"
     }
   },
   "scripts": {
@@ -31,6 +34,7 @@
     "emulators": "firebase emulators:start --project demo-ontology-appliance",
     "deploy:functions": "pnpm --filter @ontology-appliance/functions build && firebase deploy --only functions",
     "deploy:firebase": "pnpm --filter @ontology-appliance/functions build && firebase deploy --only functions,firestore:rules,firestore:indexes,storage",
+    "firebase:iam-v3:check": "node scripts/check_firebase_cli_iam_v3.cjs",
     "infra:fmt": "terraform -chdir=infra fmt -recursive",
     "infra:validate": "terraform -chdir=infra/terraform/environments/dev init -backend=false && terraform -chdir=infra/terraform/environments/dev validate"
   }

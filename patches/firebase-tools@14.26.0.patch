@@ -1,0 +1,17 @@
+diff --git a/lib/gcp/resourceManager.js b/lib/gcp/resourceManager.js
+index 3d1e07c..ddbb5fc 100644
+--- a/lib/gcp/resourceManager.js
++++ b/lib/gcp/resourceManager.js
+@@ -16,7 +16,11 @@ exports.firebaseRoles = {
+     serviceUsageConsumer: "roles/serviceusage.serviceUsageConsumer",
+ };
+ async function getIamPolicy(projectIdOrNumber) {
+-    const response = await apiClient.post(`/projects/${projectIdOrNumber}:getIamPolicy`);
++    const response = await apiClient.post(`/projects/${projectIdOrNumber}:getIamPolicy`, {
++        options: {
++            requestedPolicyVersion: 3,
++        },
++    });
+     return response.body;
+ }
+ exports.getIamPolicy = getIamPolicy;
