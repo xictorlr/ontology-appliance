@@ -446,12 +446,58 @@ data "google_compute_default_service_account" "functions_build" {
   depends_on = [google_project_service.required["compute.googleapis.com"]]
 }
 
+resource "google_project_service_identity" "pubsub" {
+  provider = google-beta
+  count    = var.enabled ? 1 : 0
+
+  project = google_project.this[0].project_id
+  service = "pubsub.googleapis.com"
+
+  depends_on = [google_project_service.required["pubsub.googleapis.com"]]
+}
+
 resource "google_project_iam_member" "functions_build_builder" {
   count = var.enabled ? 1 : 0
 
   project = google_project.this[0].project_id
   role    = "roles/cloudbuild.builds.builder"
   member  = "serviceAccount:${data.google_compute_default_service_account.functions_build[0].email}"
+}
+
+# Firebase Functions v2 requires these service-agent bindings when a project
+# first integrates Eventarc-backed triggers. They replace only the narrow
+# permissions that the removed default Editor grant used to provide.
+resource "google_project_iam_member" "functions_pubsub_token_creator" {
+  count = var.enabled ? 1 : 0
+
+  project = google_project.this[0].project_id
+  role    = "roles/iam.serviceAccountTokenCreator"
+  member  = "serviceAccount:${google_project_service_identity.pubsub[0].email}"
+}
+
+resource "google_project_iam_member" "functions_build_eventarc_receiver" {
+  count = var.enabled ? 1 : 0
+
+  project = google_project.this[0].project_id
+  role    = "roles/eventarc.eventReceiver"
+  member  = "serviceAccount:${data.google_compute_default_service_account.functions_build[0].email}"
+}
+
+resource "google_project_iam_member" "functions_build_run_invoker" {
+  count = var.enabled ? 1 : 0
+
+  project = google_project.this[0].project_id
+  role    = "roles/run.invoker"
+  member  = "serviceAccount:${data.google_compute_default_service_account.functions_build[0].email}"
+
+  # Cloud Run exposes request.host to IAM Conditions. The Firebase-managed
+  # build identity may invoke generated Functions services, but the separate
+  # Semantic Gateway remains limited to its two approved runtime identities.
+  condition {
+    title       = "exclude_semantic_gateway"
+    description = "Functions build identity cannot invoke the private Semantic Gateway."
+    expression  = "!request.host.startsWith('oa-dev-semantic-gateway-')"
+  }
 }
 
 resource "google_service_account_iam_member" "ci_functions_build_act_as" {
