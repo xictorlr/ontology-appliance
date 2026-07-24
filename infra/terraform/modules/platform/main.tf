@@ -83,6 +83,20 @@ resource "google_project_service" "required" {
   disable_on_destroy = false
 }
 
+# Keep the Firebase Extensions control API independent from the core API
+# for_each. Adding a key to that collection defers default-service-account data
+# sources during planning and would otherwise cause unnecessary IAM
+# remove/recreate operations. Firebase CLI requires this API to analyze
+# parameterized Functions even when no extension is installed.
+resource "google_project_service" "firebase_extensions_control" {
+  provider = google.no_user_project_override
+  count    = var.enabled ? 1 : 0
+
+  project            = google_project.this[0].project_id
+  service            = "firebaseextensions.googleapis.com"
+  disable_on_destroy = false
+}
+
 resource "google_project_service" "org_policy" {
   provider = google.no_user_project_override
   count    = var.enabled ? 1 : 0
