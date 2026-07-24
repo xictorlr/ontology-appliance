@@ -448,6 +448,20 @@ resource "google_service_account_iam_member" "ci_functions_build_act_as" {
   member             = "serviceAccount:${google_service_account.runtime["ci"].email}"
 }
 
+# Firebase CLI validates the legacy App Engine default identity before a
+# Functions v2 deploy even when every function declares the dedicated runtime
+# service account. Limit ActAs to the CI deployer on this one service account;
+# the default identity intentionally retains no project-level Editor role.
+resource "google_service_account_iam_member" "ci_app_engine_default_act_as" {
+  count = var.enabled ? 1 : 0
+
+  service_account_id = "projects/${google_project.this[0].project_id}/serviceAccounts/${google_project.this[0].project_id}@appspot.gserviceaccount.com"
+  role               = "roles/iam.serviceAccountUser"
+  member             = "serviceAccount:${google_service_account.runtime["ci"].email}"
+
+  depends_on = [google_firebase_project.this]
+}
+
 resource "google_project_iam_member" "firestore_runtime" {
   for_each = var.enabled ? toset(["functions"]) : toset([])
 
