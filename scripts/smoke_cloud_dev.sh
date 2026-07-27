@@ -52,7 +52,7 @@ health=""
 # treating the transient concealed 404 as an application failure.
 for _attempt in {1..24}; do
   if health="$(curl --fail --silent --show-error \
-    --header "Authorization: Bearer ${identity_token}" \
+    --header "X-Serverless-Authorization: Bearer ${identity_token}" \
     "${GATEWAY_URL%/}/healthz" 2>/dev/null)"; then
     break
   fi
