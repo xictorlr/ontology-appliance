@@ -44,6 +44,10 @@ env:
     value: demo-bank
     availability:
       - RUNTIME
+  - variable: SOURCE_BUCKET
+    value: ontology-apliance-oa-input
+    availability:
+      - RUNTIME
   - variable: SEMANTIC_GATEWAY_URL
     secret: oa-dev-semantic-gateway-url
     availability:

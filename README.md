@@ -7,7 +7,7 @@ Ontology Appliance turns fragmented enterprise metadata into governed semantic c
 - Next.js control plane prepared for Firebase App Hosting.
 - Firebase Authentication with passwordless email, Google sign-in enabled in App Hosting after OAuth setup, and a synthetic local demo session.
 - Private FastAPI semantic gateway with RDF/OWL/SKOS, SHACL validation, provenance, read-only SPARQL, and five golden competency questions.
-- Synthetic CRM, account, payment, AML, sanctions, and KYC-document fixtures with connector contracts.
+- Live tenant source onboarding for bounded CSV, JSONL, PDF, and OpenAPI 3 JSON uploads, plus synthetic connector fixtures for reproducible evaluation.
 - Firestore/Storage rules, Functions v2 triggers, task queue orchestration, and drift scheduling.
 - Terraform modules for an EU dev environment with least-privilege identities and €50 budget alerts.
 - Six repo-local Codex skills under `.agents/skills/`.
@@ -34,9 +34,11 @@ Browser
   │ Firebase Auth → HTTP-only session
   ▼
 Next.js on Firebase App Hosting (BFF)
-  │ private OIDC call
-  ▼
-FastAPI Semantic Gateway on Cloud Run
+  ├─ private OIDC call → FastAPI Semantic Gateway on Cloud Run
+  └─ bounded source upload → versioned Firebase Storage object
+                            └─ Functions v2 → SHA-256 profile → immutable snapshot
+
+Cloud data plane
   ├─ immutable RDF/SHACL bundles in Cloud Storage
   ├─ workflow, proposals and projections in Firestore
   ├─ Cloud Tasks + Functions v2 for evidence profiling, drift and idempotent orchestration
@@ -69,13 +71,36 @@ pnpm dev
 
 Open `http://localhost:3000`. With no Firebase public configuration, the app offers a governed `demo-bank` session. Emulator ports are defined in `firebase.json`; App Hosting uses `5002` because `5000` was occupied during project setup.
 
-Cloud users must receive explicit tenant claims after their first Firebase sign-in. An administrator must name and repeat the exact target project before the mutation:
+Verified users without existing membership claims can self-enroll into the configured
+pilot tenant as read-only auditors. Source onboarding requires an explicit `admin`
+or `steward` role. An administrator must name and repeat the exact target project
+before granting that elevated role:
 
 ```bash
 pnpm --filter @ontology-appliance/web claims:set -- --project PROJECT_ID --confirm-project PROJECT_ID --email user@example.com --roles steward,auditor
 ```
 
-The user then signs in again to refresh the token. No cloud identity receives an implicit role.
+The user then signs in again to refresh the token. The tenant is always derived
+from the verified token/session, never accepted from a browser request body.
+
+## Connecting sources
+
+Open **Sources** in the deployed control plane and choose an available connector:
+
+| Connector | Current production behavior |
+|---|---|
+| CSV | Validates a unique UTF-8 header, profiles bounded records, and creates an immutable snapshot. |
+| JSONL | Validates every bounded object record and preserves deterministic line-level evidence coordinates. |
+| PDF | Verifies the PDF signature and creates a content-addressed document snapshot. |
+| OpenAPI 3 | Accepts a JSON contract and inventories its paths; live remote API calls are deliberately disabled. |
+| PostgreSQL | Roadmap only until a read-only adapter, Secret Manager reference, network boundary, and ephemeral integration test exist. |
+
+Uploads are limited to 20 MiB. The BFF derives the tenant and uploader from the
+HTTP-only Firebase session, records a Firestore audit event, and can only create
+new objects under the governed input bucket. It cannot read, replace, or delete
+those objects. Storage finalization invokes the existing serverless profiling,
+snapshot, proposal, and independent verification workflow. No database password,
+API token, or service credential is accepted by the browser form.
 
 Run verification:
 

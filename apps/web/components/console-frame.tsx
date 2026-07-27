@@ -25,7 +25,7 @@ import type { SessionIdentity } from "@/lib/server-auth";
 
 const navigation = [
   { href: "/dashboard", label: "Overview", icon: LayoutDashboard },
-  { href: "/sources", label: "Sources", icon: Database, count: "6" },
+  { href: "/sources", label: "Sources", icon: Database },
   { href: "/model", label: "Semantic model", icon: Network },
   { href: "/proposals", label: "Review queue", icon: GitPullRequestArrow, count: "3" },
   { href: "/versions", label: "Versions", icon: Boxes },
