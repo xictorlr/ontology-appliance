@@ -39,6 +39,16 @@ def main() -> None:
     if package.get("engines", {}).get("node") != "22.x":
         raise SystemExit("root package must pin Node 22.x")
 
+    apphosting_config = require("apps/web/apphosting.yaml").read_text()
+    google_sign_in_block = (
+        '  - variable: NEXT_PUBLIC_GOOGLE_SIGN_IN_ENABLED\n'
+        '    value: "true"\n'
+    )
+    if google_sign_in_block not in apphosting_config:
+        raise SystemExit(
+            "App Hosting must expose Google sign-in only after the Firebase provider is configured"
+        )
+
     proposal_schema = json.loads(
         require("contracts/schemas/proposal.schema.json").read_text()
     )

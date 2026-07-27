@@ -40,9 +40,12 @@ export default function LoginPage() {
     setMessage(null);
     try {
       const auth = await browserAuth();
-      const result = await signInWithPopup(auth, new GoogleAuthProvider());
-      await createSession(await result.user.getIdToken(true));
-      await signOut(auth);
+      try {
+        const result = await signInWithPopup(auth, new GoogleAuthProvider());
+        await createSession(await result.user.getIdToken(true));
+      } finally {
+        await signOut(auth);
+      }
     } catch (error) {
       setMessage(error instanceof Error ? error.message : "Google sign-in failed.");
     } finally {

@@ -32,7 +32,7 @@ env:
       - BUILD
       - RUNTIME
   - variable: NEXT_PUBLIC_GOOGLE_SIGN_IN_ENABLED
-    value: "false"
+    value: "true"
     availability:
       - BUILD
       - RUNTIME

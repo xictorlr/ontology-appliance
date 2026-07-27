@@ -5,7 +5,7 @@ Ontology Appliance turns fragmented enterprise metadata into governed semantic c
 ## What is implemented
 
 - Next.js control plane prepared for Firebase App Hosting.
-- Firebase Authentication with passwordless email, a code-ready Google provider that is disabled until OAuth is configured, and a synthetic local demo session.
+- Firebase Authentication with passwordless email, Google sign-in enabled in App Hosting after OAuth setup, and a synthetic local demo session.
 - Private FastAPI semantic gateway with RDF/OWL/SKOS, SHACL validation, provenance, read-only SPARQL, and five golden competency questions.
 - Synthetic CRM, account, payment, AML, sanctions, and KYC-document fixtures with connector contracts.
 - Firestore/Storage rules, Functions v2 triggers, task queue orchestration, and drift scheduling.
