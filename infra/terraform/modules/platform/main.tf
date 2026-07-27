@@ -829,6 +829,30 @@ resource "google_secret_manager_secret_iam_member" "gateway_url_apphosting_acces
   member    = "serviceAccount:${google_service_account.runtime["apphosting"].email}"
 }
 
+resource "google_secret_manager_secret_iam_member" "gateway_url_apphosting_viewer" {
+  count = var.enabled ? 1 : 0
+
+  project   = google_project.this[0].project_id
+  secret_id = google_secret_manager_secret.empty["semantic-gateway-url"].secret_id
+  role      = "roles/secretmanager.viewer"
+  member    = "serviceAccount:${google_service_account.runtime["apphosting"].email}"
+}
+
+# Firebase's non-interactive apphosting:secrets:grantaccess flow requires the
+# App Hosting service agent to manage versions while resolving build-time
+# secret references. Keep this additive binding in Terraform so the CLI's
+# one-time backend grant cannot become unmanaged IAM drift.
+resource "google_secret_manager_secret_iam_member" "gateway_url_apphosting_service_agent_version_manager" {
+  count = var.enabled ? 1 : 0
+
+  project   = google_project.this[0].project_id
+  secret_id = google_secret_manager_secret.empty["semantic-gateway-url"].secret_id
+  role      = "roles/secretmanager.secretVersionManager"
+  member    = "serviceAccount:service-${google_project.this[0].number}@gcp-sa-firebaseapphosting.iam.gserviceaccount.com"
+
+  depends_on = [google_project_service.required["firebaseapphosting.googleapis.com"]]
+}
+
 resource "google_secret_manager_secret_iam_member" "gateway_url_ci_version_adder" {
   count = var.enabled ? 1 : 0
 

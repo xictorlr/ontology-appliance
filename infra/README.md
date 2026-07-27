@@ -106,7 +106,9 @@ owners.
    supported `GLOBAL_ACCESS` locality, rooted at `apps/web`; pauses automatic
    branch rollout while it creates the
    pinned build and rollout; and re-enables protected `main` only after success.
-   It refuses to proceed until the gateway URL secret has a version.
+   It refuses to proceed until the gateway URL secret has a version and
+   idempotently applies Firebase's backend-scoped, non-interactive secret grant;
+   Terraform owns the corresponding additive IAM members.
 
    Independently re-run the read-only deployment proof with
    `GCP_PROJECT_ID`, `APPHOSTING_REPOSITORY_RESOURCE`, and
