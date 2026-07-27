@@ -172,6 +172,7 @@ jobs:
             '- role: roles/run.invoker' \
             '  members:' \
             "  - serviceAccount:${{ vars.APPHOSTING_SERVICE_ACCOUNT }}" \
+            "  - serviceAccount:${{ vars.GCP_DEPLOY_SERVICE_ACCOUNT }}" \
             "  - serviceAccount:${{ vars.FUNCTIONS_SERVICE_ACCOUNT }}" \
             'version: 1' > "$policy_file"
           gcloud run services set-iam-policy oa-dev-semantic-gateway "$policy_file" \

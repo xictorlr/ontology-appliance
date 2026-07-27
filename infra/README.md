@@ -70,8 +70,9 @@ owners.
    All values are non-secret resource identifiers; authentication remains keyless
    through separate deployment and Publisher WIF providers. The deployment workflow
    builds and pushes the gateway image, owns the private Cloud Run service, grants
-   only the App Hosting and Functions runtimes `run.invoker`, and adds the discovered
-   URL as a version of `oa-dev-semantic-gateway-url`. The protected publication
+   only the App Hosting runtime, Functions runtime, and keyless CI smoke-test identity
+   `run.invoker` on that exact gateway, and adds the discovered URL as a version of
+   `oa-dev-semantic-gateway-url`. The protected publication
    environment rejects self-review and is the only workflow allowed to update the
    semantic active pointer.
    The configuration script also applies and verifies `main` branch protection
