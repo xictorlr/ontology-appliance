@@ -95,6 +95,17 @@ def main() -> None:
         raise SystemExit(
             "every semantic gateway deployment mode must pin the mock verifier"
         )
+    for gateway_invoker in (
+        '"  - serviceAccount:${{ vars.APPHOSTING_SERVICE_ACCOUNT }}"',
+        '"  - serviceAccount:${{ vars.GCP_DEPLOY_SERVICE_ACCOUNT }}"',
+        '"  - serviceAccount:${{ vars.FUNCTIONS_SERVICE_ACCOUNT }}"',
+    ):
+        if gateway_invoker not in deploy_workflow:
+            raise SystemExit(
+                f"private gateway invocation policy is missing: {gateway_invoker}"
+            )
+    if "allUsers" in deploy_workflow or "allAuthenticatedUsers" in deploy_workflow:
+        raise SystemExit("deployment workflow must not make the gateway public")
 
     platform_tf = require("infra/terraform/modules/platform/main.tf").read_text()
     required_iam_boundaries = (
