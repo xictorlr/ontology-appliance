@@ -23,6 +23,7 @@ backend_json='{"name":"projects/ontology-appliance-dev-test/locations/europe-wes
 traffic_json='{"name":"projects/ontology-appliance-dev-test/locations/europe-west4/backends/ontology-appliance-web/traffic","rolloutPolicy":{"codebaseBranch":"main","disabled":false}}'
 repository_json='{"name":"projects/ontology-appliance-dev-test/locations/europe-west4/connections/firebase-app-hosting-github/gitRepositoryLinks/ontology-appliance","cloneUri":"https://github.com/xictorlr/ontology-appliance.git"}'
 github_repository_json='{"nameWithOwner":"xictorlr/ontology-appliance","isPrivate":true}'
+public_github_repository_json='{"nameWithOwner":"xictorlr/ontology-appliance","isPrivate":false}'
 github_ref_json='{"ref":"refs/heads/main","object":{"type":"commit","sha":"0123456789abcdef0123456789abcdef01234567"}}'
 branch_protection_json='{"required_status_checks":{"strict":true,"contexts":["web-and-functions","semantic-gateway","contracts-skills-infra"]},"enforce_admins":{"enabled":true},"required_pull_request_reviews":{"required_approving_review_count":1,"require_last_push_approval":true},"required_linear_history":{"enabled":true},"allow_force_pushes":{"enabled":false},"allow_deletions":{"enabled":false},"required_conversation_resolution":{"enabled":true}}'
 
@@ -30,6 +31,7 @@ validate_inputs
 verify_branch_protection "$branch_protection_json"
 verify_github_ref "$github_ref_json"
 verify_backend "$backend_json" "$traffic_json" "$repository_json" "$github_repository_json"
+verify_backend "$backend_json" "$traffic_json" "$repository_json" "$public_github_repository_json"
 
 jq -e \
   --arg repository "$repository_resource" \

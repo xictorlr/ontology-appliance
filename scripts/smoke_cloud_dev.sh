@@ -22,6 +22,7 @@ case "$require_app_hosting" in
 esac
 
 region="${GCP_REGION:-europe-west4}"
+task_region="${GCP_TASK_REGION:-europe-west1}"
 service="${GATEWAY_SERVICE:-oa-dev-semantic-gateway}"
 expected_publication_state="${EXPECTED_PUBLICATION_STATE:-CANDIDATE}"
 
@@ -40,7 +41,11 @@ case "$expected_publication_state" in
     ;;
 esac
 
-identity_token="$(gcloud auth print-identity-token --audiences="$GATEWAY_URL")"
+if [[ -n "${GATEWAY_IDENTITY_TOKEN:-}" ]]; then
+  identity_token="$GATEWAY_IDENTITY_TOKEN"
+else
+  identity_token="$(gcloud auth print-identity-token --audiences="$GATEWAY_URL")"
+fi
 health="$(curl --fail --silent --show-error \
   --header "Authorization: Bearer ${identity_token}" \
   "${GATEWAY_URL%/}/healthz")"
@@ -75,8 +80,7 @@ application_auth_status="$(curl --silent --output /dev/null --write-out '%{http_
   exit 1
 }
 
-for function_name in sourceObjectFinalized proposalCreated processIngestionTask \
-  processVerificationTask enqueueDailyDriftChecks processDriftTask; do
+for function_name in sourceObjectFinalized proposalCreated enqueueDailyDriftChecks; do
   gcloud functions describe "$function_name" \
     --gen2 \
     --project "$GCP_PROJECT_ID" \
@@ -84,10 +88,18 @@ for function_name in sourceObjectFinalized proposalCreated processIngestionTask 
     --format='value(state)' | grep -Fxq ACTIVE
 done
 
+for function_name in processIngestionTask processVerificationTask processDriftTask; do
+  gcloud functions describe "$function_name" \
+    --gen2 \
+    --project "$GCP_PROJECT_ID" \
+    --region "$task_region" \
+    --format='value(state)' | grep -Fxq ACTIVE
+done
+
 for queue_name in processIngestionTask processVerificationTask processDriftTask; do
   gcloud tasks queues describe "$queue_name" \
     --project "$GCP_PROJECT_ID" \
-    --location "$region" \
+    --location "$task_region" \
     --format='value(state)' | grep -Fxq RUNNING
 done
 

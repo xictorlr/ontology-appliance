@@ -11,6 +11,7 @@ import { onTaskDispatched } from "firebase-functions/v2/tasks";
 
 import {
   REGION,
+  TASK_REGION,
   functionsServiceAccount,
   ontologyBaseVersion,
   sourceBucket,
@@ -79,7 +80,7 @@ setGlobalOptions({
 });
 
 const taskOptions = {
-  region: REGION,
+  region: TASK_REGION,
   retryConfig: taskRetryConfig,
   rateLimits: taskRateLimits,
   memory: "512MiB" as const,
@@ -92,7 +93,7 @@ async function enqueue<T extends { executionId: string }>(
   queueName: string,
   data: T,
 ): Promise<void> {
-  const functionName = `locations/${REGION}/functions/${queueName}`;
+  const functionName = `locations/${TASK_REGION}/functions/${queueName}`;
   try {
     await taskQueues.taskQueue<T>(functionName).enqueue(data, {
       id: data.executionId,
