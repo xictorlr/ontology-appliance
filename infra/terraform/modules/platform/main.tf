@@ -535,8 +535,8 @@ resource "google_project_iam_custom_role" "apphosting_firestore_review" {
 
   project     = google_project.this[0].project_id
   role_id     = "oa_${var.environment}_reviewWriter"
-  title       = "Ontology Appliance review writer"
-  description = "Read proposals and create/update governed review records without delete access."
+  title       = "Ontology Appliance control plane writer"
+  description = "Read tenant state and create/update governed review, source-connection, and audit records without delete access."
   permissions = [
     "datastore.databases.get",
     "datastore.entities.create",
@@ -673,6 +673,20 @@ resource "google_storage_bucket_iam_member" "input_functions_reader" {
   bucket = google_storage_bucket.input[0].name
   role   = "roles/storage.objectViewer"
   member = "serviceAccount:${google_service_account.runtime["functions"].email}"
+}
+
+resource "google_storage_bucket_iam_member" "input_apphosting_creator" {
+  count = var.enabled ? 1 : 0
+
+  bucket = google_storage_bucket.input[0].name
+  role   = "roles/storage.objectCreator"
+  member = "serviceAccount:${google_service_account.runtime["apphosting"].email}"
+
+  condition {
+    title       = "create_tenant_source_uploads_only"
+    description = "The session-aware BFF may create immutable tenant upload objects; it cannot read, replace, or delete them."
+    expression  = "resource.name.startsWith('projects/_/buckets/${google_storage_bucket.input[0].name}/objects/tenants/')"
+  }
 }
 
 resource "google_storage_bucket_iam_member" "input_ci_smoke_creator" {

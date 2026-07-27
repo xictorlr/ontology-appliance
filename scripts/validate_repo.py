@@ -72,6 +72,38 @@ def main() -> None:
             raise SystemExit(
                 f"Google popup compatibility boundary is missing: {google_popup_boundary}"
             )
+    login_page = require("apps/web/app/login/page.tsx").read_text()
+    google_session = login_page.index("await createFirebaseSession(result.user);")
+    google_redirect = login_page.index('router.replace("/dashboard");', google_session)
+    google_refresh = login_page.index("router.refresh();", google_redirect)
+    if not google_session < google_redirect < google_refresh:
+        raise SystemExit(
+            "Google sign-in must navigate to the dashboard after creating its server session"
+        )
+
+    source_route = require("apps/web/app/api/sources/route.ts").read_text()
+    for source_boundary in (
+        "const session = await getSession();",
+        "canManageSources(session.roles)",
+        "`tenants/${session.tenantId}/sourceConnections/${identity.sourceId}`",
+        "`tenants/${session.tenantId}/uploads/${identity.sourceId}/`",
+        "preconditionOpts: { ifGenerationMatch: 0 }",
+        'accessMode: "READ_ONLY"',
+        'eventType: "SOURCE_CONNECTION_REGISTERED"',
+    ):
+        if source_boundary not in source_route:
+            raise SystemExit(
+                f"Tenant-bound source onboarding boundary is missing: {source_boundary}"
+            )
+    for untrusted_tenant in (
+        'form.get("tenant")',
+        'form.get("tenantId")',
+        'form.get("tenant_id")',
+    ):
+        if untrusted_tenant in source_route:
+            raise SystemExit(
+                "Source onboarding must derive the tenant from the verified session"
+            )
 
     proposal_schema = json.loads(
         require("contracts/schemas/proposal.schema.json").read_text()
@@ -152,6 +184,8 @@ def main() -> None:
         '"storage.googleapis.com/objects.setRetention"',
         '"storage.googleapis.com/objects.update"',
         'role    = "roles/firebaseapphosting.computeRunner"',
+        'resource "google_storage_bucket_iam_member" "input_apphosting_creator"',
+        'title       = "create_tenant_source_uploads_only"',
         '"firebaseauth.users.update"',
         "google_iam_deny_policy.apphosting_artifact_mutation,",
         "google_tags_location_tag_binding.artifact_publisher_only,",

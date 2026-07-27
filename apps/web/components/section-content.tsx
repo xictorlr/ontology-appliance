@@ -42,8 +42,8 @@ import {
   Workflow,
   X,
 } from "lucide-react";
-import { FormEvent, ReactNode, useEffect, useMemo, useState } from "react";
-import { competencyQuestions, concepts, initialProposals, sources, traceRows, type ProposalView } from "@/lib/demo-data";
+import { FormEvent, ReactNode, useCallback, useEffect, useMemo, useState } from "react";
+import { competencyQuestions, concepts, initialProposals, traceRows, type ProposalView } from "@/lib/demo-data";
 
 export function SectionContent({ section }: { section: string }) {
   switch (section) {
@@ -137,26 +137,226 @@ function PanelTitle({ title, subtitle, action }: { title: string; subtitle: stri
   return <div className="panel-title"><div><h2>{title}</h2><p>{subtitle}</p></div>{action}</div>;
 }
 
+type SourceInventoryItem = {
+  id: string;
+  name: string;
+  kind: string;
+  sourceType: string;
+  accessMode: "read_only";
+  status: string;
+  fields: number | null;
+  records: number | null;
+  bytes: number | null;
+  snapshotId: string | null;
+  sha256: string | null;
+  mediaType: string | null;
+  updatedAt: string | null;
+  origin: "firebase" | "fixture";
+};
+
+type SourceKind = "csv" | "jsonl" | "pdf" | "openapi";
+
+const connectorCatalog: Array<{
+  type: SourceKind | "postgresql";
+  label: string;
+  detail: string;
+  accept: string;
+  availability: "available" | "roadmap";
+  icon: typeof Database;
+}> = [
+  { type: "csv", label: "CSV / delimited", detail: "Header discovery, bounded profiling, immutable snapshot", accept: ".csv,text/csv", availability: "available", icon: Database },
+  { type: "jsonl", label: "JSON Lines", detail: "Object records, schema evidence, deterministic line locators", accept: ".jsonl,.ndjson,application/x-ndjson", availability: "available", icon: Braces },
+  { type: "pdf", label: "PDF evidence", detail: "Document snapshot and content hash; no source mutation", accept: ".pdf,application/pdf", availability: "available", icon: FileCheck2 },
+  { type: "openapi", label: "OpenAPI 3", detail: "JSON contract inventory; live calls remain disabled", accept: ".json,application/json", availability: "available", icon: Code2 },
+  { type: "postgresql", label: "PostgreSQL", detail: "Requires a read-only adapter, Secret Manager, and integration tests", accept: "", availability: "roadmap", icon: ServerCog },
+];
+
 function Sources() {
-  const [profiled, setProfiled] = useState(false);
+  const [inventory, setInventory] = useState<SourceInventoryItem[]>([]);
+  const [inventoryMode, setInventoryMode] = useState<"loading" | "demo" | "firebase" | "unavailable">("loading");
+  const [canManage, setCanManage] = useState(false);
+  const [selectedType, setSelectedType] = useState<SourceKind | null>(null);
+  const [displayName, setDisplayName] = useState("");
+  const [sourceId, setSourceId] = useState("");
+  const [sourceIdTouched, setSourceIdTouched] = useState(false);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [submitting, setSubmitting] = useState(false);
+  const [message, setMessage] = useState("");
+
+  const loadInventory = useCallback(async () => {
+    try {
+      const response = await fetch("/api/sources", { cache: "no-store" });
+      const payload = await response.json() as {
+        mode?: "demo" | "firebase";
+        canManageSources?: boolean;
+        sources?: SourceInventoryItem[];
+        detail?: string;
+      };
+      if (!response.ok) throw new Error(payload.detail ?? "Source inventory could not be loaded.");
+      setInventory(Array.isArray(payload.sources) ? payload.sources : []);
+      setCanManage(payload.canManageSources === true);
+      setInventoryMode(payload.mode === "firebase" ? "firebase" : "demo");
+    } catch (error) {
+      setInventoryMode("unavailable");
+      setMessage(error instanceof Error ? error.message : "Source inventory could not be loaded.");
+    }
+  }, []);
+
+  useEffect(() => {
+    void loadInventory();
+  }, [loadInventory]);
+
+  function slug(value: string) {
+    return value
+      .normalize("NFKD")
+      .replace(/[\u0300-\u036f]/gu, "")
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/gu, "-")
+      .replace(/^-+|-+$/gu, "")
+      .slice(0, 64);
+  }
+
+  function openConnector(type: SourceKind) {
+    if (!canManage) {
+      setMessage("An administrator or steward role is required to connect sources.");
+      return;
+    }
+    setSelectedType(type);
+    setDisplayName("");
+    setSourceId("");
+    setSourceIdTouched(false);
+    setSelectedFile(null);
+    setMessage("");
+  }
+
+  async function connectSource(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    if (!selectedType || !selectedFile) return;
+    setSubmitting(true);
+    setMessage("");
+    try {
+      const body = new FormData();
+      body.set("sourceType", selectedType);
+      body.set("displayName", displayName);
+      body.set("sourceId", sourceId);
+      body.set("file", selectedFile);
+      const response = await fetch("/api/sources", { method: "POST", body });
+      const payload = await response.json() as { detail?: string; source?: SourceInventoryItem };
+      if (!response.ok) throw new Error(payload.detail ?? "The source could not be connected.");
+      setSelectedType(null);
+      setMessage("Source registered. Firebase is creating its immutable profile and evidence snapshot.");
+      await loadInventory();
+    } catch (error) {
+      setMessage(error instanceof Error ? error.message : "The source could not be connected.");
+    } finally {
+      setSubmitting(false);
+    }
+  }
+
+  const totalBytes = inventory.reduce((total, source) => total + (source.bytes ?? 0), 0);
+  const readySources = inventory.filter((source) => source.status === "READY").length;
+  const selectedConnector = connectorCatalog.find((connector) => connector.type === selectedType);
+
+  function statusView(status: string) {
+    if (status === "READY") return { label: "Ready", className: "ready" };
+    if (status === "UPLOAD_FAILED" || status === "FAILED") return { label: "Failed", className: "review" };
+    return { label: "Profiling", className: "profiling" };
+  }
+
   return (
     <>
-      <PageHeader eyebrow="Evidence layer" title="Connected sources" description="Read-only inventory, profiling, and lineage. No business data is changed at origin." actions={<><button className="button secondary"><CloudUpload size={17} /> Import manifest</button><button className="button primary"><Plus size={17} /> Add source</button></>} />
-      <div className="source-summary"><div><Database size={20} /><span><strong>6</strong> sources</span></div><div><Layers3 size={20} /><span><strong>7</strong> assets</span></div><div><Fingerprint size={20} /><span><strong>37</strong> fields</span></div><div><LockKeyhole size={20} /><span><strong>Read-only</strong> enforced</span></div></div>
-      <section className="source-grid">
-        {sources.map((source) => <article className="source-card" key={source.id}>
-          <div className="source-card-head"><span className={`source-icon ${source.color}`}><Database size={19} /></span><span className={`source-state ${source.status.toLowerCase()}`}><i />{source.status}</span></div>
-          <h2>{source.name}</h2><p><code>{source.id}</code> · {source.kind}</p>
-          <div className="source-stats"><span><strong>{source.fields}</strong> fields</span><span><strong>{source.records}</strong> records</span><span><strong>{source.evidence}</strong> evidence</span></div>
-          <div className="quality-bar" aria-label={`${source.completeness}% required fixture fields populated`}><i style={{ width: `${source.completeness}%` }} /></div>
-          <footer><span>{source.assets} asset{source.assets === 1 ? "" : "s"} · {source.bytes.toLocaleString("en-US")} B · {source.updated}</span><button className="text-button">Inspect <ChevronRight size={14} /></button></footer>
-        </article>)}
+      <PageHeader
+        eyebrow="Evidence layer"
+        title="Connected sources"
+        description="Register read-only evidence, profile it serverlessly, and preserve an immutable, tenant-bound snapshot."
+        actions={<button className="button primary" disabled={inventoryMode === "loading" || !canManage} onClick={() => openConnector("csv")}><Plus size={17} /> Connect source</button>}
+      />
+      {message && <div className="source-message" role="status">{message}</div>}
+      <div className="source-summary">
+        <div><Database size={20} /><span><strong>{inventoryMode === "loading" ? "—" : inventory.length}</strong> sources</span></div>
+        <div><Layers3 size={20} /><span><strong>{readySources}</strong> profiled</span></div>
+        <div><Fingerprint size={20} /><span><strong>{totalBytes.toLocaleString("en-US")}</strong> bytes observed</span></div>
+        <div><LockKeyhole size={20} /><span><strong>Read-only</strong> enforced</span></div>
+      </div>
+
+      <section className="panel connector-catalog">
+        <PanelTitle
+          title="Connector catalog"
+          subtitle="Only implemented adapters can be activated. Database credentials will use Secret Manager when that adapter is production-ready."
+          action={<span className={`inventory-mode ${inventoryMode}`}>{inventoryMode === "firebase" ? "Live Firebase" : inventoryMode === "demo" ? "Fixture preview" : inventoryMode}</span>}
+        />
+        <div className="connector-options">
+          {connectorCatalog.map((connector) => {
+            const ConnectorIcon = connector.icon;
+            const available = connector.availability === "available";
+            return (
+              <button
+                className={`connector-option ${available ? "" : "roadmap"}`}
+                disabled={!available || !canManage}
+                key={connector.type}
+                onClick={() => available && openConnector(connector.type as SourceKind)}
+              >
+                <span><ConnectorIcon size={19} /></span>
+                <strong>{connector.label}</strong>
+                <small>{connector.detail}</small>
+                <em>{available ? "Available" : "Roadmap"}</em>
+              </button>
+            );
+          })}
+        </div>
       </section>
+
+      {inventoryMode === "loading" ? (
+        <section className="source-empty"><LoaderCircle className="spin" size={22} /><h2>Loading source inventory</h2></section>
+      ) : inventory.length === 0 ? (
+        <section className="source-empty"><Database size={24} /><h2>No sources connected yet</h2><p>Choose an available connector. The tenant is taken from your verified session, never from the upload form.</p></section>
+      ) : (
+        <section className="source-grid">
+          {inventory.map((source, index) => {
+            const state = statusView(source.status);
+            return <article className="source-card" key={source.id}>
+              <div className="source-card-head"><span className={`source-icon ${["mint", "blue", "violet", "amber", "rose", "cyan"][index % 6]}`}><Database size={19} /></span><span className={`source-state ${state.className}`}><i />{state.label}</span></div>
+              <h2>{source.name}</h2><p><code>{source.id}</code> · {source.kind} · {source.origin === "firebase" ? "live" : "fixture"}</p>
+              <div className="source-stats">
+                <span><strong>{source.fields ?? "—"}</strong> fields</span>
+                <span><strong>{source.records ?? "—"}</strong> records</span>
+                <span><strong>{source.sha256 ? source.sha256.slice(0, 8) : "pending"}</strong> hash</span>
+              </div>
+              <div className="quality-bar" aria-label={`${state.label} source profile`}><i style={{ width: state.className === "ready" ? "100%" : state.className === "review" ? "100%" : "38%" }} /></div>
+              <footer><span>{source.bytes?.toLocaleString("en-US") ?? "—"} B · {source.updatedAt ? new Date(source.updatedAt).toLocaleString() : "awaiting snapshot"}</span><span className="read-only-badge"><LockKeyhole size={11} />read only</span></footer>
+            </article>;
+          })}
+        </section>
+      )}
       <section className="panel source-policy-panel">
-        <div className="policy-copy"><span className="metric-icon mint"><ShieldCheck size={19} /></span><div><h2>Sampling policy</h2><p>Synthetic or masked samples only. Sensitive values are excluded from model prompts and logs.</p></div></div>
+        <div className="policy-copy"><span className="metric-icon mint"><ShieldCheck size={19} /></span><div><h2>Ingestion policy</h2><p>20 MiB maximum. UTF-8 and contract validation occur before upload; Functions create the authoritative profile and snapshot.</p></div></div>
         <div className="policy-tags"><span>Metadata first</span><span>Tenant isolated</span><span>SHA-256 evidence</span></div>
-        <button className="button secondary" onClick={() => setProfiled(true)}><RefreshCw size={16} className={profiled ? "spin-once" : ""} />{profiled ? "Profile queued" : "Re-profile all"}</button>
+        <button className="button secondary" onClick={() => void loadInventory()}><RefreshCw size={16} />Refresh inventory</button>
       </section>
+
+      {selectedType && selectedConnector && (
+        <div className="source-dialog-backdrop" role="presentation" onMouseDown={(event) => {
+          if (event.target === event.currentTarget && !submitting) setSelectedType(null);
+        }}>
+          <section className="source-dialog" role="dialog" aria-modal="true" aria-labelledby="source-dialog-title">
+            <header><div><span className="eyebrow">Read-only connector</span><h2 id="source-dialog-title">Connect {selectedConnector.label}</h2><p>{selectedConnector.detail}</p></div><button className="icon-button" disabled={submitting} onClick={() => setSelectedType(null)} aria-label="Close"><X size={18} /></button></header>
+            <form onSubmit={connectSource}>
+              <label>Source name<input required minLength={3} maxLength={80} value={displayName} onChange={(event) => {
+                const value = event.target.value;
+                setDisplayName(value);
+                if (!sourceIdTouched) setSourceId(slug(value));
+              }} placeholder="Customer master EU" /></label>
+              <label>Source ID<input required pattern="[a-z][a-z0-9-]{2,63}" value={sourceId} onChange={(event) => {
+                setSourceId(event.target.value.toLowerCase());
+                setSourceIdTouched(true);
+              }} placeholder="customer-master-eu" /><small>Stable evidence identifier; it cannot be renamed after registration.</small></label>
+              <label>Source file<input required type="file" accept={selectedConnector.accept} onChange={(event) => setSelectedFile(event.target.files?.[0] ?? null)} /><small>{selectedType === "openapi" ? "OpenAPI 3.x JSON only; the platform does not call the remote API in this release." : "Maximum 20 MiB. Uploads become immutable versioned source objects."}</small></label>
+              <div className="source-boundary"><LockKeyhole size={17} /><div><strong>No source writes</strong><span>The server derives your tenant and uploader identity from the verified session. No credential is accepted in this form.</span></div></div>
+              <footer><button type="button" className="button secondary" disabled={submitting} onClick={() => setSelectedType(null)}>Cancel</button><button type="submit" className="button primary" disabled={submitting || !selectedFile}>{submitting ? <LoaderCircle className="spin" size={17} /> : <CloudUpload size={17} />}{submitting ? "Registering…" : "Register & profile"}</button></footer>
+            </form>
+          </section>
+        </div>
+      )}
     </>
   );
 }

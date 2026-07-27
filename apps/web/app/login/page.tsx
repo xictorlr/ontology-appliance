@@ -47,6 +47,8 @@ export default function LoginPage() {
       } finally {
         await signOut(auth);
       }
+      router.replace("/dashboard");
+      router.refresh();
     } catch (error) {
       setMessage(error instanceof Error ? error.message : "Google sign-in failed.");
     } finally {
