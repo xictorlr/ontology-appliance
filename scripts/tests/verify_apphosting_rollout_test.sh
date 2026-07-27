@@ -6,6 +6,7 @@ repo_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 source "$repo_root/scripts/verify_apphosting_rollout.sh"
 
 GCP_PROJECT_ID="ontology-appliance-dev-test"
+project_number="123456789"
 backend_id="ontology-appliance-web"
 region="europe-west4"
 branch="main"
@@ -26,6 +27,10 @@ verify_exact_rollout "$backend_json" "$traffic_json" "$build_json" "$rollout_jso
 [[ "$(canonical_apphosting_https_url "https://ontology-appliance-web--ontology-appliance-dev-test.europe-west4.hosted.app")" == "https://ontology-appliance-web--ontology-appliance-dev-test.europe-west4.hosted.app" ]]
 hostname_backend_json="$(jq '.uri = "ontology-appliance-web--ontology-appliance-dev-test.europe-west4.hosted.app"' <<<"$backend_json")"
 verify_exact_rollout "$hostname_backend_json" "$traffic_json" "$build_json" "$rollout_json"
+numeric_traffic_json="$(sed 's#projects/ontology-appliance-dev-test/locations/europe-west4/backends/ontology-appliance-web/builds/#projects/123456789/locations/europe-west4/backends/ontology-appliance-web/builds/#' <<<"$traffic_json")"
+verify_exact_rollout "$backend_json" "$numeric_traffic_json" "$build_json" "$rollout_json"
+source_uri_build_json="$(jq '.source.codebase |= (del(.repository) + {uri: "https://github.com/xictorlr/ontology-appliance/commit/0123456789abcdef0123456789abcdef01234567"})' <<<"$build_json")"
+verify_exact_rollout "$backend_json" "$traffic_json" "$source_uri_build_json" "$rollout_json"
 
 expect_rejection() {
   local description="$1"
@@ -83,6 +88,10 @@ expect_rejection "backend URI drift" \
 other_repo_build_json="$(jq '.source.codebase.repository = "projects/ontology-appliance-dev-test/locations/europe-west4/connections/other/gitRepositoryLinks/other"' <<<"$build_json")"
 expect_rejection "resolved build repository drift" \
   verify_exact_rollout "$backend_json" "$traffic_json" "$other_repo_build_json" "$rollout_json"
+
+wrong_source_uri_build_json="$(jq '.source.codebase |= (del(.repository) + {uri: "https://github.com/example/other/commit/0123456789abcdef0123456789abcdef01234567"})' <<<"$build_json")"
+expect_rejection "resolved build source URI drift" \
+  verify_exact_rollout "$backend_json" "$traffic_json" "$wrong_source_uri_build_json" "$rollout_json"
 
 [[ "$active_build" == "$(jq -r '.current.splits[0].build' <<<"$traffic_json")" ]]
 echo "App Hosting exact-rollout verification tests passed."

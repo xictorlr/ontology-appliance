@@ -197,7 +197,7 @@ def main() -> None:
         '"$build_state" == "READY"',
         '"$resolved_sha" == "$expected_sha"',
         '"$rollout_state" == "SUCCEEDED"',
-        '"$rollout_build" == "$active_build"',
+        '"$canonical_rollout_build" == "$canonical_active_build"',
         '"$locality" == "GLOBAL_ACCESS"',
     ):
         if exact_proof not in apphosting_verify:

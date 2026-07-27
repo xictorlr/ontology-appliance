@@ -10,7 +10,9 @@ region="${APPHOSTING_REGION:-europe-west4}"
 branch="${APPHOSTING_BRANCH:-main}"
 expected_sha="${APPHOSTING_GIT_SHA:-}"
 repository_resource="${APPHOSTING_REPOSITORY_RESOURCE:-}"
+github_repository="${GITHUB_REPOSITORY:-xictorlr/ontology-appliance}"
 rollout_id="${APPHOSTING_ROLLOUT_ID:-}"
+project_number="${GCP_PROJECT_NUMBER:-}"
 apphosting_api_origin="${APPHOSTING_API_ORIGIN:-https://firebaseapphosting.googleapis.com}"
 access_token=""
 
@@ -35,6 +37,17 @@ canonical_apphosting_https_url() {
   esac
 }
 
+canonical_apphosting_resource_name() {
+  local raw_name="$1"
+  local resource_project resource_suffix
+
+  [[ "$raw_name" =~ ^projects/([^/]+)/locations/ ]] || return 1
+  resource_project="${BASH_REMATCH[1]}"
+  [[ "$resource_project" == "$GCP_PROJECT_ID" || "$resource_project" == "$project_number" ]] || return 1
+  resource_suffix="${raw_name#projects/${resource_project}/}"
+  printf 'projects/%s/%s\n' "$GCP_PROJECT_ID" "$resource_suffix"
+}
+
 validate_inputs() {
   : "${GCP_PROJECT_ID:?Set GCP_PROJECT_ID to the App Hosting project.}"
   : "${expected_sha:?Set APPHOSTING_GIT_SHA to the exact deployed commit.}"
@@ -52,6 +65,10 @@ validate_inputs() {
     echo "APPHOSTING_BRANCH must remain main." >&2
     return 1
   }
+  [[ "$github_repository" =~ ^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$ ]] || {
+    echo "GITHUB_REPOSITORY must use the owner/repository form." >&2
+    return 1
+  }
   [[ "$backend_id" =~ ^[a-z][a-z0-9-]{0,28}[a-z0-9]$ ]] || {
     echo "APPHOSTING_BACKEND_ID must be a valid 2-30 character backend ID." >&2
     return 1
@@ -64,6 +81,10 @@ validate_inputs() {
     echo "APPHOSTING_REPOSITORY_RESOURCE must be a europe-west4 GitRepositoryLink in GCP_PROJECT_ID." >&2
     return 1
   }
+  if [[ -n "$project_number" && ! "$project_number" =~ ^[0-9]+$ ]]; then
+    echo "GCP_PROJECT_NUMBER must contain only digits when provided." >&2
+    return 1
+  fi
   if [[ -z "$rollout_id" ]]; then
     rollout_id="rollout-${expected_sha:0:12}"
   fi
@@ -81,8 +102,9 @@ verify_exact_rollout() {
   local expected_backend expected_traffic expected_rollout
   local backend_name locality backend_repository raw_backend_url backend_url expected_backend_url
   local traffic_name traffic_branch traffic_disabled reconciling split_count
-  local active_build active_percent build_name build_state resolved_sha build_repository
-  local rollout_name rollout_state rollout_build
+  local active_build canonical_active_build active_percent
+  local build_name canonical_build_name build_state resolved_sha build_repository build_source_uri
+  local rollout_name rollout_state rollout_build canonical_rollout_build
 
   expected_backend="$(backend_resource_name)"
   expected_traffic="${expected_backend}/traffic"
@@ -117,6 +139,7 @@ verify_exact_rollout() {
   reconciling="$(jq -r '(.result // .).reconciling // false' <<<"$traffic_json")"
   split_count="$(jq -r '((.result // .).current.splits // []) | length' <<<"$traffic_json")"
   active_build="$(jq -r '(.result // .).current.splits[0].build // empty' <<<"$traffic_json")"
+  canonical_active_build="$(canonical_apphosting_resource_name "$active_build" 2>/dev/null || true)"
   active_percent="$(jq -r '(.result // .).current.splits[0].percent // empty' <<<"$traffic_json")"
   [[ "$traffic_name" == "$expected_traffic" ]] || {
     echo "App Hosting traffic drift: expected $expected_traffic, got ${traffic_name:-missing}." >&2
@@ -134,16 +157,18 @@ verify_exact_rollout() {
     echo "App Hosting must route exactly 100 percent of traffic to one build." >&2
     return 1
   }
-  [[ "$active_build" =~ ^${expected_backend}/builds/[a-z][a-z0-9-]{0,61}[a-z0-9]$ ]] || {
+  [[ "$canonical_active_build" =~ ^${expected_backend}/builds/[a-z][a-z0-9-]{0,61}[a-z0-9]$ ]] || {
     echo "App Hosting active build is missing or belongs to another backend." >&2
     return 1
   }
 
   build_name="$(jq -r '(.result // .).name // empty' <<<"$build_json")"
+  canonical_build_name="$(canonical_apphosting_resource_name "$build_name" 2>/dev/null || true)"
   build_state="$(jq -r '(.result // .).state // empty' <<<"$build_json")"
   resolved_sha="$(jq -r '(.result // .).source.codebase.hash // empty' <<<"$build_json")"
   build_repository="$(jq -r '(.result // .).source.codebase.repository // empty' <<<"$build_json")"
-  [[ "$build_name" == "$active_build" ]] || {
+  build_source_uri="$(jq -r '(.result // .).source.codebase.uri // empty' <<<"$build_json")"
+  [[ "$canonical_build_name" == "$canonical_active_build" ]] || {
     echo "App Hosting build evidence does not match the active traffic split." >&2
     return 1
   }
@@ -155,14 +180,22 @@ verify_exact_rollout() {
     echo "App Hosting active build resolves to ${resolved_sha:-missing}, not $expected_sha." >&2
     return 1
   }
-  [[ "$build_repository" == "$repository_resource" ]] || {
-    echo "App Hosting active build repository drift." >&2
-    return 1
-  }
+  if [[ -n "$build_repository" ]]; then
+    [[ "$build_repository" == "$repository_resource" ]] || {
+      echo "App Hosting active build repository drift." >&2
+      return 1
+    }
+  else
+    [[ "$build_source_uri" == "https://github.com/${github_repository}/commit/${expected_sha}" ]] || {
+      echo "App Hosting active build source URI does not prove the expected GitHub repository and SHA." >&2
+      return 1
+    }
+  fi
 
   rollout_name="$(jq -r '(.result // .).name // empty' <<<"$rollout_json")"
   rollout_state="$(jq -r '(.result // .).state // empty' <<<"$rollout_json")"
   rollout_build="$(jq -r '(.result // .).build // empty' <<<"$rollout_json")"
+  canonical_rollout_build="$(canonical_apphosting_resource_name "$rollout_build" 2>/dev/null || true)"
   [[ "$rollout_name" == "$expected_rollout" ]] || {
     echo "App Hosting rollout drift: expected $expected_rollout, got ${rollout_name:-missing}." >&2
     return 1
@@ -171,7 +204,7 @@ verify_exact_rollout() {
     echo "App Hosting pinned rollout is not SUCCEEDED." >&2
     return 1
   }
-  [[ "$rollout_build" == "$active_build" ]] || {
+  [[ "$canonical_rollout_build" == "$canonical_active_build" ]] || {
     echo "App Hosting pinned rollout is not the active build." >&2
     return 1
   }
@@ -199,6 +232,11 @@ main() {
   done
 
   access_token="$(gcloud auth print-access-token)"
+  project_number="$(gcloud projects describe "$GCP_PROJECT_ID" --format='value(projectNumber)')"
+  [[ "$project_number" =~ ^[0-9]+$ ]] || {
+    echo "Could not resolve the numeric project reference for $GCP_PROJECT_ID." >&2
+    return 1
+  }
   backend_name="$(backend_resource_name)"
   backend_json="$(api_get "$backend_name")"
   traffic_json="$(api_get "${backend_name}/traffic")"
