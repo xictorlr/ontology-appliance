@@ -36,6 +36,14 @@ env:
     availability:
       - BUILD
       - RUNTIME
+  - variable: OA_SELF_ENROLLMENT_ENABLED
+    value: "true"
+    availability:
+      - RUNTIME
+  - variable: OA_SELF_ENROLLMENT_TENANT_ID
+    value: demo-bank
+    availability:
+      - RUNTIME
   - variable: SEMANTIC_GATEWAY_URL
     secret: oa-dev-semantic-gateway-url
     availability:
