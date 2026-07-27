@@ -4,11 +4,13 @@ The guarded bootstrap creates a new Firebase/GCP project shell, or explicitly
 adopts one existing Firebase project after exact identity checks, and creates
 its remote state bucket. Terraform then owns that project and the durable cloud
 resources in `europe-west4`. Firebase CLI owns Functions, Firestore
-indexes/rules, and Storage rules. The guarded REST scripts own the App Hosting
-backend, traffic policy, pinned builds, and rollouts; the one-time private
-Developer Connect link is established manually. GitHub Actions exclusively owns
-the Semantic Gateway Cloud Run service and its invoker policy. No runtime
-resource has two owners.
+indexes/rules, and Storage rules. Because Cloud Tasks is unavailable in
+`europe-west4`, only its queues and task-consumer Functions use
+`europe-west1`. The guarded REST scripts own the App Hosting backend, traffic
+policy, pinned builds, and rollouts; the one-time Developer Connect link targets
+the exact protected repository. GitHub Actions exclusively owns the Semantic
+Gateway Cloud Run service and its invoker policy. No runtime resource has two
+owners.
 
 ## Bootstrap order
 
@@ -99,7 +101,7 @@ resource has two owners.
    ```
 
    The script uses the App Hosting REST API without an interactive CLI flow. It
-   verifies the private Developer Connect link, required `main` protections, and
+   verifies the exact Developer Connect link, required `main` protections, and
    live GitHub ref; creates only a `REGIONAL_STRICT` backend in `europe-west4`
    rooted at `apps/web`; pauses automatic branch rollout while it creates the
    pinned build and rollout; and re-enables protected `main` only after success.

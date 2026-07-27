@@ -219,12 +219,24 @@ jobs:
           pnpm exec firebase deploy \
             --only functions,firestore:rules,firestore:indexes,storage \
             --project "${{ vars.GCP_PROJECT_ID }}"
+      - name: Mint short-lived gateway identity token
+        if: env.DEPLOYMENT_SCOPE != 'bootstrap'
+        id: gateway-identity
+        uses: google-github-actions/auth@7c6bc770dae815cd3e89ee6cdf493a5fab2cc093 # v3
+        with:
+          workload_identity_provider: ${{ vars.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ vars.GCP_DEPLOY_SERVICE_ACCOUNT }}
+          token_format: id_token
+          id_token_audience: ${{ env.GATEWAY_URL }}
+          create_credentials_file: false
+          export_environment_variables: false
       - name: Run backend cloud smoke tests
         if: env.DEPLOYMENT_SCOPE == 'backend'
         env:
           GCP_PROJECT_ID: ${{ vars.GCP_PROJECT_ID }}
           GATEWAY_URL: ${{ env.GATEWAY_URL }}
           INPUT_BUCKET: ${{ vars.INPUT_BUCKET }}
+          GATEWAY_IDENTITY_TOKEN: ${{ steps.gateway-identity.outputs.id_token }}
           REQUIRE_APP_HOSTING: "false"
           RUN_FUNCTIONS_E2E: "true"
         run: bash scripts/smoke_cloud_dev.sh
@@ -235,6 +247,7 @@ jobs:
           GATEWAY_URL: ${{ env.GATEWAY_URL }}
           APP_HOSTING_URL: ${{ vars.APP_HOSTING_URL }}
           INPUT_BUCKET: ${{ vars.INPUT_BUCKET }}
+          GATEWAY_IDENTITY_TOKEN: ${{ steps.gateway-identity.outputs.id_token }}
           REQUIRE_APP_HOSTING: "true"
           RUN_FUNCTIONS_E2E: "true"
         run: bash scripts/smoke_cloud_dev.sh

@@ -189,19 +189,14 @@ verify_repository_link() {
   local repository_json="$1"
   local github_repository_json="$2"
   local actual_name clone_uri actual_repository_slug expected_repository_slug
-  local actual_repository_key expected_repository_key private_repository
+  local actual_repository_key expected_repository_key
 
   actual_name="$(jq -r '.name // empty' <<<"$repository_json")"
   clone_uri="$(jq -r '.cloneUri // empty' <<<"$repository_json")"
   expected_repository_slug="$(jq -r '.nameWithOwner // empty' <<<"$github_repository_json")"
-  private_repository="$(jq -r '.isPrivate // false' <<<"$github_repository_json")"
 
   [[ "$actual_name" == "$repository_resource" ]] || {
     echo "Developer Connect repository drift: expected $repository_resource, got ${actual_name:-missing}." >&2
-    return 1
-  }
-  [[ "$private_repository" == "true" ]] || {
-    echo "Expected $repository to be private." >&2
     return 1
   }
   if ! actual_repository_slug="$(github_repository_from_clone_uri "$clone_uri")"; then

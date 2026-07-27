@@ -1,6 +1,10 @@
 import { defineString } from "firebase-functions/params";
 
 export const REGION = "europe-west4";
+// Cloud Tasks is not available in europe-west4. Keep event-driven functions
+// co-located with Firestore and Storage, and place only task consumers in the
+// nearest supported European region.
+export const TASK_REGION = "europe-west1";
 
 export const sourceBucket = defineString("SOURCE_BUCKET", {
   description: "Firebase-enabled input bucket provisioned by Terraform.",

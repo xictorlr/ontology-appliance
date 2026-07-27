@@ -3,6 +3,11 @@
 Functions v2 and Cloud Tasks materialize the bounded discovery, verification,
 and drift control plane. No handler can activate an ontology version.
 
+Storage, Firestore, and scheduled functions stay with the pilot data plane in
+`europe-west4`. Cloud Tasks is not offered there, so the three task queues and
+their task-consumer Functions run in `europe-west1`; only bounded task payloads
+cross that regional boundary.
+
 - Storage finalization derives the tenant and source from the immutable object
   path, profiles metadata only, and transactionally creates a content-addressed
   snapshot plus a `PENDING_VERIFICATION` proposal.
