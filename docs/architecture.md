@@ -6,7 +6,7 @@ Firebase is the product and control plane. Cloud Run is the semantic compute pla
 
 ## Request path
 
-1. Firebase Auth establishes a passwordless-email identity; Google sign-in can be enabled after its OAuth provider is configured.
+1. Firebase Auth establishes a passwordless-email or Google identity; App Hosting enables Google only after its OAuth provider is configured.
 2. The Next.js BFF exchanges the ID token for an HTTP-only session cookie.
 3. Every BFF call derives `tenantId` and roles from the verified session.
 4. App Hosting invokes the private Cloud Run gateway with a Google-signed ID token.
