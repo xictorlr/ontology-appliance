@@ -19,7 +19,7 @@ apply_changes="true"
 CONFIRM_GCP_PROJECT_ID="$GCP_PROJECT_ID"
 CONFIRM_APPHOSTING_GIT_SHA="$expected_sha"
 
-backend_json='{"name":"projects/ontology-appliance-dev-test/locations/europe-west4/backends/ontology-appliance-web","servingLocality":"REGIONAL_STRICT","serviceAccount":"oa-dev-apphosting@ontology-appliance-dev-test.iam.gserviceaccount.com","appId":"1:123456789:web:abcdef012345","uri":"https://ontology-appliance-web--ontology-appliance-dev-test.europe-west4.hosted.app","codebase":{"rootDirectory":"apps/web","repository":"projects/ontology-appliance-dev-test/locations/europe-west4/connections/firebase-app-hosting-github/gitRepositoryLinks/ontology-appliance"}}'
+backend_json='{"name":"projects/ontology-appliance-dev-test/locations/europe-west4/backends/ontology-appliance-web","servingLocality":"GLOBAL_ACCESS","serviceAccount":"oa-dev-apphosting@ontology-appliance-dev-test.iam.gserviceaccount.com","appId":"1:123456789:web:abcdef012345","uri":"https://ontology-appliance-web--ontology-appliance-dev-test.europe-west4.hosted.app","codebase":{"rootDirectory":"apps/web","repository":"projects/ontology-appliance-dev-test/locations/europe-west4/connections/firebase-app-hosting-github/gitRepositoryLinks/ontology-appliance"}}'
 traffic_json='{"name":"projects/ontology-appliance-dev-test/locations/europe-west4/backends/ontology-appliance-web/traffic","rolloutPolicy":{"codebaseBranch":"main","disabled":false}}'
 repository_json='{"name":"projects/ontology-appliance-dev-test/locations/europe-west4/connections/firebase-app-hosting-github/gitRepositoryLinks/ontology-appliance","cloneUri":"https://github.com/xictorlr/ontology-appliance.git"}'
 github_repository_json='{"nameWithOwner":"xictorlr/ontology-appliance","isPrivate":true}'
@@ -37,7 +37,7 @@ jq -e \
   --arg repository "$repository_resource" \
   --arg account "$APPHOSTING_SERVICE_ACCOUNT" \
   --arg app_id "$APPHOSTING_WEB_APP_ID" \
-  '.servingLocality == "REGIONAL_STRICT" and
+  '.servingLocality == "GLOBAL_ACCESS" and
    .codebase.repository == $repository and
    .codebase.rootDirectory == "apps/web" and
    .serviceAccount == $account and
@@ -70,8 +70,8 @@ expect_rejection() {
   fi
 }
 
-wrong_locality_json="$(jq '.servingLocality = "GLOBAL_ACCESS"' <<<"$backend_json")"
-expect_rejection "non-strict App Hosting locality" \
+wrong_locality_json="$(jq '.servingLocality = "REGIONAL_STRICT"' <<<"$backend_json")"
+expect_rejection "unsupported App Hosting locality" \
   verify_backend "$wrong_locality_json" "$traffic_json" "$repository_json" "$github_repository_json"
 
 missing_web_app_json="$(jq 'del(.appId)' <<<"$backend_json")"

@@ -155,11 +155,12 @@ Use this cycle-free order:
    scripts/create_apphosting_backend.sh
    ```
 
-   First create the one-time private GitHub `GitRepositoryLink` through the
+   First create the one-time GitHub `GitRepositoryLink` through
    Firebase console and copy its full Developer Connect resource name. The
    script itself is non-interactive: it verifies that link, protected `main`,
-   and the exact GitHub SHA; creates a `REGIONAL_STRICT` backend in
-   `europe-west4`; builds and rolls out that commit; then proves that one active
+   and the exact GitHub SHA; creates the backend in `europe-west4` using App
+   Hosting's currently supported `GLOBAL_ACCESS` serving locality; builds and
+   rolls out that commit; then proves that one active
    build receives 100% of traffic and resolved to the same full SHA. Preserve
    the emitted `APP_HOSTING_URL`. Re-run the read-only proof at any time with
    the same project, repository resource, and SHA using

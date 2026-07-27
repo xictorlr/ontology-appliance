@@ -78,8 +78,8 @@ verify_exact_rollout() {
     echo "App Hosting backend drift: expected $expected_backend, got ${backend_name:-missing}." >&2
     return 1
   }
-  [[ "$locality" == "REGIONAL_STRICT" ]] || {
-    echo "App Hosting locality drift: REGIONAL_STRICT is required." >&2
+  [[ "$locality" == "GLOBAL_ACCESS" ]] || {
+    echo "App Hosting locality drift: GLOBAL_ACCESS is the currently supported App Hosting mode." >&2
     return 1
   }
   [[ "$backend_repository" == "$repository_resource" ]] || {

@@ -102,8 +102,9 @@ owners.
 
    The script uses the App Hosting REST API without an interactive CLI flow. It
    verifies the exact Developer Connect link, required `main` protections, and
-   live GitHub ref; creates only a `REGIONAL_STRICT` backend in `europe-west4`
-   rooted at `apps/web`; pauses automatic branch rollout while it creates the
+   live GitHub ref; creates the backend in `europe-west4` with the currently
+   supported `GLOBAL_ACCESS` locality, rooted at `apps/web`; pauses automatic
+   branch rollout while it creates the
    pinned build and rollout; and re-enables protected `main` only after success.
    It refuses to proceed until the gateway URL secret has a version.
 
