@@ -48,6 +48,16 @@ def main() -> None:
         raise SystemExit(
             "App Hosting must expose Google sign-in only after the Firebase provider is configured"
         )
+    next_config = require("apps/web/next.config.ts").read_text()
+    for google_popup_boundary in (
+        'source: "/login"',
+        'key: "Cross-Origin-Opener-Policy"',
+        'value: "same-origin-allow-popups"',
+    ):
+        if google_popup_boundary not in next_config:
+            raise SystemExit(
+                f"Google popup compatibility boundary is missing: {google_popup_boundary}"
+            )
 
     proposal_schema = json.loads(
         require("contracts/schemas/proposal.schema.json").read_text()
