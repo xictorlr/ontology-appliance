@@ -22,6 +22,10 @@ rollout_json='{"name":"projects/ontology-appliance-dev-test/locations/europe-wes
 
 validate_inputs
 verify_exact_rollout "$backend_json" "$traffic_json" "$build_json" "$rollout_json"
+[[ "$(canonical_apphosting_https_url "ontology-appliance-web--ontology-appliance-dev-test.europe-west4.hosted.app")" == "https://ontology-appliance-web--ontology-appliance-dev-test.europe-west4.hosted.app" ]]
+[[ "$(canonical_apphosting_https_url "https://ontology-appliance-web--ontology-appliance-dev-test.europe-west4.hosted.app")" == "https://ontology-appliance-web--ontology-appliance-dev-test.europe-west4.hosted.app" ]]
+hostname_backend_json="$(jq '.uri = "ontology-appliance-web--ontology-appliance-dev-test.europe-west4.hosted.app"' <<<"$backend_json")"
+verify_exact_rollout "$hostname_backend_json" "$traffic_json" "$build_json" "$rollout_json"
 
 expect_rejection() {
   local description="$1"
@@ -71,6 +75,10 @@ expect_rejection "pinned rollout does not own active build" \
 unsupported_locality_backend_json="$(jq '.servingLocality = "REGIONAL_STRICT"' <<<"$backend_json")"
 expect_rejection "backend locality not currently supported" \
   verify_exact_rollout "$unsupported_locality_backend_json" "$traffic_json" "$build_json" "$rollout_json"
+
+wrong_uri_backend_json="$(jq '.uri = "https://unexpected.example"' <<<"$backend_json")"
+expect_rejection "backend URI drift" \
+  verify_exact_rollout "$wrong_uri_backend_json" "$traffic_json" "$build_json" "$rollout_json"
 
 other_repo_build_json="$(jq '.source.codebase.repository = "projects/ontology-appliance-dev-test/locations/europe-west4/connections/other/gitRepositoryLinks/other"' <<<"$build_json")"
 expect_rejection "resolved build repository drift" \

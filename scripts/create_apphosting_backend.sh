@@ -58,6 +58,23 @@ lowercase() {
   LC_ALL=C tr '[:upper:]' '[:lower:]'
 }
 
+canonical_apphosting_https_url() {
+  local raw_url="$1"
+
+  [[ -n "$raw_url" ]] || return 1
+  case "$raw_url" in
+    https://*)
+      printf '%s\n' "$raw_url"
+      ;;
+    *://*)
+      return 1
+      ;;
+    *)
+      printf 'https://%s\n' "$raw_url"
+      ;;
+  esac
+}
+
 backend_resource_name() {
   printf 'projects/%s/locations/%s/backends/%s\n' "$GCP_PROJECT_ID" "$region" "$backend_id"
 }
@@ -229,7 +246,7 @@ verify_github_ref() {
 verify_backend_configuration() {
   local backend_json="$1"
   local actual_name expected_name actual_account actual_root actual_repository
-  local actual_app_id actual_uri expected_uri actual_locality
+  local actual_app_id actual_uri actual_https_uri expected_uri actual_locality
 
   actual_name="$(jq -r '(.result // .).name // empty' <<<"$backend_json")"
   expected_name="$(backend_resource_name)"
@@ -240,6 +257,7 @@ verify_backend_configuration() {
   actual_uri="$(jq -r '(.result // .).uri // empty' <<<"$backend_json")"
   actual_locality="$(jq -r '(.result // .).servingLocality // empty' <<<"$backend_json")"
   expected_uri="https://${backend_id}--${GCP_PROJECT_ID}.${region}.hosted.app"
+  actual_https_uri="$(canonical_apphosting_https_url "$actual_uri" 2>/dev/null || true)"
 
   [[ "$actual_name" == "$expected_name" ]] || {
     echo "App Hosting backend drift: expected $expected_name, got ${actual_name:-missing}." >&2
@@ -265,7 +283,7 @@ verify_backend_configuration() {
     echo "App Hosting Web App drift: expected $APPHOSTING_WEB_APP_ID, got ${actual_app_id:-missing}." >&2
     return 1
   }
-  if [[ -n "$actual_uri" && "$actual_uri" != "$expected_uri" ]]; then
+  if [[ -n "$actual_uri" && "$actual_https_uri" != "$expected_uri" ]]; then
     echo "App Hosting URI drift: expected $expected_uri, got $actual_uri." >&2
     return 1
   fi
@@ -306,7 +324,7 @@ verify_backend() {
   verify_backend_configuration "$backend_json" || return 1
   verify_traffic_policy "$traffic_json" "false" || return 1
   actual_uri="$(jq -r '(.result // .).uri // empty' <<<"$backend_json")"
-  [[ "$actual_uri" == https://* ]] || {
+  canonical_apphosting_https_url "$actual_uri" >/dev/null || {
     echo "App Hosting has not exposed an HTTPS backend URL after the pinned rollout." >&2
     return 1
   }
@@ -609,8 +627,9 @@ run_exact_rollout_verifier() {
 
 emit_backend_url() {
   local backend_json="$1"
-  local backend_url
-  backend_url="$(jq -r '(.result // .).uri // empty' <<<"$backend_json")"
+  local raw_backend_url backend_url
+  raw_backend_url="$(jq -r '(.result // .).uri // empty' <<<"$backend_json")"
+  backend_url="$(canonical_apphosting_https_url "$raw_backend_url" 2>/dev/null || true)"
   [[ "$backend_url" == https://* ]] || {
     echo "App Hosting has not exposed an HTTPS backend URL after the pinned rollout." >&2
     return 1

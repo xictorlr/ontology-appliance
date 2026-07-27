@@ -18,6 +18,23 @@ backend_resource_name() {
   printf 'projects/%s/locations/%s/backends/%s\n' "$GCP_PROJECT_ID" "$region" "$backend_id"
 }
 
+canonical_apphosting_https_url() {
+  local raw_url="$1"
+
+  [[ -n "$raw_url" ]] || return 1
+  case "$raw_url" in
+    https://*)
+      printf '%s\n' "$raw_url"
+      ;;
+    *://*)
+      return 1
+      ;;
+    *)
+      printf 'https://%s\n' "$raw_url"
+      ;;
+  esac
+}
+
 validate_inputs() {
   : "${GCP_PROJECT_ID:?Set GCP_PROJECT_ID to the App Hosting project.}"
   : "${expected_sha:?Set APPHOSTING_GIT_SHA to the exact deployed commit.}"
@@ -62,7 +79,7 @@ verify_exact_rollout() {
   local build_json="$3"
   local rollout_json="$4"
   local expected_backend expected_traffic expected_rollout
-  local backend_name locality backend_repository
+  local backend_name locality backend_repository raw_backend_url backend_url expected_backend_url
   local traffic_name traffic_branch traffic_disabled reconciling split_count
   local active_build active_percent build_name build_state resolved_sha build_repository
   local rollout_name rollout_state rollout_build
@@ -74,6 +91,9 @@ verify_exact_rollout() {
   backend_name="$(jq -r '(.result // .).name // empty' <<<"$backend_json")"
   locality="$(jq -r '(.result // .).servingLocality // empty' <<<"$backend_json")"
   backend_repository="$(jq -r '(.result // .).codebase.repository // empty' <<<"$backend_json")"
+  raw_backend_url="$(jq -r '(.result // .).uri // empty' <<<"$backend_json")"
+  backend_url="$(canonical_apphosting_https_url "$raw_backend_url" 2>/dev/null || true)"
+  expected_backend_url="https://${backend_id}--${GCP_PROJECT_ID}.${region}.hosted.app"
   [[ "$backend_name" == "$expected_backend" ]] || {
     echo "App Hosting backend drift: expected $expected_backend, got ${backend_name:-missing}." >&2
     return 1
@@ -84,6 +104,10 @@ verify_exact_rollout() {
   }
   [[ "$backend_repository" == "$repository_resource" ]] || {
     echo "App Hosting backend repository drift." >&2
+    return 1
+  }
+  [[ "$backend_url" == "$expected_backend_url" ]] || {
+    echo "App Hosting backend URI drift: expected $expected_backend_url, got ${raw_backend_url:-missing}." >&2
     return 1
   }
 
@@ -165,7 +189,7 @@ api_get() {
 }
 
 main() {
-  local backend_name backend_json traffic_json active_build build_json rollout_json backend_url
+  local backend_name backend_json traffic_json active_build build_json rollout_json raw_backend_url backend_url
   validate_inputs
   for command_name in curl gcloud jq; do
     command -v "$command_name" >/dev/null 2>&1 || {
@@ -187,7 +211,8 @@ main() {
   rollout_json="$(api_get "${backend_name}/rollouts/${rollout_id}")"
 
   verify_exact_rollout "$backend_json" "$traffic_json" "$build_json" "$rollout_json"
-  backend_url="$(jq -r '(.result // .).uri // empty' <<<"$backend_json")"
+  raw_backend_url="$(jq -r '(.result // .).uri // empty' <<<"$backend_json")"
+  backend_url="$(canonical_apphosting_https_url "$raw_backend_url" 2>/dev/null || true)"
   echo "App Hosting exact-rollout proof passed."
   echo "APPHOSTING_GIT_SHA=$expected_sha"
   echo "APPHOSTING_ACTIVE_BUILD=$active_build"
