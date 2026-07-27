@@ -43,7 +43,15 @@ import {
   X,
 } from "lucide-react";
 import { FormEvent, ReactNode, useCallback, useEffect, useMemo, useState } from "react";
+import {
+  connectorCatalog,
+  connectorCategories,
+  isActiveFileConnector,
+  type ConnectorCategory,
+} from "@/lib/connector-catalog";
 import { competencyQuestions, concepts, initialProposals, traceRows, type ProposalView } from "@/lib/demo-data";
+import { industryPacks } from "@/lib/industry-catalog";
+import type { SourceType } from "@/lib/source-contract";
 
 export function SectionContent({ section }: { section: string }) {
   switch (section) {
@@ -154,22 +162,39 @@ type SourceInventoryItem = {
   origin: "firebase" | "fixture";
 };
 
-type SourceKind = "csv" | "jsonl" | "pdf" | "openapi";
+type SourceKind = SourceType;
 
-const connectorCatalog: Array<{
-  type: SourceKind | "postgresql";
+const connectorCategoryView: Record<ConnectorCategory, {
   label: string;
   detail: string;
-  accept: string;
-  availability: "available" | "roadmap";
   icon: typeof Database;
-}> = [
-  { type: "csv", label: "CSV / delimited", detail: "Header discovery, bounded profiling, immutable snapshot", accept: ".csv,text/csv", availability: "available", icon: Database },
-  { type: "jsonl", label: "JSON Lines", detail: "Object records, schema evidence, deterministic line locators", accept: ".jsonl,.ndjson,application/x-ndjson", availability: "available", icon: Braces },
-  { type: "pdf", label: "PDF evidence", detail: "Document snapshot and content hash; no source mutation", accept: ".pdf,application/pdf", availability: "available", icon: FileCheck2 },
-  { type: "openapi", label: "OpenAPI 3", detail: "JSON contract inventory; live calls remain disabled", accept: ".json,application/json", availability: "available", icon: Code2 },
-  { type: "postgresql", label: "PostgreSQL", detail: "Requires a read-only adapter, Secret Manager, and integration tests", accept: "", availability: "roadmap", icon: ServerCog },
-];
+}> = {
+  file: {
+    label: "Files",
+    detail: "Bounded uploads with immutable source evidence",
+    icon: FileCheck2,
+  },
+  api: {
+    label: "API contracts",
+    detail: "Contract metadata without remote execution",
+    icon: Code2,
+  },
+  database: {
+    label: "Databases",
+    detail: "Read-only catalogs, allowlists, and query limits",
+    icon: Database,
+  },
+  "object-storage": {
+    label: "Object storage",
+    detail: "Federated identities and version-pinned objects",
+    icon: CloudUpload,
+  },
+  lakehouse: {
+    label: "Warehouses & lakehouses",
+    detail: "Governed catalogs and bounded compute",
+    icon: Layers3,
+  },
+};
 
 function Sources() {
   const [inventory, setInventory] = useState<SourceInventoryItem[]>([]);
@@ -255,7 +280,7 @@ function Sources() {
 
   const totalBytes = inventory.reduce((total, source) => total + (source.bytes ?? 0), 0);
   const readySources = inventory.filter((source) => source.status === "READY").length;
-  const selectedConnector = connectorCatalog.find((connector) => connector.type === selectedType);
+  const selectedConnector = connectorCatalog.find((connector) => connector.id === selectedType);
 
   function statusView(status: string) {
     if (status === "READY") return { label: "Ready", className: "ready" };
@@ -281,26 +306,41 @@ function Sources() {
 
       <section className="panel connector-catalog">
         <PanelTitle
-          title="Connector catalog"
-          subtitle="Only implemented adapters can be activated. Database credentials will use Secret Manager when that adapter is production-ready."
+          title="Enterprise connector catalog"
+          subtitle="Active adapters are usable now. Planned adapters require read-only credentials, network policy, provenance, and an integration test before activation."
           action={<span className={`inventory-mode ${inventoryMode}`}>{inventoryMode === "firebase" ? "Live Firebase" : inventoryMode === "demo" ? "Fixture preview" : inventoryMode}</span>}
         />
-        <div className="connector-options">
-          {connectorCatalog.map((connector) => {
-            const ConnectorIcon = connector.icon;
-            const available = connector.availability === "available";
+        <div className="connector-groups">
+          {connectorCategories.map((category) => {
+            const categoryView = connectorCategoryView[category];
+            const CategoryIcon = categoryView.icon;
+            const connectors = connectorCatalog.filter((connector) => connector.category === category);
             return (
-              <button
-                className={`connector-option ${available ? "" : "roadmap"}`}
-                disabled={!available || !canManage}
-                key={connector.type}
-                onClick={() => available && openConnector(connector.type as SourceKind)}
-              >
-                <span><ConnectorIcon size={19} /></span>
-                <strong>{connector.label}</strong>
-                <small>{connector.detail}</small>
-                <em>{available ? "Available" : "Roadmap"}</em>
-              </button>
+              <section className="connector-group" key={category}>
+                <header>
+                  <span><CategoryIcon size={17} /></span>
+                  <div><h3>{categoryView.label}</h3><p>{categoryView.detail}</p></div>
+                  <em>{connectors.length}</em>
+                </header>
+                <div className="connector-options">
+                  {connectors.map((connector) => {
+                    const active = isActiveFileConnector(connector);
+                    return (
+                      <button
+                        className={`connector-option ${active ? "" : "roadmap"}`}
+                        disabled={!active || !canManage}
+                        key={connector.id}
+                        onClick={() => active && openConnector(connector.id)}
+                      >
+                        <span><CategoryIcon size={19} /></span>
+                        <strong>{connector.label}</strong>
+                        <small>{connector.detail}</small>
+                        <em>{active ? "Active" : "Planned"}</em>
+                      </button>
+                    );
+                  })}
+                </div>
+              </section>
             );
           })}
         </div>
@@ -569,13 +609,27 @@ function Traces() {
 function SettingsPage() {
   return (
     <>
-      <PageHeader eyebrow="Tenant controls" title="Settings" description="Security, model routing, publication policy, and budget guardrails for Demo Bank EU." actions={<button className="button primary"><Check size={17} /> Save changes</button>} />
+      <PageHeader eyebrow="Tenant controls" title="Settings" description="Security, model routing, publication policy, industry packs, and budget guardrails for Demo Bank EU." actions={<span className="version-chip"><ShieldCheck size={13} /> Governed policy</span>} />
       <div className="settings-layout">
         <section className="panel settings-panel"><PanelTitle title="Identity & tenancy" subtitle="Server-side authorization is always rechecked" /><SettingRow icon={<Users size={18} />} title="Pilot tenant" detail="demo-bank · Europe West 4"><span className="setting-value">Single pilot</span></SettingRow><SettingRow icon={<KeyRound size={18} />} title="Authentication" detail="Passwordless email and Google via Firebase Auth"><span className="state-good"><CheckCircle2 size={14} /> Firebase enabled</span></SettingRow><SettingRow icon={<ShieldCheck size={18} />} title="Workspace roles" detail="Admin, steward, and auditor"><button className="text-button">Manage roles</button></SettingRow></section>
         <section className="panel settings-panel"><PanelTitle title="Model routing" subtitle="Deterministic Functions workflow active; model adapters remain disabled" /><SettingRow icon={<WandSparkles size={18} />} title="Proposal generator adapter" detail="Vertex AI · not invoked"><span className="state-warning"><TriangleAlert size={14} /> Disabled</span></SettingRow><SettingRow icon={<SearchCheck size={18} />} title="Independent verifier" detail="No OpenAI credential configured"><span className="state-warning"><TriangleAlert size={14} /> Deterministic mock</span></SettingRow><div className="settings-callout"><ShieldAlert size={18} /><p>No model API is called in this pilot mode. Mock verification never claims independent model agreement; model-dependent or high-risk proposals are routed to a person or abstain.</p></div></section>
         <section className="panel settings-panel"><PanelTitle title="Publication policy" subtitle="Only the Publisher identity writes an active version" /><SettingRow icon={<Workflow size={18} />} title="Low-risk threshold" detail="All deterministic gates must pass"><span className="setting-value">≥ 0.95</span></SettingRow><SettingRow icon={<UserCheck size={18} />} title="High-risk changes" detail="Relations, merges, regulatory semantics"><span className="state-warning">Always human</span></SettingRow><SettingRow icon={<PackageCheck size={18} />} title="Rollback" detail="Last valid immutable bundle"><span className="state-good"><CheckCircle2 size={14} /> Enabled</span></SettingRow></section>
         <section className="panel settings-panel"><PanelTitle title="Dev budget guardrails" subtitle="Terraform definition; no billing data before deployment" /><div className="budget-meter"><div><span>Cloud spend</span><strong>Not connected <small>/ €50 alert policy</small></strong></div><i><b style={{ width: "0%" }} /></i><div className="budget-thresholds"><span>50%</span><span>80%</span><span>100%</span></div></div><SettingRow icon={<ServerCog size={18} />} title="Serverless limits" detail="Scale to zero; bounded workers"><span className="state-good"><CheckCircle2 size={14} /> Defined</span></SettingRow></section>
       </div>
+      <section className="panel industry-pack-panel">
+        <PanelTitle title="Industry semantic packs" subtitle="Only a versioned, tested, independently verified RDF/SHACL bundle may become active." action={<span className="setting-value">1 active · {industryPacks.length - 1} planned</span>} />
+        <div className="industry-pack-grid">
+          {industryPacks.map((pack) => (
+            <article className={`industry-pack ${pack.availability}`} key={pack.id}>
+              <header><span>{pack.availability === "active" ? <CheckCircle2 size={16} /> : <Clock3 size={16} />}</span><em>{pack.availability === "active" ? "Active pilot" : "Planned"}</em></header>
+              <h3>{pack.label}</h3>
+              <p>{pack.detail}</p>
+              <div>{pack.coreConcepts.slice(0, 4).map((concept) => <span key={concept}>{concept}</span>)}</div>
+              <footer>{pack.availability === "active" ? "Candidate · demo only" : "RDF + SHACL + competency questions required"}</footer>
+            </article>
+          ))}
+        </div>
+      </section>
     </>
   );
 }

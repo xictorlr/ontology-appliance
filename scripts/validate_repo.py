@@ -28,6 +28,9 @@ def main() -> None:
         "storage.rules",
         "scripts/create_apphosting_backend.sh",
         "scripts/verify_apphosting_rollout.sh",
+        "apps/web/lib/connector-catalog.ts",
+        "apps/web/lib/industry-catalog.ts",
+        "docs/enterprise-connectors.md",
         "infra",
         "semantic",
         "data",
@@ -103,6 +106,36 @@ def main() -> None:
         if untrusted_tenant in source_route:
             raise SystemExit(
                 "Source onboarding must derive the tenant from the verified session"
+            )
+
+    connector_catalog = require("apps/web/lib/connector-catalog.ts").read_text()
+    for connector_boundary in (
+        'availability: "active"',
+        'id: "amazon-s3"',
+        'id: "azure-blob"',
+        'id: "databricks"',
+        'credentialBoundary: "secret-manager"',
+        'credentialBoundary: "workload-identity"',
+        '"integration-test"',
+    ):
+        if connector_boundary not in connector_catalog:
+            raise SystemExit(
+                f"Enterprise connector catalog boundary is missing: {connector_boundary}"
+            )
+
+    industry_catalog = require("apps/web/lib/industry-catalog.ts").read_text()
+    for industry_boundary in (
+        'id: "financial-crime-kyc-aml"',
+        'id: "oil-gas"',
+        'id: "energy-utilities"',
+        '"versioned-rdf-bundle"',
+        '"shacl-shapes"',
+        '"competency-questions"',
+        '"independent-verification"',
+    ):
+        if industry_boundary not in industry_catalog:
+            raise SystemExit(
+                f"Industry pack governance boundary is missing: {industry_boundary}"
             )
 
     proposal_schema = json.loads(

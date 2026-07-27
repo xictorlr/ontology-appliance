@@ -46,9 +46,23 @@ if [[ -n "${GATEWAY_IDENTITY_TOKEN:-}" ]]; then
 else
   identity_token="$(gcloud auth print-identity-token --audiences="$GATEWAY_URL")"
 fi
-health="$(curl --fail --silent --show-error \
-  --header "Authorization: Bearer ${identity_token}" \
-  "${GATEWAY_URL%/}/healthz")"
+health=""
+# A service IAM policy update can take several seconds to reach every Cloud Run
+# frontend. Require a successful, authenticated container response rather than
+# treating the transient concealed 404 as an application failure.
+for _attempt in {1..24}; do
+  if health="$(curl --fail --silent --show-error \
+    --header "Authorization: Bearer ${identity_token}" \
+    "${GATEWAY_URL%/}/healthz" 2>/dev/null)"; then
+    break
+  fi
+  health=""
+  sleep 5
+done
+[[ -n "$health" ]] || {
+  echo "Authenticated gateway health did not become reachable after IAM propagation." >&2
+  exit 1
+}
 jq -e \
   --arg state "$expected_publication_state" \
   --arg serving "$expected_serving_mode" \
@@ -63,18 +77,25 @@ fi
 
 unauthenticated_status="$(curl --silent --output /dev/null --write-out '%{http_code}' \
   "${GATEWAY_URL%/}/healthz")"
-[[ "$unauthenticated_status" == "401" || "$unauthenticated_status" == "403" ]] || {
-  echo "Expected Cloud Run IAM denial, got HTTP $unauthenticated_status." >&2
+[[ "$unauthenticated_status" == "401" ||
+   "$unauthenticated_status" == "403" ||
+   "$unauthenticated_status" == "404" ]] || {
+  echo "Expected Cloud Run IAM denial or concealed private route, got HTTP $unauthenticated_status." >&2
   exit 1
 }
 
-application_auth_status="$(curl --silent --output /dev/null --write-out '%{http_code}' \
-  --request POST \
-  --header "X-Serverless-Authorization: Bearer ${identity_token}" \
-  --header 'Authorization: Bearer deliberately-invalid-firebase-session' \
-  --header 'Content-Type: application/json' \
-  --data '{"term":"Party"}' \
-  "${GATEWAY_URL%/}/v1/resolve")"
+application_auth_status=""
+for _attempt in {1..12}; do
+  application_auth_status="$(curl --silent --output /dev/null --write-out '%{http_code}' \
+    --request POST \
+    --header "X-Serverless-Authorization: Bearer ${identity_token}" \
+    --header 'Authorization: Bearer deliberately-invalid-firebase-session' \
+    --header 'Content-Type: application/json' \
+    --data '{"term":"Party"}' \
+    "${GATEWAY_URL%/}/v1/resolve")"
+  [[ "$application_auth_status" == "401" ]] && break
+  sleep 5
+done
 [[ "$application_auth_status" == "401" ]] || {
   echo "Expected application authentication denial, got HTTP $application_auth_status." >&2
   exit 1
