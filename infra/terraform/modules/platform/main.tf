@@ -438,6 +438,17 @@ resource "google_service_account" "runtime" {
   description  = "Least-privilege identity managed by Terraform for ${each.key}."
 }
 
+# GitHub CI verifies the private gateway through the same runtime identity used
+# by App Hosting. This role grants only generateIdToken; it does not grant
+# access-token creation, service-account keys, or App Hosting data permissions.
+resource "google_service_account_iam_member" "ci_apphosting_openid_token_creator" {
+  count = var.enabled ? 1 : 0
+
+  service_account_id = google_service_account.runtime["apphosting"].name
+  role               = "roles/iam.serviceAccountOpenIdTokenCreator"
+  member             = "serviceAccount:${google_service_account.runtime["ci"].email}"
+}
+
 data "google_compute_default_service_account" "functions_build" {
   count = var.enabled ? 1 : 0
 

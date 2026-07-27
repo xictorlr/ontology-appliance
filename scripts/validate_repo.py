@@ -188,7 +188,10 @@ def main() -> None:
         '"  - serviceAccount:${{ vars.APPHOSTING_SERVICE_ACCOUNT }}"',
         '"  - serviceAccount:${{ vars.GCP_DEPLOY_SERVICE_ACCOUNT }}"',
         '"  - serviceAccount:${{ vars.FUNCTIONS_SERVICE_ACCOUNT }}"',
-        "id_token_include_email: true",
+        "APPHOSTING_SERVICE_ACCOUNT: ${{ vars.APPHOSTING_SERVICE_ACCOUNT }}",
+        "iamcredentials.googleapis.com/v1/projects/-/serviceAccounts/${APPHOSTING_SERVICE_ACCOUNT}:generateIdToken",
+        "{audience: $audience, includeEmail: true}",
+        'echo "::add-mask::${gateway_token}"',
     ):
         if gateway_invoker not in deploy_workflow:
             raise SystemExit(
@@ -218,6 +221,9 @@ def main() -> None:
         '"storage.googleapis.com/objects.update"',
         'role    = "roles/firebaseapphosting.computeRunner"',
         'resource "google_storage_bucket_iam_member" "input_apphosting_creator"',
+        'resource "google_service_account_iam_member" "ci_apphosting_openid_token_creator"',
+        'role               = "roles/iam.serviceAccountOpenIdTokenCreator"',
+        'member             = "serviceAccount:${google_service_account.runtime["ci"].email}"',
         'title       = "create_tenant_source_uploads_only"',
         '"firebaseauth.users.update"',
         "google_iam_deny_policy.apphosting_artifact_mutation,",
