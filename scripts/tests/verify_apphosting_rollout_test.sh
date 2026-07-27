@@ -15,7 +15,7 @@ rollout_id="rollout-0123456789ab"
 
 backend_name="projects/ontology-appliance-dev-test/locations/europe-west4/backends/ontology-appliance-web"
 active_build="${backend_name}/builds/build-0123456789ab"
-backend_json='{"name":"projects/ontology-appliance-dev-test/locations/europe-west4/backends/ontology-appliance-web","servingLocality":"REGIONAL_STRICT","uri":"https://ontology-appliance-web--ontology-appliance-dev-test.europe-west4.hosted.app","codebase":{"rootDirectory":"apps/web","repository":"projects/ontology-appliance-dev-test/locations/europe-west4/connections/firebase-app-hosting-github/gitRepositoryLinks/ontology-appliance"}}'
+backend_json='{"name":"projects/ontology-appliance-dev-test/locations/europe-west4/backends/ontology-appliance-web","servingLocality":"GLOBAL_ACCESS","uri":"https://ontology-appliance-web--ontology-appliance-dev-test.europe-west4.hosted.app","codebase":{"rootDirectory":"apps/web","repository":"projects/ontology-appliance-dev-test/locations/europe-west4/connections/firebase-app-hosting-github/gitRepositoryLinks/ontology-appliance"}}'
 traffic_json='{"name":"projects/ontology-appliance-dev-test/locations/europe-west4/backends/ontology-appliance-web/traffic","reconciling":false,"rolloutPolicy":{"codebaseBranch":"main","disabled":false},"current":{"splits":[{"build":"projects/ontology-appliance-dev-test/locations/europe-west4/backends/ontology-appliance-web/builds/build-0123456789ab","percent":100}]}}'
 build_json='{"name":"projects/ontology-appliance-dev-test/locations/europe-west4/backends/ontology-appliance-web/builds/build-0123456789ab","state":"READY","source":{"codebase":{"repository":"projects/ontology-appliance-dev-test/locations/europe-west4/connections/firebase-app-hosting-github/gitRepositoryLinks/ontology-appliance","commit":"0123456789abcdef0123456789abcdef01234567","hash":"0123456789abcdef0123456789abcdef01234567"}}}'
 rollout_json='{"name":"projects/ontology-appliance-dev-test/locations/europe-west4/backends/ontology-appliance-web/rollouts/rollout-0123456789ab","state":"SUCCEEDED","build":"projects/ontology-appliance-dev-test/locations/europe-west4/backends/ontology-appliance-web/builds/build-0123456789ab"}'
@@ -68,9 +68,9 @@ other_rollout_build_json="$(jq '.build = "projects/ontology-appliance-dev-test/l
 expect_rejection "pinned rollout does not own active build" \
   verify_exact_rollout "$backend_json" "$traffic_json" "$build_json" "$other_rollout_build_json"
 
-global_backend_json="$(jq '.servingLocality = "GLOBAL_ACCESS"' <<<"$backend_json")"
-expect_rejection "backend not REGIONAL_STRICT" \
-  verify_exact_rollout "$global_backend_json" "$traffic_json" "$build_json" "$rollout_json"
+unsupported_locality_backend_json="$(jq '.servingLocality = "REGIONAL_STRICT"' <<<"$backend_json")"
+expect_rejection "backend locality not currently supported" \
+  verify_exact_rollout "$unsupported_locality_backend_json" "$traffic_json" "$build_json" "$rollout_json"
 
 other_repo_build_json="$(jq '.source.codebase.repository = "projects/ontology-appliance-dev-test/locations/europe-west4/connections/other/gitRepositoryLinks/other"' <<<"$build_json")"
 expect_rejection "resolved build repository drift" \

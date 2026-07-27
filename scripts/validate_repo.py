@@ -177,7 +177,7 @@ def main() -> None:
         "APPHOSTING_APPLY",
         "CONFIRM_GCP_PROJECT_ID",
         "CONFIRM_APPHOSTING_GIT_SHA",
-        'servingLocality: "REGIONAL_STRICT"',
+        'servingLocality: "GLOBAL_ACCESS"',
         "source: {codebase: {commit: $commit}}",
         "/v1beta/",
         "verify_apphosting_rollout.sh",
@@ -196,7 +196,7 @@ def main() -> None:
         '"$resolved_sha" == "$expected_sha"',
         '"$rollout_state" == "SUCCEEDED"',
         '"$rollout_build" == "$active_build"',
-        '"$locality" == "REGIONAL_STRICT"',
+        '"$locality" == "GLOBAL_ACCESS"',
     ):
         if exact_proof not in apphosting_verify:
             raise SystemExit(f"App Hosting exact-rollout proof is missing: {exact_proof}")

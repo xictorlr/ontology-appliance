@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# Reproducibly provisions the App Hosting control-plane resources. The private
-# GitHub repository must already be linked through the Firebase App Hosting
-# GitHub App; this script consumes that explicit Developer Connect resource and
-# never launches an interactive Firebase CLI flow.
+# Reproducibly provisions the App Hosting control-plane resources. The exact
+# protected GitHub repository must already be linked through the Firebase App
+# Hosting GitHub App; this script consumes that explicit Developer Connect
+# resource and never launches an interactive Firebase CLI flow.
 
 script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 backend_id="${APPHOSTING_BACKEND_ID:-ontology-appliance-web}"
@@ -245,8 +245,8 @@ verify_backend_configuration() {
     echo "App Hosting backend drift: expected $expected_name, got ${actual_name:-missing}." >&2
     return 1
   }
-  [[ "$actual_locality" == "REGIONAL_STRICT" ]] || {
-    echo "App Hosting locality drift: REGIONAL_STRICT is required." >&2
+  [[ "$actual_locality" == "GLOBAL_ACCESS" ]] || {
+    echo "App Hosting locality drift: GLOBAL_ACCESS is the currently supported App Hosting mode." >&2
     return 1
   }
   [[ "$actual_account" == "$APPHOSTING_SERVICE_ACCOUNT" ]] || {
@@ -320,7 +320,7 @@ backend_payload() {
     --arg app_id "$APPHOSTING_WEB_APP_ID" \
     '{
       displayName: "Ontology Appliance web",
-      servingLocality: "REGIONAL_STRICT",
+      servingLocality: "GLOBAL_ACCESS",
       codebase: {repository: $repository, rootDirectory: $root},
       serviceAccount: $service_account,
       appId: $app_id,
