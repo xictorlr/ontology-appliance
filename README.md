@@ -93,7 +93,9 @@ Open **Sources** in the deployed control plane and choose an available connector
 | JSONL | Validates every bounded object record and preserves deterministic line-level evidence coordinates. |
 | PDF | Verifies the PDF signature and creates a content-addressed document snapshot. |
 | OpenAPI 3 | Accepts a JSON contract and inventories its paths; live remote API calls are deliberately disabled. |
-| PostgreSQL | Roadmap only until a read-only adapter, Secret Manager reference, network boundary, and ephemeral integration test exist. |
+| PostgreSQL, MySQL, SQL Server, Oracle | Planned: read-only adapter, Secret Manager reference, network boundary, allowlists, and ephemeral integration tests are required. |
+| Amazon S3, Azure Blob Storage, Google Cloud Storage | Planned: federated read-only identity, prefix allowlist, version-pinned evidence, and integration tests are required. |
+| Databricks, BigQuery, Snowflake | Planned: catalog-scoped access, bounded query/compute policy, server-side credentials, and integration tests are required. |
 
 Uploads are limited to 20 MiB. The BFF derives the tenant and uploader from the
 HTTP-only Firebase session, records a Firestore audit event, and can only create
@@ -101,6 +103,24 @@ new objects under the governed input bucket. It cannot read, replace, or delete
 those objects. Storage finalization invokes the existing serverless profiling,
 snapshot, proposal, and independent verification workflow. No database password,
 API token, or service credential is accepted by the browser form.
+
+The complete activation contract for these options is documented in
+[`docs/enterprise-connectors.md`](./docs/enterprise-connectors.md). A catalog
+entry is not a claim that the adapter exists: only CSV, JSONL, PDF, and OpenAPI
+3 JSON are active in this release.
+
+## Industry semantic packs
+
+The platform now exposes a cross-industry pack catalog. **Financial Crime ·
+KYC/AML** remains the only implemented pack and is still a labeled,
+non-published candidate. The roadmap includes **Oil & Gas**, Energy & Utilities,
+Insurance, Manufacturing, Healthcare & Life Sciences, Retail & CPG,
+Telecommunications, and Public Sector.
+
+Each planned pack stays inactive until it includes a versioned RDF bundle,
+SHACL shapes, executable competency questions, evidence-backed mappings, and an
+independent verification path. Models may propose sector concepts, but they
+cannot activate a pack or approve their own output.
 
 Run verification:
 
