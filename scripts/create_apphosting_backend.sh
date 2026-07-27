@@ -639,7 +639,7 @@ emit_backend_url() {
 
 main() {
   validate_inputs
-  for command_name in curl gcloud gh jq; do
+  for command_name in curl firebase gcloud gh jq; do
     command -v "$command_name" >/dev/null 2>&1 || {
       echo "Missing required command: $command_name" >&2
       return 1
@@ -663,6 +663,15 @@ main() {
     echo "Deploy the semantic gateway first so $gateway_secret has an enabled version." >&2
     return 1
   fi
+
+  # App Hosting resolves secret references during its build as well as at
+  # runtime. The official non-interactive grant is idempotent and scopes access
+  # to this exact backend; Terraform owns the resulting additive IAM members.
+  firebase apphosting:secrets:grantaccess "$gateway_secret" \
+    --backend "$backend_id" \
+    --location "$region" \
+    --project "$GCP_PROJECT_ID" \
+    --non-interactive >/dev/null
 
   access_token="$(gcloud auth print-access-token)"
   repository_json="$(api_request GET "${developer_connect_api_origin%/}/v1/${repository_resource}")"

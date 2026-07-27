@@ -179,6 +179,8 @@ def main() -> None:
         "CONFIRM_APPHOSTING_GIT_SHA",
         'servingLocality: "GLOBAL_ACCESS"',
         "source: {codebase: {commit: $commit}}",
+        "apphosting:secrets:grantaccess",
+        "--non-interactive",
         "/v1beta/",
         "verify_apphosting_rollout.sh",
     ):
