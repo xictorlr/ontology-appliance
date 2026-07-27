@@ -32,6 +32,10 @@ verify_branch_protection "$branch_protection_json"
 verify_github_ref "$github_ref_json"
 verify_backend "$backend_json" "$traffic_json" "$repository_json" "$github_repository_json"
 verify_backend "$backend_json" "$traffic_json" "$repository_json" "$public_github_repository_json"
+hostname_backend_json="$(jq '.uri = "ontology-appliance-web--ontology-appliance-dev-test.europe-west4.hosted.app"' <<<"$backend_json")"
+verify_backend "$hostname_backend_json" "$traffic_json" "$repository_json" "$github_repository_json"
+[[ "$(canonical_apphosting_https_url "ontology-appliance-web--ontology-appliance-dev-test.europe-west4.hosted.app")" == "https://ontology-appliance-web--ontology-appliance-dev-test.europe-west4.hosted.app" ]]
+[[ "$(canonical_apphosting_https_url "https://ontology-appliance-web--ontology-appliance-dev-test.europe-west4.hosted.app")" == "https://ontology-appliance-web--ontology-appliance-dev-test.europe-west4.hosted.app" ]]
 
 jq -e \
   --arg repository "$repository_resource" \
@@ -81,6 +85,8 @@ expect_rejection "backend without its Terraform-managed Web App" \
 wrong_uri_json="$(jq '.uri = "https://unexpected.example"' <<<"$backend_json")"
 expect_rejection "backend URI drift" \
   verify_backend "$wrong_uri_json" "$traffic_json" "$repository_json" "$github_repository_json"
+expect_rejection "non-HTTPS backend URI" \
+  canonical_apphosting_https_url "http://ontology-appliance-web--ontology-appliance-dev-test.europe-west4.hosted.app"
 
 unprotected_branch_json="$(jq '.required_pull_request_reviews.required_approving_review_count = 0' <<<"$branch_protection_json")"
 expect_rejection "main without an independent approval" \
