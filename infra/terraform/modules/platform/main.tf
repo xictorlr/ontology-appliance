@@ -560,10 +560,11 @@ resource "google_project_iam_custom_role" "firebase_session_issuer" {
   project     = google_project.this[0].project_id
   role_id     = "oa_${var.environment}_sessionIssuer"
   title       = "Ontology Appliance session issuer"
-  description = "Issue and revoke-check Firebase session cookies without user administration."
+  description = "Issue and revoke-check Firebase sessions and assign bounded self-enrollment claims."
   permissions = [
     "firebaseauth.users.createSession",
     "firebaseauth.users.get",
+    "firebaseauth.users.update",
   ]
 }
 

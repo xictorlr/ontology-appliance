@@ -14,6 +14,7 @@ import { GoogleAuthProvider, sendSignInLinkToEmail, signInWithPopup, signOut } f
 import { useRouter } from "next/navigation";
 import { FormEvent, useState } from "react";
 import { browserAuth, firebaseConfigured, googleSignInEnabled } from "@/lib/firebase-client";
+import { createFirebaseSession } from "@/lib/session-client";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -21,11 +22,11 @@ export default function LoginPage() {
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
 
-  async function createSession(idToken?: string, demo = false) {
+  async function createDemoSession() {
     const response = await fetch("/api/session", {
       method: "POST",
       headers: { "content-type": "application/json" },
-      body: JSON.stringify({ idToken, demo }),
+      body: JSON.stringify({ demo: true }),
     });
     if (!response.ok) {
       const problem = await response.json().catch(() => null) as { detail?: string } | null;
@@ -42,7 +43,7 @@ export default function LoginPage() {
       const auth = await browserAuth();
       try {
         const result = await signInWithPopup(auth, new GoogleAuthProvider());
-        await createSession(await result.user.getIdToken(true));
+        await createFirebaseSession(result.user);
       } finally {
         await signOut(auth);
       }
@@ -104,7 +105,7 @@ export default function LoginPage() {
             <span>EU pilot environment</span>
           </div>
           <h2>Enter the workspace</h2>
-          <p>Use your approved identity. Access is scoped to a tenant and role.</p>
+          <p>Use a verified identity. New members join the pilot tenant with read-only auditor access.</p>
 
           {firebaseConfigured ? (
             <>
@@ -127,7 +128,7 @@ export default function LoginPage() {
             <div className="demo-access">
               <div className="demo-badge"><CheckCircle2 size={17} /> Configuration-safe demo</div>
               <p>Firebase keys are not present, so this local build uses the synthetic <code>demo-bank</code> tenant.</p>
-              <button className="button primary" type="button" disabled={busy} onClick={() => createSession(undefined, true)}>
+              <button className="button primary" type="button" disabled={busy} onClick={createDemoSession}>
                 {busy && <LoaderCircle className="spin" size={18} />}
                 Open governed demo
               </button>

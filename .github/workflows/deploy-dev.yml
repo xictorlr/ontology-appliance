@@ -229,6 +229,7 @@ jobs:
           service_account: ${{ vars.GCP_DEPLOY_SERVICE_ACCOUNT }}
           token_format: id_token
           id_token_audience: ${{ env.GATEWAY_URL }}
+          id_token_include_email: true
           create_credentials_file: false
           export_environment_variables: false
       - name: Run backend cloud smoke tests

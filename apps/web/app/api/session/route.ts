@@ -4,6 +4,10 @@ import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 import { pilotMembership } from "@/lib/claims";
 import { isSameOriginRequest } from "@/lib/request-security";
+import {
+  hasExplicitMembershipClaims,
+  selfEnrollmentAssignment,
+} from "@/lib/self-enrollment";
 
 const fiveDays = 5 * 24 * 60 * 60 * 1000;
 const maxSessionRequestBytes = 16 * 1024;
@@ -11,6 +15,30 @@ const maxSessionRequestBytes = 16 * 1024;
 function auth() {
   if (!getApps().length) initializeApp({ credential: applicationDefault() });
   return getAuth();
+}
+
+function membershipRequired() {
+  return NextResponse.json(
+    {
+      type: "urn:ontology-appliance:problem:membership-required",
+      title: "Pilot membership required",
+      status: 403,
+      detail: "Your identity is valid but is not eligible for automatic pilot enrollment. Ask an administrator to grant a workspace role.",
+    },
+    { status: 403 },
+  );
+}
+
+function membershipTokenRefreshRequired() {
+  return NextResponse.json(
+    {
+      type: "urn:ontology-appliance:problem:membership-token-refresh-required",
+      title: "Pilot membership assigned",
+      status: 409,
+      detail: "Your pilot membership was assigned. Refresh the identity token to continue.",
+    },
+    { status: 409 },
+  );
 }
 
 export async function POST(request: Request) {
@@ -75,26 +103,53 @@ export async function POST(request: Request) {
     );
   }
 
+  let decoded;
   try {
-    const decoded = await auth().verifyIdToken(body.idToken);
-    if (Date.now() / 1000 - decoded.auth_time > 5 * 60) {
-      return NextResponse.json(
-        { type: "about:blank", title: "Recent sign-in required", status: 401, detail: "Sign in again to create a session." },
-        { status: 401 },
-      );
-    }
-    const membership = pilotMembership(decoded);
-    if (!membership) {
+    decoded = await auth().verifyIdToken(body.idToken);
+  } catch {
+    return NextResponse.json(
+      { type: "about:blank", title: "Unauthorized", status: 401, detail: "The ID token is invalid." },
+      { status: 401 },
+    );
+  }
+  if (Date.now() / 1000 - decoded.auth_time > 5 * 60) {
+    return NextResponse.json(
+      { type: "about:blank", title: "Recent sign-in required", status: 401, detail: "Sign in again to create a session." },
+      { status: 401 },
+    );
+  }
+
+  const membership = pilotMembership(decoded);
+  if (!membership) {
+    const assignment = selfEnrollmentAssignment(decoded);
+    if (!assignment) return membershipRequired();
+
+    try {
+      const user = await auth().getUser(decoded.uid);
+      const storedMembership = pilotMembership(user.customClaims);
+      if (storedMembership) return membershipTokenRefreshRequired();
+      if (hasExplicitMembershipClaims(user.customClaims)) return membershipRequired();
+
+      await auth().setCustomUserClaims(decoded.uid, {
+        ...(user.customClaims ?? {}),
+        tenant_id: assignment.tenantId,
+        roles: assignment.roles,
+      });
+      return membershipTokenRefreshRequired();
+    } catch {
       return NextResponse.json(
         {
-          type: "urn:ontology-appliance:problem:membership-required",
-          title: "Pilot membership required",
-          status: 403,
-          detail: "Your identity is valid but has not been assigned to this pilot tenant. Ask an administrator to grant a workspace role.",
+          type: "urn:ontology-appliance:problem:membership-provisioning-unavailable",
+          title: "Pilot enrollment unavailable",
+          status: 503,
+          detail: "Your identity is valid, but pilot enrollment could not be completed. Try again shortly.",
         },
-        { status: 403 },
+        { status: 503 },
       );
     }
+  }
+
+  try {
     const sessionCookie = await auth().createSessionCookie(body.idToken, { expiresIn: fiveDays });
     cookieStore.set("oa_session", sessionCookie, {
       httpOnly: true,
