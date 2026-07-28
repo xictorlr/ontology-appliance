@@ -10,6 +10,9 @@ from ontology_appliance_gateway.cloud_smoke import HttpResponse, RequestFunction
 
 
 GATEWAY_URL = "https://oa-dev-semantic-gateway-example.europe-west4.run.app"
+FUNCTION_GATEWAY_URL = (
+    "https://europe-west4-ontology-apliance.cloudfunctions.net/semanticGatewayHttp"
+)
 
 
 def response_sequence(
@@ -91,6 +94,38 @@ def test_in_cloud_smoke_rejects_public_gateway_health() -> None:
     assert len(requests) == 3
 
 
+def test_in_cloud_smoke_accepts_owned_cloud_function_endpoint() -> None:
+    health = {
+        "status": "ok",
+        "ontologyVersion": "2026.07.1-candidate",
+        "publicationState": "CANDIDATE",
+        "servingMode": "DEMO_ONLY",
+        "isPublished": False,
+    }
+    requests, requester = response_sequence(
+        [
+            HttpResponse(200, b"header.payload.signature"),
+            HttpResponse(200, json.dumps(health).encode()),
+            HttpResponse(403, b"private"),
+            HttpResponse(401, b'{"detail":"invalid session"}'),
+        ]
+    )
+
+    run_smoke(
+        {
+            "GATEWAY_URL": FUNCTION_GATEWAY_URL,
+            "EXPECTED_PUBLICATION_STATE": "CANDIDATE",
+        },
+        requester=requester,
+    )
+
+    assert requests[0].full_url.endswith(
+        "audience=https%3A%2F%2Feurope-west4-ontology-apliance.cloudfunctions.net"
+        "%2FsemanticGatewayHttp"
+    )
+    assert requests[1].full_url == f"{FUNCTION_GATEWAY_URL}/healthz"
+
+
 @pytest.mark.parametrize(
     "gateway_url",
     [
@@ -98,8 +133,11 @@ def test_in_cloud_smoke_rejects_public_gateway_health() -> None:
         "https://gateway.example.com",
         "https://gateway.run.app/extra-path",
         "https://gateway.run.app?tenant=untrusted",
+        "https://europe-west4-project.cloudfunctions.net",
+        "https://europe-west4-project.cloudfunctions.net/function/extra",
+        "https://europe-west4-project.cloudfunctions.net/function?tenant=untrusted",
     ],
 )
-def test_in_cloud_smoke_rejects_non_cloud_run_origins(gateway_url: str) -> None:
-    with pytest.raises(RuntimeError, match="HTTPS Cloud Run service origin"):
+def test_in_cloud_smoke_rejects_untrusted_gateway_urls(gateway_url: str) -> None:
+    with pytest.raises(RuntimeError, match="HTTPS Cloud Run origin or Cloud Functions"):
         run_smoke({"GATEWAY_URL": gateway_url})

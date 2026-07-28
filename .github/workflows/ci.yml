@@ -50,7 +50,7 @@ jobs:
           enable-cache: true
           prune-cache: true
       - working-directory: services/semantic-gateway
-        run: uv sync --dev --extra firebase --frozen
+        run: uv sync --dev --extra firebase --extra cloud-function --frozen
       - working-directory: services/semantic-gateway
         run: >-
           uv run ruff check .

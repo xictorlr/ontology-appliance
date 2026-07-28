@@ -23,6 +23,7 @@ def main() -> None:
         "contracts/openapi.yaml",
         "contracts/schemas/proposal.schema.json",
         "services/semantic-gateway/pyproject.toml",
+        "services/semantic-gateway/src/ontology_appliance_gateway/cloud_function.py",
         "firebase.json",
         "firestore.rules",
         "storage.rules",
@@ -185,6 +186,10 @@ def main() -> None:
             "every semantic gateway deployment mode must pin the mock verifier"
         )
     for gateway_invoker in (
+        "gcloud functions deploy semanticGatewayHttp",
+        "gcloud functions describe semanticGatewayHttp",
+        "gcloud run services set-iam-policy semanticgatewayhttp",
+        '--update-labels "release-sha=${{ env.RELEASE_SHA }}"',
         '"  - serviceAccount:${{ vars.APPHOSTING_SERVICE_ACCOUNT }}"',
         '"  - serviceAccount:${{ vars.GCP_DEPLOY_SERVICE_ACCOUNT }}"',
         '"  - serviceAccount:${{ vars.FUNCTIONS_SERVICE_ACCOUNT }}"',

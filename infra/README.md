@@ -9,8 +9,8 @@ indexes/rules, and Storage rules. Because Cloud Tasks is unavailable in
 `europe-west1`. The guarded REST scripts own the App Hosting backend, traffic
 policy, pinned builds, and rollouts; the one-time Developer Connect link targets
 the exact protected repository. GitHub Actions exclusively owns the Semantic
-Gateway Cloud Run service and its invoker policy. No runtime resource has two
-owners.
+Gateway Function v2 source deployment and the invoker policy on its underlying
+Cloud Run service. No runtime resource has two owners.
 
 ## Bootstrap order
 
@@ -69,10 +69,12 @@ owners.
 
    All values are non-secret resource identifiers; authentication remains keyless
    through separate deployment and Publisher WIF providers. The deployment workflow
-   builds and pushes the gateway image, owns the private Cloud Run service, grants
-   only the App Hosting runtime, Functions runtime, and keyless CI smoke-test identity
-   `run.invoker` on that exact gateway, and adds the discovered URL as a version of
-   `oa-dev-semantic-gateway-url`. The protected publication
+   builds and pushes the gateway image used by its in-cloud smoke test, stages
+   the same FastAPI package behind a private Cloud Functions v2 endpoint, grants
+   only the App Hosting runtime, Functions runtime, and keyless CI smoke-test
+   identity `run.invoker` on that exact gateway, and adds the discovered
+   `cloudfunctions.net` URL as a version of `oa-dev-semantic-gateway-url`. The
+   protected publication
    environment rejects self-review and is the only workflow allowed to update the
    semantic active pointer.
    The configuration script also applies and verifies `main` branch protection

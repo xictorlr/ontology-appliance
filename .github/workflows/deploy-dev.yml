@@ -105,7 +105,7 @@ jobs:
       - name: Verify semantic gateway
         working-directory: services/semantic-gateway
         run: |
-          uv sync --dev --extra firebase --frozen
+          uv sync --dev --extra firebase --extra cloud-function --frozen
           uv run ruff check . ../../scripts/check_semantic_publication.py ../../scripts/export_publication_review.py ../../scripts/manage_semantic_rollback.py
           uv run pytest
       - name: Build gateway image without cloud credentials
@@ -129,40 +129,73 @@ jobs:
         run: gcloud auth configure-docker europe-west4-docker.pkg.dev --quiet
       - name: Push prebuilt gateway image
         run: docker push "${{ vars.ARTIFACT_REGISTRY_IMAGE }}:${{ env.RELEASE_SHA }}"
-      - name: Deploy private demo-candidate gateway
+      - name: Stage Cloud Functions gateway source
+        id: gateway_function_source
+        shell: bash
+        run: |
+          function_source="${RUNNER_TEMP}/semantic-gateway-function"
+          mkdir -p "$function_source/gateway" "$function_source/semantic/artifacts"
+          cp services/semantic-gateway/src/ontology_appliance_gateway/cloud_function.py \
+            "$function_source/main.py"
+          cp services/semantic-gateway/pyproject.toml "$function_source/gateway/pyproject.toml"
+          cp -R services/semantic-gateway/src "$function_source/gateway/src"
+          cp -R semantic/artifacts/. "$function_source/semantic/artifacts/"
+          uv export \
+            --project services/semantic-gateway \
+            --frozen \
+            --no-dev \
+            --extra firebase \
+            --extra cloud-function \
+            --no-emit-project \
+            --no-hashes \
+            --quiet \
+            --output-file "$function_source/requirements.txt"
+          printf '\n./gateway\n' >> "$function_source/requirements.txt"
+          echo "path=$function_source" >> "$GITHUB_OUTPUT"
+      - name: Deploy private demo-candidate gateway function
         if: env.SEMANTIC_MODE == 'candidate'
         run: >-
-          gcloud run deploy oa-dev-semantic-gateway
-          --image "${{ vars.ARTIFACT_REGISTRY_IMAGE }}:${{ env.RELEASE_SHA }}"
+          gcloud functions deploy semanticGatewayHttp
           --project "${{ vars.GCP_PROJECT_ID }}"
           --region europe-west4
+          --gen2
+          --runtime python312
+          --source "${{ steps.gateway_function_source.outputs.path }}"
+          --entry-point semantic_gateway
+          --trigger-http
           --no-allow-unauthenticated
-          --ingress all
-          --min 0
-          --max 3
+          --ingress-settings all
+          --min-instances 0
+          --max-instances 3
           --cpu 1
           --memory 512Mi
           --concurrency 8
           --timeout 30
-          --service-account "${{ vars.GATEWAY_SERVICE_ACCOUNT }}"
-          --set-env-vars "GOOGLE_CLOUD_PROJECT=${{ vars.GCP_PROJECT_ID }},OA_ENV=production,OA_AUTH_MODE=firebase-session,OA_TENANT_ID=demo-bank,OA_ALLOW_DEMO_CANDIDATE=true,OA_SEMANTIC_TIMEOUT_SECONDS=5,OA_MAX_SEMANTIC_CONCURRENCY=2,VERIFIER_PROVIDER=mock,OPENAI_VERIFIER_MODE=mock,GENERATOR_PROVIDER=mock"
-      - name: Deploy private published gateway
+          --run-service-account "${{ vars.GATEWAY_SERVICE_ACCOUNT }}"
+          --update-labels "release-sha=${{ env.RELEASE_SHA }}"
+          --set-env-vars "GOOGLE_CLOUD_PROJECT=${{ vars.GCP_PROJECT_ID }},OA_ENV=production,OA_ARTIFACT_DIR=/workspace/semantic/artifacts,OA_LAST_VALID_PATH=/tmp/ontology-appliance/last-valid.trig,OA_AUTH_MODE=hybrid,OA_SERVICE_AUDIENCE=https://europe-west4-${{ vars.GCP_PROJECT_ID }}.cloudfunctions.net/semanticGatewayHttp,OA_TRUSTED_SERVICE_ACCOUNTS=${{ vars.FUNCTIONS_SERVICE_ACCOUNT }},OA_TENANT_ID=demo-bank,OA_ALLOW_DEMO_CANDIDATE=true,OA_SEMANTIC_TIMEOUT_SECONDS=5,OA_MAX_SEMANTIC_CONCURRENCY=2,VERIFIER_PROVIDER=mock,OPENAI_VERIFIER_MODE=mock,GENERATOR_PROVIDER=mock"
+      - name: Deploy private published gateway function
         if: env.SEMANTIC_MODE == 'published'
         run: >-
-          gcloud run deploy oa-dev-semantic-gateway
-          --image "${{ vars.ARTIFACT_REGISTRY_IMAGE }}:${{ env.RELEASE_SHA }}"
+          gcloud functions deploy semanticGatewayHttp
           --project "${{ vars.GCP_PROJECT_ID }}"
           --region europe-west4
+          --gen2
+          --runtime python312
+          --source "${{ steps.gateway_function_source.outputs.path }}"
+          --entry-point semantic_gateway
+          --trigger-http
           --no-allow-unauthenticated
-          --ingress all
-          --min 0
-          --max 3
+          --ingress-settings all
+          --min-instances 0
+          --max-instances 3
           --cpu 1
           --memory 512Mi
           --concurrency 8
           --timeout 30
-          --service-account "${{ vars.GATEWAY_SERVICE_ACCOUNT }}"
-          --set-env-vars "GOOGLE_CLOUD_PROJECT=${{ vars.GCP_PROJECT_ID }},ONTOLOGY_ARTIFACT_BUCKET=${{ vars.ARTIFACT_BUCKET }},ONTOLOGY_ARTIFACT_POINTER=tenants/demo-bank/ontology/active.json,OA_ACTIVE_POINTER_GENERATION=${{ env.ACTIVE_POINTER_GENERATION }},OA_ENV=production,OA_AUTH_MODE=firebase-session,OA_TENANT_ID=demo-bank,OA_ALLOW_DEMO_CANDIDATE=false,OA_SEMANTIC_TIMEOUT_SECONDS=5,OA_MAX_SEMANTIC_CONCURRENCY=2,VERIFIER_PROVIDER=mock,OPENAI_VERIFIER_MODE=mock,GENERATOR_PROVIDER=mock"
+          --run-service-account "${{ vars.GATEWAY_SERVICE_ACCOUNT }}"
+          --update-labels "release-sha=${{ env.RELEASE_SHA }}"
+          --set-env-vars "GOOGLE_CLOUD_PROJECT=${{ vars.GCP_PROJECT_ID }},ONTOLOGY_ARTIFACT_BUCKET=${{ vars.ARTIFACT_BUCKET }},ONTOLOGY_ARTIFACT_POINTER=tenants/demo-bank/ontology/active.json,OA_ACTIVE_POINTER_GENERATION=${{ env.ACTIVE_POINTER_GENERATION }},OA_ENV=production,OA_ARTIFACT_DIR=/workspace/semantic/artifacts,OA_LAST_VALID_PATH=/tmp/ontology-appliance/last-valid.trig,OA_AUTH_MODE=hybrid,OA_SERVICE_AUDIENCE=https://europe-west4-${{ vars.GCP_PROJECT_ID }}.cloudfunctions.net/semanticGatewayHttp,OA_TRUSTED_SERVICE_ACCOUNTS=${{ vars.FUNCTIONS_SERVICE_ACCOUNT }},OA_TENANT_ID=demo-bank,OA_ALLOW_DEMO_CANDIDATE=false,OA_SEMANTIC_TIMEOUT_SECONDS=5,OA_MAX_SEMANTIC_CONCURRENCY=2,VERIFIER_PROVIDER=mock,OPENAI_VERIFIER_MODE=mock,GENERATOR_PROVIDER=mock"
       - name: Restrict gateway invocation to approved runtimes
         shell: bash
         run: |
@@ -175,28 +208,22 @@ jobs:
             "  - serviceAccount:${{ vars.GCP_DEPLOY_SERVICE_ACCOUNT }}" \
             "  - serviceAccount:${{ vars.FUNCTIONS_SERVICE_ACCOUNT }}" \
             'version: 1' > "$policy_file"
-          gcloud run services set-iam-policy oa-dev-semantic-gateway "$policy_file" \
+          gcloud run services set-iam-policy semanticgatewayhttp "$policy_file" \
             --project "${{ vars.GCP_PROJECT_ID }}" \
             --region europe-west4
       - name: Publish gateway URL for App Hosting
         shell: bash
         run: |
-          gateway_url="$(gcloud run services describe oa-dev-semantic-gateway \
+          gateway_url="$(gcloud functions describe semanticGatewayHttp \
             --project "${{ vars.GCP_PROJECT_ID }}" \
             --region europe-west4 \
-            --format='value(status.url)')"
+            --v2 \
+            --format='value(url)')"
           test -n "$gateway_url"
           echo "GATEWAY_URL=$gateway_url" >> "$GITHUB_ENV"
           printf '%s' "$gateway_url" | gcloud secrets versions add oa-dev-semantic-gateway-url \
             --project "${{ vars.GCP_PROJECT_ID }}" \
             --data-file=-
-          gcloud run services update oa-dev-semantic-gateway \
-            --project "${{ vars.GCP_PROJECT_ID }}" \
-            --region europe-west4 \
-            --min 0 \
-            --max 3 \
-            --concurrency 8 \
-            --update-env-vars "OA_AUTH_MODE=hybrid,OA_SERVICE_AUDIENCE=${gateway_url},OA_TRUSTED_SERVICE_ACCOUNTS=${{ vars.FUNCTIONS_SERVICE_ACCOUNT }}"
       - name: Configure Firebase deployment targets
         if: env.DEPLOYMENT_SCOPE != 'bootstrap'
         shell: bash

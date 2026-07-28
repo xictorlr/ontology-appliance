@@ -34,7 +34,7 @@ Browser
   │ Firebase Auth → HTTP-only session
   ▼
 Next.js on Firebase App Hosting (BFF)
-  ├─ private OIDC call → FastAPI Semantic Gateway on Cloud Run
+  ├─ private OIDC call → FastAPI Semantic Gateway on Cloud Functions v2
   └─ bounded source upload → versioned Firebase Storage object
                             └─ Functions v2 → SHA-256 profile → immutable snapshot
 
@@ -45,11 +45,11 @@ Cloud data plane
   └─ bounded RDF/SHACL/OWL-RL execution plus typed model adapters
 ```
 
-Cloud Run loads a validated RDF snapshot into memory and never accepts SPARQL
-Update. Published revisions are pinned to the exact Publisher-approved Storage
-generation of `active.json`, so cold starts do not follow a later broken
-`latest` pointer. The local `/tmp` cache accelerates warm recovery but is not
-treated as durable storage.
+The Cloud Run-backed Function loads a validated RDF snapshot into memory and
+never accepts SPARQL Update. Published revisions are pinned to the exact
+Publisher-approved Storage generation of `active.json`, so cold starts do not
+follow a later broken `latest` pointer. The local `/tmp` cache accelerates warm
+recovery but is not treated as durable storage.
 
 ## Local quick start
 
@@ -59,7 +59,7 @@ Prerequisites: Node.js 22, pnpm 9, Python 3.12 with `uv`, Java 21 for Firebase e
 cp .env.example .env.local
 corepack enable
 pnpm install
-cd services/semantic-gateway && uv sync --dev --extra firebase && cd ../..
+cd services/semantic-gateway && uv sync --dev --extra firebase --extra cloud-function && cd ../..
 ```
 
 Run the gateway and web app in separate terminals:
@@ -151,9 +151,10 @@ The default target is a new Firebase/GCP project named
 An operator-created Firebase project can instead be adopted only through the
 separate exact-ID gate documented in [`infra/README.md`](./infra/README.md).
 The bootstrap owns only the project shell and Terraform state bucket; Terraform
-owns durable cloud resources, Firebase CLI owns Rules/Functions, GitHub Actions
-owns the private Cloud Run gateway, and the guarded App Hosting API scripts own
-the connected frontend control plane.
+owns durable cloud resources, Firebase CLI owns control-plane Rules/Functions,
+GitHub Actions owns the private Semantic Gateway Function v2 and its underlying
+Cloud Run invoker policy, and the guarded App Hosting API scripts own the
+connected frontend control plane.
 
 Use this cycle-free order:
 

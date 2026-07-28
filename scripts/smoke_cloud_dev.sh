@@ -23,7 +23,7 @@ esac
 
 region="${GCP_REGION:-europe-west4}"
 task_region="${GCP_TASK_REGION:-europe-west1}"
-service="${GATEWAY_SERVICE:-oa-dev-semantic-gateway}"
+service="${GATEWAY_SERVICE:-semanticGatewayHttp}"
 expected_publication_state="${EXPECTED_PUBLICATION_STATE:-CANDIDATE}"
 
 case "$expected_publication_state" in
@@ -46,19 +46,21 @@ case "$gateway_in_cloud_verified" in
   true)
     # The preceding Cloud Run Job proves health, private ingress, governed
     # publication state, and application-auth rejection from an approved
-    # runtime identity. Re-check the exact control-plane revision here so a
-    # fabricated stale success cannot release a different image.
-    gateway_service_json="$(gcloud run services describe "$service" \
+    # runtime identity. Re-check the exact Cloud Functions control-plane
+    # release here so a fabricated stale success cannot release different
+    # source.
+    gateway_service_json="$(gcloud functions describe "$service" \
       --project "$GCP_PROJECT_ID" \
       --region "$region" \
+      --v2 \
       --format=json)"
     jq -e \
       --arg release "${RELEASE_SHA:-}" \
       --arg url "${GATEWAY_URL%/}" \
-      '(.status.conditions | any(.type == "Ready" and .status == "True")) and
-       .status.url == $url and
-       (.status.traffic | any(.latestRevision == true and .percent == 100)) and
-       ($release == "" or (.spec.template.spec.containers[0].image | endswith(":" + $release)))' \
+      '.state == "ACTIVE" and
+       .url == $url and
+       .serviceConfig.allTrafficOnLatestRevision == true and
+       ($release == "" or .labels["release-sha"] == $release)' \
       <<<"$gateway_service_json" >/dev/null
     ;;
   false)
@@ -83,7 +85,7 @@ case "$gateway_in_cloud_verified" in
     [[ "$unauthenticated_status" == "401" ||
        "$unauthenticated_status" == "403" ||
        "$unauthenticated_status" == "404" ]] || {
-      echo "Expected Cloud Run IAM denial or concealed private route, got HTTP $unauthenticated_status." >&2
+      echo "Expected serverless IAM denial or concealed private route, got HTTP $unauthenticated_status." >&2
       exit 1
     }
 
@@ -107,7 +109,7 @@ esac
 
 for function_name in sourceObjectFinalized proposalCreated enqueueDailyDriftChecks; do
   gcloud functions describe "$function_name" \
-    --gen2 \
+    --v2 \
     --project "$GCP_PROJECT_ID" \
     --region "$region" \
     --format='value(state)' | grep -Fxq ACTIVE
@@ -115,7 +117,7 @@ done
 
 for function_name in processIngestionTask processVerificationTask processDriftTask; do
   gcloud functions describe "$function_name" \
-    --gen2 \
+    --v2 \
     --project "$GCP_PROJECT_ID" \
     --region "$task_region" \
     --format='value(state)' | grep -Fxq ACTIVE

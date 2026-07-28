@@ -41,19 +41,31 @@ def _required_environment(environment: Mapping[str, str], name: str) -> str:
 def _validate_gateway_url(raw_url: str) -> str:
     gateway_url = raw_url.rstrip("/")
     parsed = urlparse(gateway_url)
+    cloud_run_origin = bool(
+        parsed.hostname
+        and parsed.hostname.endswith(".run.app")
+        and not parsed.path
+    )
+    cloud_function_endpoint = bool(
+        parsed.hostname
+        and parsed.hostname.endswith(".cloudfunctions.net")
+        and parsed.path.count("/") == 1
+        and parsed.path.removeprefix("/").replace("-", "").replace("_", "").isalnum()
+    )
     if (
         parsed.scheme != "https"
         or not parsed.hostname
-        or not parsed.hostname.endswith(".run.app")
+        or not (cloud_run_origin or cloud_function_endpoint)
         or parsed.username
         or parsed.password
         or parsed.port not in (None, 443)
-        or parsed.path
         or parsed.params
         or parsed.query
         or parsed.fragment
     ):
-        raise RuntimeError("GATEWAY_URL must be an HTTPS Cloud Run service origin.")
+        raise RuntimeError(
+            "GATEWAY_URL must be an HTTPS Cloud Run origin or Cloud Functions endpoint."
+        )
     return gateway_url
 
 
