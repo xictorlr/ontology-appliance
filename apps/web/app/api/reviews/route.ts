@@ -20,7 +20,14 @@ export async function GET(request: Request) {
     return NextResponse.json({ title: "Unauthorized", status: 401 }, { status: 401 });
   }
   if (session.demo) {
-    return NextResponse.json({ mode: "demo", proposals: [], pendingCount: 100, abstainedCount: 1, receiptCount: 0 });
+    return NextResponse.json({
+      mode: "demo",
+      proposals: [],
+      pendingCount: 100,
+      abstainedCount: 1,
+      receiptCount: 0,
+      canRecordReview: false,
+    });
   }
 
   try {
@@ -93,6 +100,7 @@ export async function GET(request: Request) {
       abstainedCount: abstainedCountSnapshot.data().count,
       receiptCount: receiptCountSnapshot.data().count,
       nextCursor: hasNextPage ? visibleDocuments.at(-1)?.id ?? null : null,
+      canRecordReview: canRecordReview(session.roles),
     });
   } catch (error) {
     console.error("Review queue read failed", error instanceof Error ? error.name : "unknown-error");
