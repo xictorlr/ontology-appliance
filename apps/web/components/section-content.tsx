@@ -51,6 +51,11 @@ import {
 } from "@/lib/connector-catalog";
 import { competencyQuestions, concepts, initialProposals, traceRows, type ProposalView } from "@/lib/demo-data";
 import { industryPacks } from "@/lib/industry-catalog";
+import {
+  resolveReviewQueue,
+  type ReviewQueueMode,
+  type ReviewQueuePayload,
+} from "@/lib/review-queue-state";
 import type { SourceType } from "@/lib/source-contract";
 
 export function SectionContent({ section }: { section: string }) {
@@ -433,11 +438,12 @@ function Proposals() {
   const [proposals, setProposals] = useState(initialProposals);
   const [selectedId, setSelectedId] = useState(initialProposals[0]?.id ?? "");
   const [rationale, setRationale] = useState("");
-  const [reviewMode, setReviewMode] = useState<"loading" | "demo" | "firebase" | "unavailable">("loading");
+  const [reviewMode, setReviewMode] = useState<ReviewQueueMode>("loading");
   const [reviewMessage, setReviewMessage] = useState("");
   const [pendingCount, setPendingCount] = useState(100);
   const [abstainedCount, setAbstainedCount] = useState(1);
   const [receiptCount, setReceiptCount] = useState(0);
+  const [canRecordReview, setCanRecordReview] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const selected = proposals.find((proposal) => proposal.id === selectedId);
 
@@ -445,30 +451,22 @@ function Proposals() {
     let active = true;
     void fetch("/api/reviews", { cache: "no-store" })
       .then(async (response) => {
-        const payload = await response.json() as {
-          mode?: string;
-          proposals?: ProposalView[];
-          pendingCount?: number;
-          abstainedCount?: number;
-          receiptCount?: number;
-        };
+        const payload = await response.json() as ReviewQueuePayload;
         if (!response.ok) throw new Error("review-queue-unavailable");
         if (!active) return;
-        if (payload.mode === "firebase") {
-          const liveProposals = Array.isArray(payload.proposals) ? payload.proposals : [];
-          setProposals(liveProposals);
-          setSelectedId(liveProposals[0]?.id ?? "");
-          setPendingCount(typeof payload.pendingCount === "number" ? payload.pendingCount : 0);
-          setAbstainedCount(typeof payload.abstainedCount === "number" ? payload.abstainedCount : 0);
-          setReceiptCount(typeof payload.receiptCount === "number" ? payload.receiptCount : 0);
-          setReviewMode("firebase");
-        } else {
-          setReviewMode("demo");
-          setReviewMessage("Local demo is read-only; governed decisions require a Firebase identity.");
-        }
+        const queue = resolveReviewQueue(payload, initialProposals);
+        setProposals(queue.proposals);
+        setSelectedId(queue.selectedId);
+        setPendingCount(queue.pendingCount);
+        setAbstainedCount(queue.abstainedCount);
+        setReceiptCount(queue.receiptCount);
+        setCanRecordReview(queue.canRecordReview);
+        setReviewMode(queue.mode);
+        setReviewMessage(queue.message);
       })
       .catch(() => {
         if (!active) return;
+        setCanRecordReview(false);
         setReviewMode("unavailable");
         setReviewMessage("The governed review queue is currently unavailable.");
       });
@@ -476,8 +474,8 @@ function Proposals() {
   }, []);
 
   async function decide(id: string, decision: "APPROVED" | "REVIEW_REQUIRED" | "ABSTAINED") {
-    if (reviewMode !== "firebase") {
-      setReviewMessage("This fixture cannot create a reviewer receipt. Sign in to the deployed pilot.");
+    if (reviewMode !== "firebase" || !canRecordReview) {
+      setReviewMessage("A verified steward role is required to create a reviewer receipt.");
       return;
     }
     if (rationale.trim().length < 10) {
@@ -539,10 +537,10 @@ function Proposals() {
             return <span className={className} key={gate.name} title={gate.status}><Icon size={14} />{gate.name.replaceAll("_", " ")}</span>;
           }) : <span className="gate-skipped"><Clock3 size={14} />No gate results recorded</span>}</div></div>
           <div className="mock-warning"><ShieldAlert size={18} /><p>{selected.approvalEligible ? <><strong>Independent verification is complete.</strong> The bound risk policy permits an authorized steward to approve.</> : <><strong>Approval is unavailable.</strong> The {selected.verifierMode ?? "unknown"} verifier run does not satisfy every fail-closed approval gate.</>}</p></div>
-          <label className="review-rationale"><span>Reviewer rationale</span><textarea value={rationale} onChange={(event) => setRationale(event.target.value)} maxLength={1_000} placeholder="Explain the evidence and policy basis for this decision…" /></label>
+          <label className="review-rationale"><span>Reviewer rationale</span><textarea value={rationale} onChange={(event) => setRationale(event.target.value)} disabled={!canRecordReview || selected.status !== "Human review" || selected.reviewed} maxLength={1_000} placeholder="Explain the evidence and policy basis for this decision…" /></label>
           {selected.reviewed && <p className="review-feedback">A content-bound {selected.reviewDecision === "APPROVED" ? "approval" : selected.reviewDecision === "ABSTAINED" ? "abstention" : "review-required"} receipt already exists for this proposal.</p>}
           {reviewMessage && <p className="review-feedback" role="status">{reviewMessage}</p>}
-          <div className="review-actions"><button className="button danger" disabled={submitting || reviewMode !== "firebase" || selected.status !== "Human review" || selected.reviewed} onClick={() => void decide(selected.id, "ABSTAINED")}><X size={16} /> Record abstention</button><button className="button secondary" disabled={submitting || reviewMode !== "firebase" || selected.status !== "Human review" || selected.reviewed} onClick={() => void decide(selected.id, "REVIEW_REQUIRED")}><ShieldAlert size={16} /> Keep in review</button>{selected.approvalEligible && <button className="button primary" disabled={submitting || reviewMode !== "firebase" || selected.status !== "Human review" || selected.reviewed} onClick={() => void decide(selected.id, "APPROVED")}><Check size={16} /> Approve proposal</button>}</div>
+          <div className="review-actions"><button className="button danger" disabled={submitting || reviewMode !== "firebase" || !canRecordReview || selected.status !== "Human review" || selected.reviewed} onClick={() => void decide(selected.id, "ABSTAINED")}><X size={16} /> Record abstention</button><button className="button secondary" disabled={submitting || reviewMode !== "firebase" || !canRecordReview || selected.status !== "Human review" || selected.reviewed} onClick={() => void decide(selected.id, "REVIEW_REQUIRED")}><ShieldAlert size={16} /> Keep in review</button>{selected.approvalEligible && <button className="button primary" disabled={submitting || reviewMode !== "firebase" || !canRecordReview || selected.status !== "Human review" || selected.reviewed} onClick={() => void decide(selected.id, "APPROVED")}><Check size={16} /> Approve proposal</button>}</div>
         </aside>}
       </div>
     </>

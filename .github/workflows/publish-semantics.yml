@@ -56,7 +56,7 @@ jobs:
       - name: Fail closed unless every mapping has independent review evidence
         working-directory: services/semantic-gateway
         run: |
-          uv sync --dev --extra firebase --frozen
+          uv sync --dev --extra firebase --extra cloud-function --frozen
           uv run python ../../scripts/check_semantic_publication.py --self-test
           uv run python ../../scripts/export_publication_review.py --self-test
           uv run python ../../scripts/manage_semantic_rollback.py --self-test

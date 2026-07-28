@@ -23,6 +23,7 @@ firebase = [
   "firebase-admin>=6.8,<8",
   "google-cloud-storage>=3,<4",
 ]
+cloud-function = ["functions-framework>=3.9,<4"]
 vertex = ["google-genai>=1.30,<2"]
 test = [
   "pytest>=8.3,<9",
