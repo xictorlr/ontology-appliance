@@ -41,65 +41,69 @@ case "$expected_publication_state" in
     ;;
 esac
 
-if [[ -n "${GATEWAY_IDENTITY_TOKEN:-}" ]]; then
-  identity_token="$GATEWAY_IDENTITY_TOKEN"
-else
-  identity_token="$(gcloud auth print-identity-token --audiences="$GATEWAY_URL")"
-fi
-health=""
-# A service IAM policy update can take several seconds to reach every Cloud Run
-# frontend. Require a successful, authenticated container response rather than
-# treating the transient concealed 404 as an application failure.
-for _attempt in {1..24}; do
-  if health="$(curl --fail --silent --show-error \
-    --header "X-Serverless-Authorization: Bearer ${identity_token}" \
-    "${GATEWAY_URL%/}/healthz" 2>/dev/null)"; then
-    break
-  fi
-  health=""
-  sleep 5
-done
-[[ -n "$health" ]] || {
-  echo "Authenticated gateway health did not become reachable after IAM propagation." >&2
-  exit 1
-}
-jq -e \
-  --arg state "$expected_publication_state" \
-  --arg serving "$expected_serving_mode" \
-  --argjson published "$expected_is_published" \
-  '.status == "ok" and .publicationState == $state and
-   .servingMode == $serving and .isPublished == $published' \
-  <<<"$health" >/dev/null
-if [[ -n "${EXPECTED_ONTOLOGY_VERSION:-}" ]]; then
-  jq -e --arg version "$EXPECTED_ONTOLOGY_VERSION" \
-    '.ontologyVersion == $version' <<<"$health" >/dev/null
-fi
+gateway_in_cloud_verified="${GATEWAY_IN_CLOUD_VERIFIED:-false}"
+case "$gateway_in_cloud_verified" in
+  true)
+    # The preceding Cloud Run Job proves health, private ingress, governed
+    # publication state, and application-auth rejection from an approved
+    # runtime identity. Re-check the exact control-plane revision here so a
+    # fabricated stale success cannot release a different image.
+    gateway_service_json="$(gcloud run services describe "$service" \
+      --project "$GCP_PROJECT_ID" \
+      --region "$region" \
+      --format=json)"
+    jq -e \
+      --arg release "${RELEASE_SHA:-}" \
+      --arg url "${GATEWAY_URL%/}" \
+      '(.status.conditions | any(.type == "Ready" and .status == "True")) and
+       .status.url == $url and
+       (.status.traffic | any(.latestRevision == true and .percent == 100)) and
+       ($release == "" or (.spec.template.spec.containers[0].image | endswith(":" + $release)))' \
+      <<<"$gateway_service_json" >/dev/null
+    ;;
+  false)
+    identity_token="$(gcloud auth print-identity-token --audiences="$GATEWAY_URL")"
+    health="$(curl --fail --silent --show-error \
+      --header "X-Serverless-Authorization: Bearer ${identity_token}" \
+      "${GATEWAY_URL%/}/healthz")"
+    jq -e \
+      --arg state "$expected_publication_state" \
+      --arg serving "$expected_serving_mode" \
+      --argjson published "$expected_is_published" \
+      '.status == "ok" and .publicationState == $state and
+       .servingMode == $serving and .isPublished == $published' \
+      <<<"$health" >/dev/null
+    if [[ -n "${EXPECTED_ONTOLOGY_VERSION:-}" ]]; then
+      jq -e --arg version "$EXPECTED_ONTOLOGY_VERSION" \
+        '.ontologyVersion == $version' <<<"$health" >/dev/null
+    fi
 
-unauthenticated_status="$(curl --silent --output /dev/null --write-out '%{http_code}' \
-  "${GATEWAY_URL%/}/healthz")"
-[[ "$unauthenticated_status" == "401" ||
-   "$unauthenticated_status" == "403" ||
-   "$unauthenticated_status" == "404" ]] || {
-  echo "Expected Cloud Run IAM denial or concealed private route, got HTTP $unauthenticated_status." >&2
-  exit 1
-}
+    unauthenticated_status="$(curl --silent --output /dev/null --write-out '%{http_code}' \
+      "${GATEWAY_URL%/}/healthz")"
+    [[ "$unauthenticated_status" == "401" ||
+       "$unauthenticated_status" == "403" ||
+       "$unauthenticated_status" == "404" ]] || {
+      echo "Expected Cloud Run IAM denial or concealed private route, got HTTP $unauthenticated_status." >&2
+      exit 1
+    }
 
-application_auth_status=""
-for _attempt in {1..12}; do
-  application_auth_status="$(curl --silent --output /dev/null --write-out '%{http_code}' \
-    --request POST \
-    --header "X-Serverless-Authorization: Bearer ${identity_token}" \
-    --header 'Authorization: Bearer deliberately-invalid-firebase-session' \
-    --header 'Content-Type: application/json' \
-    --data '{"term":"Party"}' \
-    "${GATEWAY_URL%/}/v1/resolve")"
-  [[ "$application_auth_status" == "401" ]] && break
-  sleep 5
-done
-[[ "$application_auth_status" == "401" ]] || {
-  echo "Expected application authentication denial, got HTTP $application_auth_status." >&2
-  exit 1
-}
+    application_auth_status="$(curl --silent --output /dev/null --write-out '%{http_code}' \
+      --request POST \
+      --header "X-Serverless-Authorization: Bearer ${identity_token}" \
+      --header 'Authorization: Bearer deliberately-invalid-firebase-session' \
+      --header 'Content-Type: application/json' \
+      --data '{"term":"Party"}' \
+      "${GATEWAY_URL%/}/v1/resolve")"
+    [[ "$application_auth_status" == "401" ]] || {
+      echo "Expected application authentication denial, got HTTP $application_auth_status." >&2
+      exit 1
+    }
+    ;;
+  *)
+    echo "GATEWAY_IN_CLOUD_VERIFIED must be true or false." >&2
+    exit 2
+    ;;
+esac
 
 for function_name in sourceObjectFinalized proposalCreated enqueueDailyDriftChecks; do
   gcloud functions describe "$function_name" \
