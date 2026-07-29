@@ -64,8 +64,13 @@ class Settings:
         )
         return cls(
             environment=environment,
+            # The repository-relative fallback must stay lazy: the deployed
+            # function ships this package at a shallow path where
+            # _project_root() cannot exist, and OA_ARTIFACT_DIR is always set
+            # there.
             artifact_dir=Path(
-                os.getenv("OA_ARTIFACT_DIR", str(_project_root() / "semantic" / "artifacts"))
+                os.getenv("OA_ARTIFACT_DIR")
+                or str(_project_root() / "semantic" / "artifacts")
             ).resolve(),
             last_valid_path=Path(
                 os.getenv(
