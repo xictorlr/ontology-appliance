@@ -28,7 +28,12 @@ def settings(tmp_path: Path) -> Settings:
 
 
 @pytest.fixture()
-def client(settings: Settings):
+def client(settings: Settings, monkeypatch: pytest.MonkeyPatch):
+    # The verifier is selected from the process environment at app creation;
+    # pin the deterministic mock so endpoint tests stay hermetic even if
+    # another module leaked provider settings.
+    monkeypatch.setenv("VERIFIER_PROVIDER", "mock")
+    monkeypatch.delenv("OPENAI_VERIFIER_MODE", raising=False)
     application = create_app(settings)
     with TestClient(application) as test_client:
         yield test_client
