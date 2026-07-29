@@ -22,6 +22,8 @@ import {
 import { enqueueDriftForTenants, listActiveTenantIds } from "./lib/drift";
 import {
   requestIndependentVerification,
+  resolveTerm,
+  type ResolvedConceptPayload,
   verificationRequestFromProposal,
   type VerificationOutcomePayload,
 } from "./lib/gateway";
@@ -39,9 +41,11 @@ import { profileSource } from "./lib/profiling";
 import {
   buildDriftProposal,
   buildIngestionProposal,
+  buildMappingProposal,
   buildVerificationDecision,
   type DriftSource,
   immutableSnapshotConflict,
+  type MappingProposalInput,
 } from "./lib/workflows";
 import type {
   DriftTaskPayload,
@@ -73,6 +77,67 @@ function evidenceObservedAt(value: unknown): string {
   if (typeof value === "string") return assertUtcTimestamp(value);
   if (value instanceof Timestamp) return value.toDate().toISOString();
   throw new Error("Changed source profile has no reproducible observation timestamp");
+}
+
+const MAX_MAPPED_COLUMNS = 25;
+const MIN_RESOLUTION_SCORE = 0.5;
+
+/**
+ * Proposes deterministic column-to-concept mappings after the ingestion
+ * transaction committed. Fail-safe by design: resolver or write failures skip
+ * the affected column so a governed but unreachable gateway never fails an
+ * already-completed ingestion, and the deterministic proposal id makes every
+ * re-observation an ALREADY_EXISTS no-op.
+ */
+async function proposeColumnMappings(
+  input: Omit<MappingProposalInput, "columnName" | "concept">,
+): Promise<void> {
+  const gatewayUrl = semanticGatewayUrl.value().trim();
+  if (gatewayUrl === "" || input.profile.columnNames.length === 0) return;
+  let skippedColumns = 0;
+  for (const columnName of input.profile.columnNames.slice(0, MAX_MAPPED_COLUMNS)) {
+    const resolution = await resolveTerm(
+      gatewayUrl,
+      gatewayUrl,
+      input.tenantId,
+      columnName,
+      3,
+    );
+    if (resolution === null) {
+      skippedColumns += 1;
+      continue;
+    }
+    const concept = resolution.concepts
+      .filter((candidate) => candidate.score >= MIN_RESOLUTION_SCORE)
+      .reduce<ResolvedConceptPayload | null>(
+        (top, candidate) => (top === null || candidate.score > top.score ? candidate : top),
+        null,
+      );
+    // A governed abstention below the score threshold is not a failure.
+    if (concept === null) continue;
+    try {
+      const proposal = buildMappingProposal({ ...input, columnName, concept });
+      await db
+        .doc(`tenants/${input.tenantId}/proposals/${proposal.proposal_id}`)
+        .create({ ...proposal, createdAt: input.observedAt });
+    } catch (error) {
+      const code =
+        typeof error === "object" && error !== null && "code" in error
+          ? error.code
+          : undefined;
+      // ALREADY_EXISTS: the identical deterministic proposal is immutable.
+      if (code === 6 || code === "already-exists") continue;
+      skippedColumns += 1;
+    }
+  }
+  if (skippedColumns > 0) {
+    logger.warn("Skipped column mapping proposals after resolver or write failures", {
+      tenantId: input.tenantId,
+      sourceId: input.sourceId,
+      objectName: input.objectName,
+      skippedColumns,
+    });
+  }
 }
 
 setGlobalOptions({
@@ -399,6 +464,18 @@ export const processIngestionTask = onTaskDispatched<IngestionTaskPayload>(
           },
           { merge: true },
         );
+      });
+      // Column discovery runs after the committed transaction so a resolver
+      // outage can never invalidate the recorded ingestion outcome.
+      await proposeColumnMappings({
+        tenantId,
+        sourceId,
+        bucket: request.data.bucket,
+        objectName: request.data.objectName,
+        generation: request.data.generation,
+        observedAt: assertUtcTimestamp(request.data.observedAt),
+        activeOntologyVersion: ontologyBaseVersion.value(),
+        profile,
       });
     } catch (error) {
       await Promise.all([
