@@ -268,7 +268,10 @@ if [[ "${RUN_FUNCTIONS_E2E:-true}" == "true" ]]; then
        .fields.proposal_id.stringValue == $proposal and
        .fields.status.stringValue == "HUMAN_REVIEW" and
        (.fields.gate_result_ids.arrayValue.values | length) == 8 and
-       .fields.models.mapValue.fields.mode.stringValue == "disabled"' \
+       .fields.models.mapValue.fields.mode.stringValue == "mock" and
+       .fields.models.mapValue.fields.verifier.mapValue.fields.provider.stringValue
+         == "deterministic-mock" and
+       (.fields.models.mapValue.fields.independent_agreement | has("nullValue"))' \
       <<<"$run" >/dev/null
     gates="$(firestore_document "tenants/demo-bank/verificationRuns/${run_id}/gateResults?pageSize=20")"
     jq -e '

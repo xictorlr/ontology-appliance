@@ -163,6 +163,21 @@ export interface VerificationDecision {
   proposalUpdate: Record<string, unknown>;
 }
 
+export type IndependentVerdict = "SUPPORTED" | "REJECTED" | "ABSTAINED";
+
+/** Subset of the gateway verification outcome the control plane records. */
+export interface IndependentVerification {
+  modelAgreement: boolean | null;
+  policyReason: string;
+  decision: {
+    verdict: IndependentVerdict;
+    provider: string;
+    model: string;
+    promptVersion: string;
+    independentModel: boolean;
+  };
+}
+
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null && !Array.isArray(value);
 }
@@ -681,15 +696,24 @@ export function buildVerificationDecision(
   runId: string,
   evaluatedAt: string,
   value: unknown,
+  independent: IndependentVerification | null = null,
 ): VerificationDecision {
   assertUtcTimestamp(evaluatedAt);
   const proposal = isRecord(value) ? value : {};
   const frozenPayload = proposalContractPayload(proposal);
   const validation = validateProposal(proposal, tenantId, proposalId);
   const valid = validation.errors.length === 0;
+  // An independent judgment is only evidence for a contract-valid proposal;
+  // it never repairs an invalid one and never decides the terminal status.
+  const recorded = valid ? independent : null;
   const status = valid ? "HUMAN_REVIEW" : "ABSTAINED";
   const reasonCodes = valid
-    ? ["INDEPENDENT_VERIFIER_NOT_CONFIGURED", "STEWARD_REVIEW_REQUIRED"]
+    ? [
+        recorded === null
+          ? "INDEPENDENT_VERIFIER_NOT_CONFIGURED"
+          : "INDEPENDENT_VERIFIER_RECORDED",
+        "STEWARD_REVIEW_REQUIRED",
+      ]
     : ["CONTRACT_OR_EVIDENCE_INCOMPLETE", "VERIFIER_ABSTAINED"];
   const frozenProposalSha256 = canonicalSha256(frozenPayload);
   const evidence = Array.isArray(proposal.evidence) ? proposal.evidence : [];
@@ -700,6 +724,38 @@ export function buildVerificationDecision(
   const contractDetail = valid
     ? "The frozen proposal matches the required tenant-bound contract."
     : `Verification abstained because ${validation.errors.slice(0, 5).join("; ")}.`;
+  const verifierLabel =
+    recorded === null
+      ? ""
+      : `${recorded.decision.provider}/${recorded.decision.model}`;
+  const independentQuestionsStatus: GateStatus =
+    recorded === null || recorded.decision.verdict === "ABSTAINED"
+      ? "SKIPPED"
+      : recorded.decision.verdict === "SUPPORTED"
+        ? "PASSED"
+        : "FAILED";
+  const independentQuestionsDetail =
+    recorded === null
+      ? "No independent question-answering verifier is configured."
+      : `Independent verifier ${verifierLabel} returned ${recorded.decision.verdict}: "${recorded.policyReason}"`;
+  const modelConsistencyStatus: GateStatus =
+    recorded === null || !recorded.decision.independentModel
+      ? "SKIPPED"
+      : recorded.modelAgreement === true
+        ? "PASSED"
+        : recorded.modelAgreement === false
+          ? "FAILED"
+          : "SKIPPED";
+  const modelConsistencyDetail =
+    recorded === null
+      ? "No independent model result exists; agreement remains null."
+      : !recorded.decision.independentModel
+        ? `Verifier ${verifierLabel} is not an independent model, so no independent agreement signal exists.`
+        : recorded.modelAgreement === true
+          ? `Independent model ${verifierLabel} agrees with the generated proposal.`
+          : recorded.modelAgreement === false
+            ? `Independent model ${verifierLabel} disagrees with the generated proposal.`
+            : `Independent model ${verifierLabel} recorded no agreement signal.`;
   const gates = [
     gate(
       1,
@@ -736,8 +792,8 @@ export function buildVerificationDecision(
     gate(
       4,
       "INDEPENDENT_QUESTIONS",
-      "SKIPPED",
-      "No independent question-answering verifier is configured.",
+      independentQuestionsStatus,
+      independentQuestionsDetail,
       validation.evidenceIds,
       runId,
       proposalId,
@@ -746,9 +802,9 @@ export function buildVerificationDecision(
     gate(
       5,
       "MODEL_CONSISTENCY",
-      "SKIPPED",
-      "No independent model result exists; agreement remains null.",
-      [],
+      modelConsistencyStatus,
+      modelConsistencyDetail,
+      recorded === null ? [] : validation.evidenceIds,
       runId,
       proposalId,
       evaluatedAt,
@@ -819,17 +875,33 @@ export function buildVerificationDecision(
       global_consistency_valid: null,
     },
     models: {
-      mode: "disabled",
+      mode:
+        recorded === null
+          ? "disabled"
+          : recorded.decision.provider === "deterministic-mock"
+            ? "mock"
+            : "live",
       generator: isRecord(proposal.generator) ? proposal.generator : null,
-      verifier: {
-        provider: "not-configured",
-        model: "not-invoked",
-        prompt_version: "not-applicable",
-        store: false,
-        independent_model: false,
-        response_status: "abstained",
-      },
-      independent_agreement: null,
+      verifier:
+        recorded === null
+          ? {
+              provider: "not-configured",
+              model: "not-invoked",
+              prompt_version: "not-applicable",
+              store: false,
+              independent_model: false,
+              response_status: "abstained",
+            }
+          : {
+              provider: recorded.decision.provider,
+              model: recorded.decision.model,
+              prompt_version: recorded.decision.promptVersion,
+              store: false,
+              independent_model: recorded.decision.independentModel,
+              response_status:
+                recorded.decision.verdict === "ABSTAINED" ? "abstained" : "completed",
+            },
+      independent_agreement: recorded === null ? null : recorded.modelAgreement,
     },
     gate_result: { status, reason_codes: reasonCodes },
     // The run digest must commit to the complete, ordered gate evidence rather

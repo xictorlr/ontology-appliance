@@ -11,6 +11,7 @@ import {
   buildVerificationDecision,
   canonicalSha256,
   immutableSnapshotConflict,
+  type IndependentVerification,
   VERIFICATION_POLICY_VERSION,
 } from "../src/lib/workflows";
 
@@ -235,6 +236,194 @@ describe("fail-closed deterministic verification", () => {
     expect(decision.gates[0]?.details).toContain(
       "deterministic_input_hash does not match deterministic_input",
     );
+  });
+});
+
+describe("independent verification outcome recording", () => {
+  function independentOutcome(
+    overrides: Partial<IndependentVerification["decision"]> = {},
+    modelAgreement: boolean | null = null,
+    policyReason = "Support did not satisfy every automatic approval gate.",
+  ): IndependentVerification {
+    return {
+      modelAgreement,
+      policyReason,
+      decision: {
+        verdict: "SUPPORTED",
+        provider: "anthropic",
+        model: "claude-sonnet-5",
+        promptVersion: "semantic-verifier-v1",
+        independentModel: true,
+        ...overrides,
+      },
+    };
+  }
+
+  function decide(independent: IndependentVerification | null) {
+    const proposal = ingestionProposal();
+    return buildVerificationDecision(
+      "demo-bank",
+      proposal.proposal_id,
+      "verify-run-100",
+      "2026-07-22T13:52:00Z",
+      proposal,
+      independent,
+    );
+  }
+
+  it("records a supported independent judgment with model agreement", () => {
+    const decision = decide(independentOutcome({}, true));
+
+    expect(decision.status).toBe("HUMAN_REVIEW");
+    expect(decision.reasonCodes).toEqual([
+      "INDEPENDENT_VERIFIER_RECORDED",
+      "STEWARD_REVIEW_REQUIRED",
+    ]);
+    expect(decision.gates[3]).toMatchObject({
+      gate: "INDEPENDENT_QUESTIONS",
+      status: "PASSED",
+    });
+    expect(decision.gates[3]?.details).toContain("anthropic/claude-sonnet-5");
+    expect(decision.gates[3]?.details).toContain(
+      '"Support did not satisfy every automatic approval gate."',
+    );
+    expect(decision.gates[3]?.evidenceIds).toHaveLength(1);
+    expect(decision.gates[4]).toMatchObject({
+      gate: "MODEL_CONSISTENCY",
+      status: "PASSED",
+    });
+    expect(decision.run).toMatchObject({
+      models: {
+        mode: "live",
+        independent_agreement: true,
+        verifier: {
+          provider: "anthropic",
+          model: "claude-sonnet-5",
+          prompt_version: "semantic-verifier-v1",
+          store: false,
+          independent_model: true,
+          response_status: "completed",
+        },
+      },
+    });
+  });
+
+  it("records a rejection as failed gates while a steward still decides", () => {
+    const decision = decide(independentOutcome({ verdict: "REJECTED" }, false));
+
+    expect(decision.status).toBe("HUMAN_REVIEW");
+    expect(decision.gates[3]).toMatchObject({
+      gate: "INDEPENDENT_QUESTIONS",
+      status: "FAILED",
+    });
+    expect(decision.gates[4]).toMatchObject({
+      gate: "MODEL_CONSISTENCY",
+      status: "FAILED",
+    });
+    expect(decision.run).toMatchObject({
+      models: {
+        mode: "live",
+        independent_agreement: false,
+        verifier: { response_status: "completed" },
+      },
+    });
+  });
+
+  it("records a mock abstention without manufacturing agreement", () => {
+    const decision = decide(
+      independentOutcome(
+        {
+          verdict: "ABSTAINED",
+          provider: "deterministic-mock",
+          model: "fixture-verifier-v1",
+          promptVersion: "fixture-v1",
+          independentModel: false,
+        },
+        null,
+        "Verifier abstained; no approval signal exists.",
+      ),
+    );
+
+    expect(decision.status).toBe("HUMAN_REVIEW");
+    expect(decision.gates[3]).toMatchObject({
+      gate: "INDEPENDENT_QUESTIONS",
+      status: "SKIPPED",
+    });
+    expect(decision.gates[4]).toMatchObject({
+      gate: "MODEL_CONSISTENCY",
+      status: "SKIPPED",
+    });
+    expect(decision.gates[4]?.details).toContain(
+      "no independent agreement signal exists",
+    );
+    expect(decision.run).toMatchObject({
+      models: {
+        mode: "mock",
+        independent_agreement: null,
+        verifier: {
+          provider: "deterministic-mock",
+          independent_model: false,
+          response_status: "abstained",
+        },
+      },
+    });
+    expect(decision.reasonCodes).toContain("INDEPENDENT_VERIFIER_RECORDED");
+  });
+
+  it("keeps the exact disabled behavior when no outcome exists", () => {
+    const proposal = ingestionProposal();
+    const withNull = buildVerificationDecision(
+      "demo-bank",
+      proposal.proposal_id,
+      "verify-run-101",
+      "2026-07-22T13:52:00Z",
+      proposal,
+      null,
+    );
+    const withoutParameter = buildVerificationDecision(
+      "demo-bank",
+      proposal.proposal_id,
+      "verify-run-101",
+      "2026-07-22T13:52:00Z",
+      proposal,
+    );
+
+    expect(withNull).toEqual(withoutParameter);
+    expect(withNull.run).toMatchObject({
+      models: { mode: "disabled", independent_agreement: null },
+    });
+    expect(withNull.reasonCodes).toEqual([
+      "INDEPENDENT_VERIFIER_NOT_CONFIGURED",
+      "STEWARD_REVIEW_REQUIRED",
+    ]);
+  });
+
+  it("never lets an independent judgment repair an invalid proposal", () => {
+    const proposal = ingestionProposal();
+    proposal.evidence = [];
+    const decision = buildVerificationDecision(
+      "demo-bank",
+      proposal.proposal_id,
+      "verify-run-102",
+      "2026-07-22T13:52:00Z",
+      proposal,
+      independentOutcome({}, true),
+    );
+
+    expect(decision.status).toBe("ABSTAINED");
+    expect(decision.reasonCodes).toEqual([
+      "CONTRACT_OR_EVIDENCE_INCOMPLETE",
+      "VERIFIER_ABSTAINED",
+    ]);
+    expect(decision.gates[3]).toMatchObject({
+      gate: "INDEPENDENT_QUESTIONS",
+      status: "SKIPPED",
+    });
+    expect(decision.gates[4]).toMatchObject({
+      gate: "MODEL_CONSISTENCY",
+      status: "SKIPPED",
+    });
+    expect(decision.run).toMatchObject({ models: { mode: "disabled" } });
   });
 });
 

@@ -14,11 +14,17 @@ import {
   TASK_REGION,
   functionsServiceAccount,
   ontologyBaseVersion,
+  semanticGatewayUrl,
   sourceBucket,
   taskRateLimits,
   taskRetryConfig,
 } from "./config";
 import { enqueueDriftForTenants, listActiveTenantIds } from "./lib/drift";
+import {
+  requestIndependentVerification,
+  verificationRequestFromProposal,
+  type VerificationOutcomePayload,
+} from "./lib/gateway";
 import { claimExecution, failExecution } from "./lib/idempotency";
 import {
   assertSafeSegment,
@@ -426,6 +432,28 @@ export const processVerificationTask = onTaskDispatched<VerificationTaskPayload>
       `tenants/${tenantId}/taskExecutions/${executionId}`,
     );
     try {
+      // The gateway call happens outside the transaction so retries of the
+      // atomic write never repeat a network side effect. The outcome is only
+      // evidence; the transaction still freezes and validates the proposal.
+      let independent: VerificationOutcomePayload | null = null;
+      const gatewayUrl = semanticGatewayUrl.value().trim();
+      if (gatewayUrl !== "") {
+        const pending = (await proposalRef.get()).data();
+        if (pending?.status === "PENDING_VERIFICATION") {
+          const verificationRequest = verificationRequestFromProposal(
+            proposalId,
+            pending,
+          );
+          if (verificationRequest !== null) {
+            independent = await requestIndependentVerification(
+              gatewayUrl,
+              gatewayUrl,
+              tenantId,
+              verificationRequest,
+            );
+          }
+        }
+      }
       await db.runTransaction(async (transaction) => {
         const [proposalSnapshot, priorRun] = await Promise.all([
           transaction.get(proposalRef),
@@ -446,6 +474,7 @@ export const processVerificationTask = onTaskDispatched<VerificationTaskPayload>
           executionId,
           assertUtcTimestamp(request.data.requestedAt),
           proposal,
+          independent,
         );
         if (priorRun.exists) {
           throw new Error("Verification refuses to overwrite an existing immutable run");
