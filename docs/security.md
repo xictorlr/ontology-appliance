@@ -23,5 +23,5 @@
 - Evidence excerpts are sensitivity-labeled and permission-filtered.
 - High-risk proposals require a steward even when all automated gates pass.
 - Demo identities cannot persist review decisions; auditors and administrators can read the queue, but only an explicitly assigned steward can record a decision. Approval is intentionally unavailable while independent verification remains in mock mode.
-- Publication produces an immutable, hash-linked Publisher receipt and a generation-guarded active pointer. Operational events begin flowing to Cloud Logging after deployment; the local trace table is explicitly synthetic and is not an operational audit ledger.
+- Publication produces an immutable, hash-linked Publisher receipt and a generation-guarded active pointer. Operational events begin flowing to Cloud Logging after deployment. The console dashboard and trace table read bounded, tenant-scoped aggregates and the latest verification runs through the session-authenticated BFF metrics endpoint; when no governed Firebase session or recorded runs exist they fall back to fixture rows that are explicitly labeled as synthetic, and neither view is an operational audit ledger.
 - Production can enable locked log retention after the irreversible retention decision is separately approved.
