@@ -500,6 +500,24 @@ resource "google_project_iam_member" "functions_build_run_invoker" {
   }
 }
 
+resource "google_project_iam_member" "functions_runtime_run_invoker" {
+  count = var.enabled ? 1 : 0
+
+  project = google_project.this[0].project_id
+  role    = "roles/run.invoker"
+  member  = "serviceAccount:${google_service_account.runtime["functions"].email}"
+
+  # Eventarc triggers and Cloud Tasks queues authenticate their deliveries to
+  # the generated Functions services as the Functions runtime identity, so it
+  # needs invoker on those services. The Semantic Gateway stays excluded here;
+  # its own service-level policy grants this identity access explicitly.
+  condition {
+    title       = "exclude_semantic_gateway"
+    description = "Functions runtime identity cannot invoke the private Semantic Gateway."
+    expression  = "!request.host.startsWith('oa-dev-semantic-gateway-')"
+  }
+}
+
 resource "google_service_account_iam_member" "ci_functions_build_act_as" {
   count = var.enabled ? 1 : 0
 
