@@ -134,11 +134,17 @@ jobs:
         shell: bash
         run: |
           function_source="${RUNNER_TEMP}/semantic-gateway-function"
-          mkdir -p "$function_source/gateway" "$function_source/semantic/artifacts"
+          mkdir -p "$function_source/semantic/artifacts"
           cp services/semantic-gateway/src/ontology_appliance_gateway/cloud_function.py \
             "$function_source/main.py"
-          cp services/semantic-gateway/pyproject.toml "$function_source/gateway/pyproject.toml"
-          cp -R services/semantic-gateway/src "$function_source/gateway/src"
+          # Ship the gateway package as plain source next to main.py instead of
+          # a pip-installed local package: the buildpack pip layer is cached on
+          # the requirements.txt content, so an unchanged dependency set would
+          # silently reuse a stale wheel of the application code across
+          # releases. Source files always deploy fresh; only third-party
+          # dependencies stay cacheable.
+          cp -R services/semantic-gateway/src/ontology_appliance_gateway \
+            "$function_source/ontology_appliance_gateway"
           cp -R semantic/artifacts/. "$function_source/semantic/artifacts/"
           uv export \
             --project services/semantic-gateway \
@@ -150,7 +156,6 @@ jobs:
             --no-hashes \
             --quiet \
             --output-file "$function_source/requirements.txt"
-          printf '\n./gateway\n' >> "$function_source/requirements.txt"
           echo "path=$function_source" >> "$GITHUB_OUTPUT"
       - name: Deploy private demo-candidate gateway function
         if: env.SEMANTIC_MODE == 'candidate'
