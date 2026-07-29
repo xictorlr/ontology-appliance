@@ -37,6 +37,15 @@ from .models import (
     ValidationResult,
 )
 from .semantic import SemanticEngine
+from .verification import (
+    ProviderDisabledError,
+    ProviderProtocolError,
+    SemanticProposal,
+    VerificationOutcome,
+    VerificationPolicy,
+    VerificationVerdict,
+    verifier_from_env,
+)
 
 LOGGER = logging.getLogger("ontology_appliance.semantic_gateway")
 TRACE_PATTERN = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._-]{7,127}$")
@@ -79,6 +88,8 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     store = ArtifactStore(runtime_settings)
     engine = SemanticEngine(runtime_settings)
     get_principal = principal_dependency(runtime_settings)
+    verifier = verifier_from_env()
+    verification_policy = VerificationPolicy()
 
     @asynccontextmanager
     async def lifespan(application: FastAPI) -> AsyncIterator[None]:
@@ -320,6 +331,52 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         result = engine.validate(snapshot(), body)
         status = ResponseStatus.OK if result.conforms else ResponseStatus.PARTIAL
         return envelope(request, principal, result, status=status, locator="shacl-report")
+
+    @application.post(
+        "/v1/verify",
+        response_model=ResponseEnvelope[VerificationOutcome],
+        operation_id="verifyIndependently",
+        responses=DEFAULT_PROBLEM_RESPONSES,
+        tags=["verification"],
+        summary="Run the independent verifier and evaluate the approval policy",
+    )
+    def verify(
+        body: SemanticProposal,
+        request: Request,
+        principal: Principal = Depends(get_principal),
+    ) -> ResponseEnvelope[VerificationOutcome]:
+        require_roles(principal, "service", "admin")
+        try:
+            decision = verifier.verify(body)
+        except ProviderDisabledError as exc:
+            raise ApiProblem(
+                503,
+                "Independent verifier disabled",
+                "The configured verifier provider is not enabled for this deployment.",
+                code="verifier-disabled",
+            ) from exc
+        except ProviderProtocolError as exc:
+            raise ApiProblem(
+                502,
+                "Independent verifier protocol error",
+                "The verifier provider returned a response that violates the contract.",
+                code="verifier-protocol",
+            ) from exc
+        outcome = verification_policy.evaluate(body, decision)
+        abstained = outcome.decision.verdict == VerificationVerdict.ABSTAINED
+        warnings = (
+            ["The verifier recorded no independent judgment; policy gates remain authoritative."]
+            if abstained
+            else None
+        )
+        return envelope(
+            request,
+            principal,
+            outcome,
+            status=ResponseStatus.ABSTAINED if abstained else ResponseStatus.OK,
+            locator=f"proposal:{body.proposal_id}",
+            warnings=warnings,
+        )
 
     @application.post(
         "/v1/sparql",
