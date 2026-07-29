@@ -35,6 +35,7 @@ import {
   buildIngestionProposal,
   buildVerificationDecision,
   type DriftSource,
+  immutableSnapshotConflict,
 } from "./lib/workflows";
 import type {
   DriftTaskPayload,
@@ -299,9 +300,10 @@ export const processIngestionTask = onTaskDispatched<IngestionTaskPayload>(
         const priorProfile = priorProfileSnapshot.data();
         if (
           priorSnapshot.exists &&
-          (priorSnapshot.data()?.sha256 !== profile.sha256 ||
-            priorSnapshot.data()?.snapshotId !== snapshotId ||
-            priorSnapshot.data()?.objectGeneration !== request.data.generation)
+          immutableSnapshotConflict(priorSnapshot.data(), {
+            sha256: profile.sha256,
+            snapshotId,
+          })
         ) {
           throw new Error("Immutable source snapshot conflicts with this task");
         }
