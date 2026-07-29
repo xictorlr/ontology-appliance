@@ -293,8 +293,11 @@ if [[ "${RUN_FUNCTIONS_E2E:-true}" == "true" ]]; then
   ingestion_proposal="$(wait_for_terminal_proposal "$changed_locator" assertion)"
   verify_terminal_run "$ingestion_proposal"
 
+  # Task-dispatched functions live in TASK_REGION (functions/src/config.ts);
+  # Cloud Tasks does not serve europe-west4, so the queue region differs from
+  # the primary deployment region.
   drift_execution_id="$(node functions/scripts/enqueue-drift-smoke.cjs \
-    "$GCP_PROJECT_ID" "$region" demo-bank "$scheduled_day" "$smoke_id")"
+    "$GCP_PROJECT_ID" "$task_region" demo-bank "$scheduled_day" "$smoke_id")"
   [[ "$drift_execution_id" =~ ^[0-9a-f]{64}$ ]]
   drift_check=""
   for _attempt in {1..36}; do
