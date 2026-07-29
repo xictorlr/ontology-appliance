@@ -237,7 +237,8 @@ jobs:
             "SOURCE_BUCKET=${{ vars.INPUT_BUCKET }}" \
             "FUNCTIONS_SERVICE_ACCOUNT=${{ vars.FUNCTIONS_SERVICE_ACCOUNT }}" \
             'ONTOLOGY_BASE_VERSION=2026.07.1-candidate' \
-            'DEFAULT_TENANT_ID=demo-bank' > "$env_file"
+            'DEFAULT_TENANT_ID=demo-bank' \
+            "SEMANTIC_GATEWAY_URL=${GATEWAY_URL}" > "$env_file"
       - name: Deploy Functions and Firebase policy
         if: env.DEPLOYMENT_SCOPE != 'bootstrap'
         env:

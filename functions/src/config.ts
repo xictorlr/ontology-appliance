@@ -28,6 +28,12 @@ export const defaultTenantId = defineString("DEFAULT_TENANT_ID", {
   default: "demo-bank",
 });
 
+export const semanticGatewayUrl = defineString("SEMANTIC_GATEWAY_URL", {
+  description:
+    "Private semantic gateway base URL and OIDC audience; empty disables independent verification.",
+  default: "",
+});
+
 export const taskRetryConfig = {
   maxAttempts: 5,
   minBackoffSeconds: 30,
