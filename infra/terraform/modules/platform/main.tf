@@ -526,6 +526,17 @@ resource "google_service_account_iam_member" "ci_functions_build_act_as" {
   member             = "serviceAccount:${google_service_account.runtime["ci"].email}"
 }
 
+# The deploy smoke enqueues a drift task that must authenticate exactly like a
+# production task: with the Functions runtime identity. Creating that task
+# requires ActAs on the identity carried in its OIDC token.
+resource "google_service_account_iam_member" "ci_functions_runtime_act_as" {
+  count = var.enabled ? 1 : 0
+
+  service_account_id = google_service_account.runtime["functions"].name
+  role               = "roles/iam.serviceAccountUser"
+  member             = "serviceAccount:${google_service_account.runtime["ci"].email}"
+}
+
 # Firebase CLI validates the legacy App Engine default identity before a
 # Functions v2 deploy even when every function declares the dedicated runtime
 # service account. Limit ActAs to the CI deployer on this one service account;

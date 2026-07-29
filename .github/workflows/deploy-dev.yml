@@ -289,6 +289,7 @@ jobs:
           GCP_PROJECT_ID: ${{ vars.GCP_PROJECT_ID }}
           GATEWAY_URL: ${{ env.GATEWAY_URL }}
           INPUT_BUCKET: ${{ vars.INPUT_BUCKET }}
+          FUNCTIONS_SERVICE_ACCOUNT: ${{ vars.FUNCTIONS_SERVICE_ACCOUNT }}
           REQUIRE_APP_HOSTING: "false"
           RUN_FUNCTIONS_E2E: "true"
         run: bash scripts/smoke_cloud_dev.sh
@@ -299,6 +300,7 @@ jobs:
           GATEWAY_URL: ${{ env.GATEWAY_URL }}
           APP_HOSTING_URL: ${{ vars.APP_HOSTING_URL }}
           INPUT_BUCKET: ${{ vars.INPUT_BUCKET }}
+          FUNCTIONS_SERVICE_ACCOUNT: ${{ vars.FUNCTIONS_SERVICE_ACCOUNT }}
           REQUIRE_APP_HOSTING: "true"
           RUN_FUNCTIONS_E2E: "true"
         run: bash scripts/smoke_cloud_dev.sh

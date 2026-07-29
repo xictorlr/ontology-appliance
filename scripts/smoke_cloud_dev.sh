@@ -173,6 +173,7 @@ jq -e '
 ' >/dev/null <<<"$tenant_audit"
 
 if [[ "${RUN_FUNCTIONS_E2E:-true}" == "true" ]]; then
+  : "${FUNCTIONS_SERVICE_ACCOUNT:?Set FUNCTIONS_SERVICE_ACCOUNT for the functions E2E stage.}"
   smoke_day="$(date -u +%Y%m%d)"
   scheduled_day="$(date -u +%Y-%m-%d)"
   smoke_id="${GITHUB_RUN_ID:-manual}-${GITHUB_RUN_ATTEMPT:-0}-$(date -u +%s)"
@@ -297,7 +298,8 @@ if [[ "${RUN_FUNCTIONS_E2E:-true}" == "true" ]]; then
   # Cloud Tasks does not serve europe-west4, so the queue region differs from
   # the primary deployment region.
   drift_execution_id="$(node functions/scripts/enqueue-drift-smoke.cjs \
-    "$GCP_PROJECT_ID" "$task_region" demo-bank "$scheduled_day" "$smoke_id")"
+    "$GCP_PROJECT_ID" "$task_region" demo-bank "$scheduled_day" "$smoke_id" \
+    "$FUNCTIONS_SERVICE_ACCOUNT")"
   [[ "$drift_execution_id" =~ ^[0-9a-f]{64}$ ]]
   drift_check=""
   for _attempt in {1..36}; do
