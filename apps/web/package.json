@@ -20,7 +20,7 @@
     "firebase-admin": "14.2.0",
     "google-auth-library": "10.9.0",
     "lucide-react": "1.25.0",
-    "next": "15.5.21",
+    "next": "16.2.12",
     "react": "19.2.8",
     "react-dom": "19.2.8",
     "zod": "4.4.3"
