@@ -10,6 +10,7 @@ import {
   buildIngestionProposal,
   buildVerificationDecision,
   canonicalSha256,
+  immutableSnapshotConflict,
   VERIFICATION_POLICY_VERSION,
 } from "../src/lib/workflows";
 
@@ -81,6 +82,51 @@ describe("durable ingestion discovery", () => {
       profile,
     });
     expect(changed.proposal_id).not.toBe(first.proposal_id);
+  });
+});
+
+describe("immutable snapshot re-observation", () => {
+  const stored = {
+    sha256: profile.sha256,
+    snapshotId: `crm@sha256:${profile.sha256}`,
+    objectGeneration: "1721640000000000",
+    objectName: "tenants/demo-bank/uploads/crm/parties.csv",
+  };
+
+  it("accepts byte-identical content observed again under a new generation", () => {
+    expect(
+      immutableSnapshotConflict(stored, {
+        sha256: profile.sha256,
+        snapshotId: `crm@sha256:${profile.sha256}`,
+      }),
+    ).toBe(false);
+  });
+
+  it("rejects a stored snapshot whose content hash no longer matches its key", () => {
+    expect(
+      immutableSnapshotConflict(
+        { ...stored, sha256: "b".repeat(64) },
+        { sha256: profile.sha256, snapshotId: `crm@sha256:${profile.sha256}` },
+      ),
+    ).toBe(true);
+  });
+
+  it("rejects a stored snapshot bound to a different snapshot identity", () => {
+    expect(
+      immutableSnapshotConflict(stored, {
+        sha256: profile.sha256,
+        snapshotId: `billing@sha256:${profile.sha256}`,
+      }),
+    ).toBe(true);
+  });
+
+  it("treats an unreadable stored snapshot as a conflict", () => {
+    expect(
+      immutableSnapshotConflict(undefined, {
+        sha256: profile.sha256,
+        snapshotId: `crm@sha256:${profile.sha256}`,
+      }),
+    ).toBe(true);
   });
 });
 
