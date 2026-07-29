@@ -30,7 +30,11 @@ def test_env_file_loader_accepts_only_allowlisted_settings(tmp_path, monkeypatch
     )
     env_file.chmod(0o600)
     for name in ("VERIFIER_PROVIDER", "ANTHROPIC_API_KEY", "UNRELATED_SECRET"):
-        monkeypatch.delenv(name, raising=False)
+        # delenv on a missing name records nothing to restore, so the loader's
+        # direct os.environ writes would leak into later tests; setenv first
+        # guarantees monkeypatch removes the name again at teardown.
+        monkeypatch.setenv(name, "teardown-guard")
+        monkeypatch.delenv(name)
 
     smoke._load_env_file(env_file)
 

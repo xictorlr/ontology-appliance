@@ -129,6 +129,33 @@ paths:
         "401": { $ref: "#/components/responses/Unauthorized" }
         "403": { $ref: "#/components/responses/Forbidden" }
         default: { $ref: "#/components/responses/DefaultProblem" }
+  /v1/verify:
+    post:
+      operationId: verifyIndependently
+      summary: Run the independent verifier and evaluate the approval policy
+      description: >-
+        Machine-to-machine verification step. The configured verifier judges the
+        proposal and the policy converts that judgment into a routing outcome;
+        model output is evidence, never the production publisher. The baseline
+        deployment runs the deterministic mock verifier, which always abstains.
+      x-required-roles: [service, admin]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/VerifyRequest"
+      responses:
+        "200":
+          description: Verification outcome with the policy routing decision
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/VerifyResponse"
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+        "422": { $ref: "#/components/responses/InvalidRequest" }
+        default: { $ref: "#/components/responses/DefaultProblem" }
   /v1/sparql:
     post:
       operationId: readOnlySparql
@@ -439,6 +466,72 @@ components:
           items: { type: object, additionalProperties: true }
         boolean: { type: [boolean, "null"] }
         truncated: { type: boolean }
+    VerifyRequest:
+      type: object
+      additionalProperties: false
+      required: [proposalId, statement, evidenceIds, risk, modelDependent, generatorProvider, generatorModel, promptVersion]
+      properties:
+        proposalId: { type: string, minLength: 1, maxLength: 256 }
+        statement: { type: string, minLength: 1, maxLength: 10000 }
+        evidenceIds:
+          type: array
+          minItems: 1
+          maxItems: 100
+          items: { type: string }
+        counterevidenceIds:
+          type: array
+          maxItems: 100
+          items: { type: string }
+        risk: { enum: [LOW, MEDIUM, HIGH] }
+        modelDependent: { type: boolean }
+        generatorProvider: { type: string, minLength: 1, maxLength: 100 }
+        generatorModel: { type: string, minLength: 1, maxLength: 200 }
+        promptVersion: { type: string, minLength: 1, maxLength: 100 }
+        generatorRationale: { type: [string, "null"], maxLength: 10000, default: null }
+        generatorResponseId: { type: [string, "null"], maxLength: 500, default: null }
+        generatorLatencyMs: { type: integer, minimum: 0, default: 0 }
+        generatorInputTokens: { type: [integer, "null"], minimum: 0, default: null }
+        generatorOutputTokens: { type: [integer, "null"], minimum: 0, default: null }
+        generatorParameters: { type: object }
+        deterministicInputHash: { type: [string, "null"], pattern: "^[0-9a-f]{64}$", default: null }
+    VerificationDecision:
+      type: object
+      additionalProperties: false
+      required: [verdict, rationale, confidence, evidenceIds, provider, model, promptVersion, independentModel]
+      properties:
+        verdict: { enum: [SUPPORTED, REJECTED, ABSTAINED] }
+        rationale: { type: string, minLength: 1, maxLength: 10000 }
+        confidence: { type: number, minimum: 0, maximum: 1 }
+        evidenceIds:
+          type: array
+          maxItems: 100
+          items: { type: string }
+        provider: { type: string }
+        model: { type: string }
+        promptVersion: { type: string }
+        independentModel: { type: boolean }
+        responseId: { type: [string, "null"] }
+        latencyMs: { type: integer, minimum: 0 }
+        inputTokens: { type: [integer, "null"], minimum: 0 }
+        outputTokens: { type: [integer, "null"], minimum: 0 }
+        refusal: { type: boolean }
+        refusalReason: { type: [string, "null"], maxLength: 10000 }
+    VerifyResponse:
+      allOf:
+        - { $ref: "#/components/schemas/ResponseEnvelope" }
+        - type: object
+          required: [data]
+          properties:
+            data:
+              type: object
+              required: [proposalId, status, modelAgreement, requiresHumanReview, policyReason, decision]
+              properties:
+                proposalId: { type: string }
+                status: { enum: [PENDING_VERIFICATION, AUTO_APPROVED, HUMAN_REVIEW, REJECTED, ABSTAINED] }
+                modelAgreement: { type: [boolean, "null"] }
+                requiresHumanReview: { type: boolean }
+                policyReason: { type: string }
+                decision: { $ref: "#/components/schemas/VerificationDecision" }
     ProblemDetails:
       type: object
       additionalProperties: true
