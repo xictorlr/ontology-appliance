@@ -20,6 +20,7 @@ import { logger } from "firebase-functions";
 
 import {
   requestIndependentVerification,
+  resolveTerm,
   type SemanticProposalRequest,
   verificationRequestFromProposal,
 } from "../src/lib/gateway";
@@ -175,6 +176,128 @@ describe("requestIndependentVerification", () => {
   });
 });
 
+describe("resolveTerm", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    vi.spyOn(logger, "warn").mockImplementation(() => undefined);
+  });
+
+  function resolveEnvelope(): { data: Record<string, unknown> } {
+    return {
+      data: {
+        term: "name",
+        concepts: [
+          {
+            iri: "urn:ontology-appliance:vocab:Name",
+            label: "Name",
+            definition: null,
+            conceptType: "http://www.w3.org/2004/02/skos/core#Concept",
+            score: 1,
+            matchedOn: "prefLabel",
+          },
+          {
+            iri: "urn:ontology-appliance:vocab:CustomerName",
+            label: "Customer Name",
+            score: 0.84,
+            matchedOn: "prefLabel",
+          },
+        ],
+      },
+    };
+  }
+
+  it("treats an empty URL as resolution disabled without minting a token", async () => {
+    await expect(resolveTerm("", GATEWAY_URL, "demo-bank", "name", 3)).resolves.toBeNull();
+    expect(getIdTokenClientMock).not.toHaveBeenCalled();
+    expect(logger.warn).not.toHaveBeenCalled();
+  });
+
+  it("posts the term with the shared gateway auth and parses the concepts", async () => {
+    requestMock.mockResolvedValueOnce({ status: 200, data: resolveEnvelope() });
+    const outcome = await resolveTerm(GATEWAY_URL, GATEWAY_URL, "demo-bank", "name", 3);
+    expect(outcome).toEqual({
+      concepts: [
+        {
+          iri: "urn:ontology-appliance:vocab:Name",
+          label: "Name",
+          score: 1,
+          matchedOn: "prefLabel",
+          conceptType: "http://www.w3.org/2004/02/skos/core#Concept",
+        },
+        {
+          iri: "urn:ontology-appliance:vocab:CustomerName",
+          label: "Customer Name",
+          score: 0.84,
+          matchedOn: "prefLabel",
+          conceptType: null,
+        },
+      ],
+    });
+    expect(getIdTokenClientMock).toHaveBeenCalledWith(GATEWAY_URL);
+    expect(requestMock).toHaveBeenCalledWith(
+      expect.objectContaining({
+        url: `${GATEWAY_URL}/v1/resolve`,
+        method: "POST",
+        data: { term: "name", limit: 3 },
+        headers: expect.objectContaining({
+          "X-Serverless-Authorization": "Bearer signed-oidc-token",
+          "x-ontology-service-auth": "google-id-token",
+          "x-ontology-tenant-id": "demo-bank",
+        }),
+      }),
+    );
+  });
+
+  it("returns an empty concept list when the gateway abstains", async () => {
+    requestMock.mockResolvedValueOnce({
+      status: 200,
+      data: { data: { term: "zzz", concepts: [] } },
+    });
+    await expect(
+      resolveTerm(GATEWAY_URL, GATEWAY_URL, "demo-bank", "zzz", 3),
+    ).resolves.toEqual({ concepts: [] });
+    expect(logger.warn).not.toHaveBeenCalled();
+  });
+
+  it("returns null on a non-OK status", async () => {
+    requestMock.mockResolvedValueOnce({ status: 503, data: {} });
+    await expect(
+      resolveTerm(GATEWAY_URL, GATEWAY_URL, "demo-bank", "name", 3),
+    ).resolves.toBeNull();
+    expect(logger.warn).toHaveBeenCalledOnce();
+  });
+
+  it("returns null when the response violates the resolve contract", async () => {
+    const outOfRange = resolveEnvelope();
+    (outOfRange.data.concepts as Array<Record<string, unknown>>)[0]!.score = 1.5;
+    requestMock.mockResolvedValueOnce({ status: 200, data: outOfRange });
+    await expect(
+      resolveTerm(GATEWAY_URL, GATEWAY_URL, "demo-bank", "name", 3),
+    ).resolves.toBeNull();
+
+    const missingIri = resolveEnvelope();
+    delete (missingIri.data.concepts as Array<Record<string, unknown>>)[0]!.iri;
+    requestMock.mockResolvedValueOnce({ status: 200, data: missingIri });
+    await expect(
+      resolveTerm(GATEWAY_URL, GATEWAY_URL, "demo-bank", "name", 3),
+    ).resolves.toBeNull();
+
+    requestMock.mockResolvedValueOnce({ status: 200, data: { data: {} } });
+    await expect(
+      resolveTerm(GATEWAY_URL, GATEWAY_URL, "demo-bank", "name", 3),
+    ).resolves.toBeNull();
+    expect(logger.warn).toHaveBeenCalledTimes(3);
+  });
+
+  it("returns null when the transport fails", async () => {
+    requestMock.mockRejectedValueOnce(new Error("connect ETIMEDOUT"));
+    await expect(
+      resolveTerm(GATEWAY_URL, GATEWAY_URL, "demo-bank", "name", 3),
+    ).resolves.toBeNull();
+    expect(logger.warn).toHaveBeenCalledOnce();
+  });
+});
+
 describe("verificationRequestFromProposal", () => {
   const profile: SourceProfile = {
     sha256: "a".repeat(64),
@@ -182,6 +305,7 @@ describe("verificationRequestFromProposal", () => {
     recordCount: 2,
     mediaType: "text/csv",
     extractorVersion: "firebase-evidence-profiler/1.0.0",
+    columnNames: ["id", "name"],
   };
 
   function proposal() {

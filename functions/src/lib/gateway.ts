@@ -148,29 +148,29 @@ function allowedGatewayOrigin(baseUrl: string): URL | null {
 }
 
 /**
- * Calls the private semantic gateway for an independent verification judgment.
+ * Shared fail-safe transport for every private semantic gateway operation.
  *
- * Fail-safe by design: an unset URL, an untrusted origin, or any transport,
- * status, or contract failure records no model result (null) so verification
- * falls back to the verifier-not-configured behavior instead of failing the
- * task. It mirrors the cloud smoke auth: one Google OIDC token minted for the
- * gateway audience travels in X-Serverless-Authorization for the Cloud Run
- * IAM layer while the same token in Authorization satisfies the gateway's
- * hybrid trusted-service principal.
+ * An unset URL, an untrusted origin, or any transport or status failure
+ * returns null instead of failing the calling task. It mirrors the cloud
+ * smoke auth: one Google OIDC token minted for the gateway audience travels
+ * in X-Serverless-Authorization for the Cloud Run IAM layer while the same
+ * token in Authorization satisfies the gateway's hybrid trusted-service
+ * principal.
  */
-export async function requestIndependentVerification(
+async function postToGateway(
   baseUrl: string,
+  path: string,
   audience: string,
   tenantId: string,
-  proposal: SemanticProposalRequest,
-): Promise<VerificationOutcomePayload | null> {
+  body: object,
+  operation: string,
+  context: Record<string, unknown>,
+): Promise<unknown | null> {
   const trimmed = baseUrl.trim();
   if (trimmed === "") return null;
   const origin = allowedGatewayOrigin(trimmed);
   if (origin === null) {
-    logger.warn("Refusing an untrusted semantic gateway URL; skipping verification", {
-      proposalId: proposal.proposalId,
-    });
+    logger.warn(`Refusing an untrusted semantic gateway URL; skipping ${operation}`, context);
     return null;
   }
   try {
@@ -178,7 +178,7 @@ export async function requestIndependentVerification(
     const client = await auth.getIdTokenClient(audience);
     const token = await client.idTokenProvider.fetchIdToken(audience);
     const response = await client.request<unknown>({
-      url: `${trimmed.replace(/\/+$/u, "")}/v1/verify`,
+      url: `${trimmed.replace(/\/+$/u, "")}${path}`,
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -186,30 +186,126 @@ export async function requestIndependentVerification(
         "x-ontology-service-auth": "google-id-token",
         "x-ontology-tenant-id": tenantId,
       },
-      data: proposal,
+      data: body,
       timeout: REQUEST_TIMEOUT_MS,
       retry: false,
     });
     if (response.status !== 200) {
-      logger.warn("Semantic gateway verification returned a non-OK status", {
-        proposalId: proposal.proposalId,
+      logger.warn(`Semantic gateway ${operation} returned a non-OK status`, {
+        ...context,
         status: response.status,
       });
       return null;
     }
-    const outcome = parseOutcome(response.data);
-    if (outcome === null) {
-      logger.warn("Semantic gateway verification response violated the contract", {
-        proposalId: proposal.proposalId,
-      });
-      return null;
-    }
-    return outcome;
+    return response.data;
   } catch (error) {
-    logger.warn("Semantic gateway verification failed; recording no model result", {
-      proposalId: proposal.proposalId,
+    logger.warn(`Semantic gateway ${operation} failed; recording no result`, {
+      ...context,
       error: error instanceof Error ? error.message.slice(0, 1_000) : "Unknown error",
     });
     return null;
   }
+}
+
+/**
+ * Calls the private semantic gateway for an independent verification judgment.
+ * Fail-safe by design: any transport, status, or contract failure records no
+ * model result (null) so verification falls back to the
+ * verifier-not-configured behavior instead of failing the task.
+ */
+export async function requestIndependentVerification(
+  baseUrl: string,
+  audience: string,
+  tenantId: string,
+  proposal: SemanticProposalRequest,
+): Promise<VerificationOutcomePayload | null> {
+  const body = await postToGateway(
+    baseUrl,
+    "/v1/verify",
+    audience,
+    tenantId,
+    proposal,
+    "verification",
+    { proposalId: proposal.proposalId },
+  );
+  if (body === null) return null;
+  const outcome = parseOutcome(body);
+  if (outcome === null) {
+    logger.warn("Semantic gateway verification response violated the contract", {
+      proposalId: proposal.proposalId,
+    });
+    return null;
+  }
+  return outcome;
+}
+
+/** Validated subset of one governed concept returned by POST /v1/resolve. */
+export interface ResolvedConceptPayload {
+  iri: string;
+  label: string;
+  score: number;
+  matchedOn: string;
+  conceptType: string | null;
+}
+
+export interface ResolveOutcomePayload {
+  concepts: ResolvedConceptPayload[];
+}
+
+function parseResolveOutcome(body: unknown): ResolveOutcomePayload | null {
+  if (!isRecord(body) || !isRecord(body.data)) return null;
+  const concepts = body.data.concepts;
+  if (!Array.isArray(concepts)) return null;
+  const parsed: ResolvedConceptPayload[] = [];
+  for (const item of concepts) {
+    if (!isRecord(item)) return null;
+    const { iri, label, score, matchedOn, conceptType } = item;
+    if (!nonEmptyString(iri) || !nonEmptyString(label) || !nonEmptyString(matchedOn)) {
+      return null;
+    }
+    if (typeof score !== "number" || !Number.isFinite(score) || score < 0 || score > 1) {
+      return null;
+    }
+    if (conceptType !== undefined && conceptType !== null && typeof conceptType !== "string") {
+      return null;
+    }
+    parsed.push({
+      iri,
+      label,
+      score,
+      matchedOn,
+      conceptType: typeof conceptType === "string" ? conceptType : null,
+    });
+  }
+  return { concepts: parsed };
+}
+
+/**
+ * Resolves one column name against the governed ontology through the private
+ * gateway. Null-on-any-failure, exactly like independent verification: the
+ * caller must skip the column rather than fail the ingestion workflow.
+ */
+export async function resolveTerm(
+  baseUrl: string,
+  audience: string,
+  tenantId: string,
+  term: string,
+  limit: number,
+): Promise<ResolveOutcomePayload | null> {
+  const body = await postToGateway(
+    baseUrl,
+    "/v1/resolve",
+    audience,
+    tenantId,
+    { term, limit },
+    "resolution",
+    { term },
+  );
+  if (body === null) return null;
+  const outcome = parseResolveOutcome(body);
+  if (outcome === null) {
+    logger.warn("Semantic gateway resolution response violated the contract", { term });
+    return null;
+  }
+  return outcome;
 }

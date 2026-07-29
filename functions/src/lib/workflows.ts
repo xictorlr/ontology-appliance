@@ -5,6 +5,7 @@ import type { SourceProfile } from "./profiling";
 
 export const DISCOVERY_ALGORITHM_VERSION = "firebase-source-profile-discovery/1.0.0";
 export const DRIFT_ALGORITHM_VERSION = "firebase-source-profile-drift/1.0.0";
+export const COLUMN_MAPPING_ALGORITHM_VERSION = "firebase-column-concept-mapping/1.0.0";
 export const VERIFICATION_POLICY_VERSION = "semantic-verification-policy-v1";
 
 const SHA256 = /^[a-f0-9]{64}$/u;
@@ -69,7 +70,7 @@ export interface ProposalDocument {
   schema_version: "1.0";
   proposal_id: string;
   tenant_id: string;
-  kind: "assertion" | "drift";
+  kind: "assertion" | "drift" | "mapping";
   risk: Risk;
   source_snapshot_ids: string[];
   active_ontology_version: string;
@@ -109,6 +110,28 @@ export interface IngestionProposalInput {
   observedAt: string;
   activeOntologyVersion: string;
   profile: SourceProfile;
+}
+
+/** Governed concept candidate returned by the gateway's lexical resolver. */
+export interface ResolvedConceptCandidate {
+  iri: string;
+  label: string;
+  score: number;
+  matchedOn: string;
+  conceptType: string | null;
+}
+
+export interface MappingProposalInput {
+  tenantId: string;
+  sourceId: string;
+  bucket: string;
+  objectName: string;
+  generation: string;
+  observedAt: string;
+  activeOntologyVersion: string;
+  profile: SourceProfile;
+  columnName: string;
+  concept: ResolvedConceptCandidate;
 }
 
 export interface DriftSource {
@@ -334,6 +357,109 @@ export function buildIngestionProposal(
     deterministic_input_hash: deterministicInputHash,
     status: "PENDING_VERIFICATION",
     reason_codes: ["IMMUTABLE_SOURCE_PROFILE_READY_FOR_VERIFICATION"],
+  };
+}
+
+export function buildMappingProposal(
+  input: MappingProposalInput,
+): ProposalDocument {
+  assertUtcTimestamp(input.observedAt);
+  if (!SHA256.test(input.profile.sha256)) throw new Error("Invalid source SHA-256");
+  if (
+    input.columnName.length === 0 ||
+    input.columnName.length > 200 ||
+    input.columnName !== input.columnName.trim()
+  ) {
+    throw new Error("Invalid column name for mapping");
+  }
+  if (input.concept.iri.length === 0 || input.concept.label.length === 0) {
+    throw new Error("Incomplete resolved concept for mapping");
+  }
+  if (
+    !Number.isFinite(input.concept.score) ||
+    input.concept.score < 0 ||
+    input.concept.score > 1
+  ) {
+    throw new Error("Invalid resolver score for mapping");
+  }
+  const snapshotId = `${input.sourceId}@sha256:${input.profile.sha256}`;
+  const locator = `gs://${input.bucket}/${input.objectName}#generation=${input.generation}`;
+  const deterministicInput: Record<string, unknown> = {
+    tenantId: input.tenantId,
+    sourceId: input.sourceId,
+    sourceSnapshotIds: [snapshotId],
+    ontologyVersion: input.activeOntologyVersion,
+    sourceObject: {
+      bucket: input.bucket,
+      name: input.objectName,
+      generation: input.generation,
+    },
+    profile: {
+      contentSha256: input.profile.sha256,
+      extractorVersion: input.profile.extractorVersion,
+    },
+    columnName: input.columnName,
+    resolvedConcept: {
+      iri: input.concept.iri,
+      label: input.concept.label,
+      score: input.concept.score,
+      matchedOn: input.concept.matchedOn,
+      conceptType: input.concept.conceptType,
+    },
+    algorithmVersion: COLUMN_MAPPING_ALGORITHM_VERSION,
+  };
+  const deterministicInputHash = canonicalSha256(deterministicInput);
+  const proposalId = `mapping-${deterministicInputHash}`;
+  const evidenceId = `evidence-${canonicalSha256({
+    snapshotId,
+    locator,
+    extractorVersion: input.profile.extractorVersion,
+    columnName: input.columnName,
+    conceptIri: input.concept.iri,
+  })}`;
+  return {
+    schema_version: "1.0",
+    proposal_id: proposalId,
+    tenant_id: input.tenantId,
+    kind: "mapping",
+    risk: "medium",
+    source_snapshot_ids: [snapshotId],
+    active_ontology_version: input.activeOntologyVersion,
+    source_locator: `${locator}#column=${input.columnName}`,
+    target_iri: input.concept.iri,
+    transformation: `column:${input.columnName} -> ${input.concept.iri}`,
+    evidence: [
+      {
+        evidence_id: evidenceId,
+        tenant_id: input.tenantId,
+        source_id: input.sourceId,
+        snapshot_id: snapshotId,
+        locator,
+        observed_at: input.observedAt,
+        extractor_version: input.profile.extractorVersion,
+        content_sha256: input.profile.sha256,
+        claim: (
+          `Header column "${input.columnName}" of this immutable metadata-only ` +
+          `profile lexically resolves to governed concept ${input.concept.iri} ` +
+          `("${input.concept.label}") via ${input.concept.matchedOn}.`
+        ).slice(0, 2_000),
+      },
+    ],
+    counterevidence: [],
+    confidence: {
+      lexical: input.concept.score,
+      structural: 0,
+      instance: 0,
+      external: 0,
+      model: 0,
+      evidence_coverage: 1,
+    },
+    generator: deterministicGenerator("column-resolver/1.0.0"),
+    algorithm_version: COLUMN_MAPPING_ALGORITHM_VERSION,
+    deterministic_input: deterministicInput,
+    deterministic_input_hash: deterministicInputHash,
+    status: "PENDING_VERIFICATION",
+    reason_codes: ["COLUMN_HEADER_RESOLVED_TO_GOVERNED_CONCEPT"],
   };
 }
 
