@@ -53,6 +53,12 @@ service cloud.firestore {
       allow read, write: if false;
     }
 
+    // Competency questions are BFF-only: the server derives tenant and role
+    // from the verified session and writes through the Admin SDK.
+    match /tenants/{tenantId}/competencyQuestions/{questionId} {
+      allow read, write: if false;
+    }
+
     match /tenants/{tenantId}/verificationRuns/{runId} {
       allow read, write: if false;
     }

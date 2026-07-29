@@ -18,7 +18,6 @@ import {
   FileCheck2,
   FileSearch,
   Fingerprint,
-  GitBranch,
   GitCommitHorizontal,
   GitPullRequestArrow,
   KeyRound,
@@ -51,6 +50,7 @@ import {
 } from "@/lib/connector-catalog";
 import { competencyQuestions, concepts, initialProposals, traceRows, type ProposalView } from "@/lib/demo-data";
 import { industryPacks } from "@/lib/industry-catalog";
+import { parseMetricsPayload, type MetricsPayload } from "@/lib/metrics-contract";
 import {
   resolveReviewQueue,
   type ReviewQueueMode,
@@ -81,35 +81,109 @@ function PageHeader({ eyebrow, title, description, actions }: { eyebrow: string;
   );
 }
 
+type MetricsMode = "loading" | "demo" | "firebase" | "unavailable";
+
+function useSemanticMetrics(): { metrics: MetricsPayload | null; mode: MetricsMode; reload: () => void } {
+  const [metrics, setMetrics] = useState<MetricsPayload | null>(null);
+  const [mode, setMode] = useState<MetricsMode>("loading");
+  const load = useCallback(async () => {
+    setMode("loading");
+    try {
+      const response = await fetch("/api/metrics", { cache: "no-store" });
+      const payload: unknown = await response.json();
+      if (!response.ok) throw new Error("metrics-unavailable");
+      const parsed = parseMetricsPayload(payload);
+      if (!parsed) throw new Error("metrics-contract-mismatch");
+      setMetrics(parsed);
+      setMode(parsed.mode);
+    } catch {
+      setMetrics(null);
+      setMode("unavailable");
+    }
+  }, []);
+  useEffect(() => {
+    void load();
+  }, [load]);
+  return { metrics, mode, reload: () => void load() };
+}
+
+const verificationModeView = {
+  disabled: { label: "Disabled", className: "state-warning" },
+  mock: { label: "Deterministic mock", className: "state-warning" },
+  live: { label: "Live", className: "state-good" },
+} as const;
+
 function Dashboard() {
-  const [runStarted, setRunStarted] = useState(false);
+  const { metrics, mode, reload } = useSemanticMetrics();
+  const live = mode === "firebase" && metrics !== null ? metrics : null;
+  const kindEntries = live
+    ? (Object.entries(live.proposals.byKind) as Array<[string, number]>).filter(([, count]) => count > 0)
+    : [];
+  const gateEntries = live
+    ? (Object.entries(live.gates.statusCounts) as Array<[string, number]>).sort(([a], [b]) => a.localeCompare(b))
+    : [];
+  const modeView = live?.verification.latestMode ? verificationModeView[live.verification.latestMode] : null;
+  const modePill = mode === "firebase" ? "Live Firebase" : mode === "demo" ? "Fixture preview" : mode === "loading" ? "Loading" : "Unavailable";
   return (
     <>
-      <PageHeader eyebrow="Synthetic pilot · 22 July 2026" title="Semantic operations" description="A reproducible preview of evidence, verification, and candidate meaning for Demo Bank EU." actions={
-        <><button className="button secondary"><FileSearch size={17} /> View audit</button><button className="button primary" onClick={() => setRunStarted(true)}><WandSparkles size={17} /> {runStarted ? "Run queued" : "Run discovery"}</button></>
+      <PageHeader eyebrow="Semantic observability" title="Semantic operations" description="Live tenant evidence, verification, and review posture aggregated from governed Firestore state." actions={
+        <><span className={`inventory-mode ${mode === "firebase" ? "firebase" : mode === "demo" ? "demo" : ""}`}>{modePill}</span><button className="button secondary" onClick={reload}><RefreshCw size={17} /> Refresh</button></>
       } />
+      {mode === "unavailable" && <div className="source-message" role="status">Tenant metrics are currently unavailable. The values below are illustrative fixtures, not operational data.</div>}
+      {mode === "demo" && <div className="source-message" role="status">Local demo session: Firestore metrics are not connected. The values below are illustrative fixtures.</div>}
 
       <section className="pilot-banner">
-        <div className="pilot-title"><span className="pilot-icon"><Sparkles size={20} /></span><div><span>Active pilot</span><h2>KYC / AML semantic foundation</h2></div></div>
+        <div className="pilot-title"><span className="pilot-icon"><Sparkles size={20} /></span><div><span>Active pilot · illustrative narrative</span><h2>KYC / AML semantic foundation</h2></div></div>
         <div className="pilot-progress">
-          <div><span>Fixture evidence connected</span><strong>6 / 6</strong></div>
-          <div className="progress-track"><i style={{ width: "100%" }} /></div>
-          <span>100%</span>
+          <div><span>{live ? "Sources profiled" : "Fixture evidence connected"}</span><strong>{live ? `${live.sources.profiledCount}` : "6 / 6"}</strong></div>
+          <div className="progress-track"><i style={{ width: live ? (live.sources.profiledCount > 0 ? "100%" : "0%") : "100%" }} /></div>
+          <span>{live ? `${live.sources.changedCount} changed` : "100%"}</span>
         </div>
         <div className="pilot-version"><span>Candidate · demo only</span><strong>2026.07.1</strong><small>Not published</small></div>
         <button className="circle-link" aria-label="Open pilot"><ArrowRight size={19} /></button>
       </section>
 
       <section className="metric-grid">
-        <Metric icon={<BookOpen size={19} />} label="Candidate concepts" value="44" change="Pilot target met" tone="mint" />
-        <Metric icon={<GitBranch size={19} />} label="Modeled relations" value="23" change="Candidate graph" tone="blue" />
-        <Metric icon={<GitPullRequestArrow size={19} />} label="Mapping proposals" value="100" change="All require review" tone="violet" />
-        <Metric icon={<ShieldCheck size={19} />} label="Connector evidence" value="79" change="96.12% complete" tone="amber" />
+        <Metric icon={<Clock3 size={19} />} label="Proposals pending review" value={live ? String(live.proposals.pendingReview) : mode === "loading" ? "…" : "100"} change={live ? "Awaiting steward adjudication" : "Illustrative fixture"} tone="amber" />
+        <Metric icon={<GitPullRequestArrow size={19} />} label="Proposals recorded" value={live ? String(live.proposals.total) : mode === "loading" ? "…" : "100"} change={live ? `${kindEntries.length} kind${kindEntries.length === 1 ? "" : "s"} observed` : "Illustrative fixture"} tone="violet" />
+        <Metric icon={<Database size={19} />} label="Sources profiled" value={live ? String(live.sources.profiledCount) : mode === "loading" ? "…" : "6"} change={live ? `${live.sources.changedCount} changed since baseline` : "Illustrative fixture"} tone="blue" />
+        <Metric icon={<ShieldCheck size={19} />} label="Verification runs" value={live ? String(live.verification.runCount) : mode === "loading" ? "…" : "0"} change={live ? (live.verification.latestDecidedAt ? `Last decided ${new Date(live.verification.latestDecidedAt).toLocaleDateString()}` : "No run decided yet") : "Illustrative fixture"} tone="mint" />
       </section>
 
       <div className="dashboard-grid">
+        <section className="panel competency-panel">
+          <PanelTitle title="Proposals by kind" subtitle={live ? "Aggregate counts from the tenant proposal ledger" : "Awaiting live Firestore metrics"} action={<span className="score-ring">{live ? live.proposals.total : "—"}</span>} />
+          <div className="question-list">
+            {live && kindEntries.length > 0 ? kindEntries.map(([kind, count]) => (
+              <div key={kind} className="question-row"><span className="question-status pass"><GitCommitHorizontal size={14} /></span><div><strong>{kind}</strong><span>{count} proposal{count === 1 ? "" : "s"}</span></div><ChevronRight size={15} /></div>
+            )) : (
+              <div className="question-row"><span className="question-status pending"><Clock3 size={14} /></span><div><strong>{live ? "No proposals recorded yet" : "No live metrics"}</strong><span>{live ? "Connect a source to start discovery" : "Sign in with a governed Firebase identity"}</span></div></div>
+            )}
+          </div>
+        </section>
+
+        <section className="panel competency-panel">
+          <PanelTitle title="Verification & drift" subtitle={live ? "Model mode, gate outcomes, and daily drift" : "Awaiting live Firestore metrics"} action={modeView ? <span className={modeView.className}>{modeView.label}</span> : <span className="setting-value">n/a</span>} />
+          <div className="question-list">
+            <div className="question-row"><span className={`question-status ${live?.verification.latestMode === "live" ? "pass" : "pending"}`}><ShieldCheck size={14} /></span><div><strong>Verifier mode</strong><span>{live ? (modeView?.label ?? "No verification run recorded") : "unknown"}</span></div></div>
+            <div className="question-row"><span className={`question-status ${live?.drift.latestStatus === "NO_DRIFT_DETECTED" ? "pass" : "pending"}`}><Activity size={14} /></span><div><strong>Last drift check</strong><span>{live?.drift.latestDay ? `${live.drift.latestDay} · ${live.drift.latestStatus ?? "unknown"}` : "No drift check recorded"}</span></div></div>
+            <div className="question-row"><span className="question-status pending"><FileSearch size={14} /></span><div><strong>Gate outcomes</strong><span>{live ? `Latest ${live.gates.sampledProposals} verified proposals` : "unknown"}</span></div></div>
+          </div>
+          <div className="gate-summary" style={{ padding: "0 17px 15px" }}>
+            <div className="gate-grid">
+              {gateEntries.length > 0 ? gateEntries.map(([status, count]) => {
+                const className = `gate-${status.toLowerCase().replace("_", "-")}`;
+                const Icon = status === "PASSED" ? CheckCircle2 : status === "FAILED" ? X : status === "SKIPPED" ? Clock3 : UserCheck;
+                return <span className={className} key={status} title={status}><Icon size={14} />{status.replaceAll("_", " ")} · {count}</span>;
+              }) : <span className="gate-skipped"><Clock3 size={14} />No gate results recorded</span>}
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <div className="dashboard-grid">
         <section className="panel pipeline-panel">
-          <PanelTitle title="Discovery pipeline" subtitle="Run 2026-07-22.04" action={<button className="text-button">Open run <ChevronRight size={15} /></button>} />
+          <PanelTitle title="Discovery pipeline" subtitle="Illustrative walkthrough · not live run state" action={<button className="text-button">Open run <ChevronRight size={15} /></button>} />
           <div className="pipeline-list">
             {[
               ["Source inventory", "6 synthetic evidence sources", "done", Database],
@@ -125,7 +199,7 @@ function Dashboard() {
         </section>
 
         <section className="panel competency-panel">
-          <PanelTitle title="Competency coverage" subtitle="5 of 5 executable on the candidate fixture" action={<span className="score-ring">100%</span>} />
+          <PanelTitle title="Competency coverage" subtitle="Illustrative · 5 bundled golden questions on the candidate fixture" action={<span className="score-ring">100%</span>} />
           <div className="question-list">
             {competencyQuestions.map((question) => <div key={question.id} className="question-row"><span className={question.score ? "question-status pass" : "question-status pending"}>{question.score ? <Check size={14} /> : <Clock3 size={14} />}</span><div><strong>{question.short}</strong><span>{question.id} · {question.score ? "Passed" : "Awaiting source"}</span></div><ChevronRight size={15} /></div>)}
           </div>
@@ -133,7 +207,7 @@ function Dashboard() {
       </div>
 
       <section className="panel attention-panel">
-        <PanelTitle title="Needs human judgment" subtitle="The mock verifier cannot authorize publication" action={<button className="button compact">Preview review queue <ArrowRight size={15} /></button>} />
+        <PanelTitle title="Needs human judgment" subtitle="Illustrative preview · the governed queue lives in Review queue" action={<button className="button compact">Preview review queue <ArrowRight size={15} /></button>} />
         <div className="attention-table">
           {initialProposals.filter((item) => item.status === "Human review").map((item) => <div className="attention-row" key={item.id}><span className={`kind-icon ${item.kind.toLowerCase()}`}><GitCommitHorizontal size={17} /></span><div className="attention-main"><strong>{item.title}</strong><span>{item.id} · {item.detail}</span></div><span className={`risk ${item.risk.toLowerCase()}`}>{item.risk} risk</span><span className="confidence"><i style={{ width: `${item.confidence}%` }} />{item.confidence}%</span><button className="icon-button"><ChevronRight size={17} /></button></div>)}
         </div>
@@ -168,6 +242,24 @@ type SourceInventoryItem = {
 };
 
 type SourceKind = SourceType;
+
+type CompetencyQuestionItem = {
+  questionId: string;
+  text: string;
+  businessArea: string;
+  status: string;
+  createdAt: string | null;
+};
+
+// Mirrors businessAreas in @/lib/competency-contract, which stays server-only
+// because it derives deterministic ids with node:crypto.
+const competencyBusinessAreas = [
+  ["kyc-aml", "KYC / AML"],
+  ["payments", "Payments"],
+  ["risk", "Risk"],
+  ["customer", "Customer"],
+  ["other", "Other"],
+] as const;
 
 const connectorCategoryView: Record<ConnectorCategory, {
   label: string;
@@ -212,6 +304,60 @@ function Sources() {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [message, setMessage] = useState("");
+  const [cqQuestions, setCqQuestions] = useState<CompetencyQuestionItem[]>([]);
+  const [cqMode, setCqMode] = useState<"loading" | "demo" | "firebase" | "unavailable">("loading");
+  const [canManageQuestions, setCanManageQuestions] = useState(false);
+  const [cqOpen, setCqOpen] = useState(false);
+  const [cqText, setCqText] = useState("");
+  const [cqArea, setCqArea] = useState<string>("kyc-aml");
+  const [cqSubmitting, setCqSubmitting] = useState(false);
+  const [cqMessage, setCqMessage] = useState("");
+
+  const loadQuestions = useCallback(async () => {
+    try {
+      const response = await fetch("/api/competency-questions", { cache: "no-store" });
+      const payload = await response.json() as {
+        mode?: "demo" | "firebase";
+        canManageQuestions?: boolean;
+        questions?: CompetencyQuestionItem[];
+        detail?: string;
+      };
+      if (!response.ok) throw new Error(payload.detail ?? "Competency questions could not be loaded.");
+      setCqQuestions(Array.isArray(payload.questions) ? payload.questions : []);
+      setCanManageQuestions(payload.canManageQuestions === true);
+      setCqMode(payload.mode === "firebase" ? "firebase" : "demo");
+    } catch (error) {
+      setCqMode("unavailable");
+      setCqMessage(error instanceof Error ? error.message : "Competency questions could not be loaded.");
+    }
+  }, []);
+
+  useEffect(() => {
+    void loadQuestions();
+  }, [loadQuestions]);
+
+  async function submitQuestion(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setCqSubmitting(true);
+    setCqMessage("");
+    try {
+      const response = await fetch("/api/competency-questions", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ text: cqText, businessArea: cqArea }),
+      });
+      const payload = await response.json() as { detail?: string; questionId?: string };
+      if (!response.ok) throw new Error(payload.detail ?? "The competency question could not be recorded.");
+      setCqOpen(false);
+      setCqText("");
+      setCqMessage(`Competency question ${payload.questionId ?? "recorded"} proposed for discovery scoping.`);
+      await loadQuestions();
+    } catch (error) {
+      setCqMessage(error instanceof Error ? error.message : "The competency question could not be recorded.");
+    } finally {
+      setCqSubmitting(false);
+    }
+  }
 
   const loadInventory = useCallback(async () => {
     try {
@@ -351,6 +497,33 @@ function Sources() {
         </div>
       </section>
 
+      <section className="panel connector-catalog">
+        <PanelTitle
+          title="Competency questions"
+          subtitle="Paso 1 · Five to twenty business questions scope which concepts, sources, and relations discovery will value. Stored per tenant; the 5 bundled golden questions stay unchanged."
+          action={<button className="button compact" disabled={cqMode !== "firebase" || !canManageQuestions} onClick={() => { setCqOpen(true); setCqMessage(""); }}><Plus size={15} /> Add question</button>}
+        />
+        {cqMessage && <div className="source-message" role="status" style={{ margin: "13px 17px 0" }}>{cqMessage}</div>}
+        <div className="question-list">
+          {cqMode === "loading" ? (
+            <div className="question-row"><span className="question-status pending"><LoaderCircle className="spin" size={14} /></span><div><strong>Loading competency questions</strong><span>Reading tenant onboarding scope</span></div></div>
+          ) : cqQuestions.length > 0 ? (
+            cqQuestions.map((question) => (
+              <div key={question.questionId} className="question-row">
+                <span className="question-status pending"><Clock3 size={14} /></span>
+                <div><strong>{question.text}</strong><span>{question.questionId} · {question.businessArea} · {question.status}{question.createdAt ? ` · ${new Date(question.createdAt).toLocaleDateString()}` : ""}</span></div>
+                <ChevronRight size={15} />
+              </div>
+            ))
+          ) : (
+            <div className="question-row">
+              <span className="question-status pending"><BookOpen size={14} /></span>
+              <div><strong>No tenant competency questions yet</strong><span>{cqMode === "firebase" ? (canManageQuestions ? "Propose the business questions this workspace must answer." : "An administrator or steward records the onboarding questions.") : cqMode === "demo" ? "Local demo is read-only; governed questions require a Firebase identity." : "Competency questions are currently unavailable."}</span></div>
+            </div>
+          )}
+        </div>
+      </section>
+
       {inventoryMode === "loading" ? (
         <section className="source-empty"><LoaderCircle className="spin" size={22} /><h2>Loading source inventory</h2></section>
       ) : inventory.length === 0 ? (
@@ -398,6 +571,24 @@ function Sources() {
               <label>Source file<input required type="file" accept={selectedConnector.accept} onChange={(event) => setSelectedFile(event.target.files?.[0] ?? null)} /><small>{selectedType === "openapi" ? "OpenAPI 3.x JSON only; the platform does not call the remote API in this release." : "Maximum 20 MiB. Uploads become immutable versioned source objects."}</small></label>
               <div className="source-boundary"><LockKeyhole size={17} /><div><strong>No source writes</strong><span>The server derives your tenant and uploader identity from the verified session. No credential is accepted in this form.</span></div></div>
               <footer><button type="button" className="button secondary" disabled={submitting} onClick={() => setSelectedType(null)}>Cancel</button><button type="submit" className="button primary" disabled={submitting || !selectedFile}>{submitting ? <LoaderCircle className="spin" size={17} /> : <CloudUpload size={17} />}{submitting ? "Registering…" : "Register & profile"}</button></footer>
+            </form>
+          </section>
+        </div>
+      )}
+
+      {cqOpen && (
+        <div className="source-dialog-backdrop" role="presentation" onMouseDown={(event) => {
+          if (event.target === event.currentTarget && !cqSubmitting) setCqOpen(false);
+        }}>
+          <section className="source-dialog" role="dialog" aria-modal="true" aria-labelledby="cq-dialog-title">
+            <header><div><span className="eyebrow">Onboarding · Paso 1</span><h2 id="cq-dialog-title">Propose a competency question</h2><p>A concrete business question the semantic layer must answer, e.g. “Which customers are related to a sanctioned company?”</p></div><button className="icon-button" disabled={cqSubmitting} onClick={() => setCqOpen(false)} aria-label="Close"><X size={18} /></button></header>
+            <form onSubmit={submitQuestion}>
+              <label>Business question<textarea required minLength={10} maxLength={500} rows={4} value={cqText} onChange={(event) => setCqText(event.target.value)} placeholder="Which customers are related to a sanctioned company?" style={{ width: "100%", minHeight: 92, padding: "8px 10px", border: "1px solid var(--line)", borderRadius: 8, background: "#fbfcfb", fontSize: 10, fontWeight: 400, resize: "vertical" }} /><small>10 to 500 characters. Duplicate questions are rejected with the same deterministic identifier.</small></label>
+              <label>Business area<select value={cqArea} onChange={(event) => setCqArea(event.target.value)} style={{ width: "100%", minHeight: 39, padding: "8px 10px", border: "1px solid var(--line)", borderRadius: 8, background: "#fbfcfb", fontSize: 10 }}>
+                {competencyBusinessAreas.map(([value, label]) => <option key={value} value={value}>{label}</option>)}
+              </select></label>
+              <div className="source-boundary"><LockKeyhole size={17} /><div><strong>Discovery scoping input</strong><span>The tenant and author are derived from your verified session. Questions are stored as PROPOSED and never alter the published golden questions.</span></div></div>
+              <footer><button type="button" className="button secondary" disabled={cqSubmitting} onClick={() => setCqOpen(false)}>Cancel</button><button type="submit" className="button primary" disabled={cqSubmitting || cqText.trim().length < 10}>{cqSubmitting ? <LoaderCircle className="spin" size={17} /> : <Plus size={17} />}{cqSubmitting ? "Recording…" : "Propose question"}</button></footer>
             </form>
           </section>
         </div>
@@ -594,12 +785,38 @@ function GatewayPlayground() {
 }
 
 function Traces() {
+  const { metrics, mode, reload } = useSemanticMetrics();
+  const live = mode === "firebase" && metrics !== null ? metrics : null;
+  const liveRuns = live?.recentRuns ?? [];
+  const showLiveRuns = live !== null && liveRuns.length > 0;
   return (
     <>
-      <PageHeader eyebrow="Observability" title="Trace & audit" description="Every answer and decision can be replayed from its inputs, artifacts, policy, and model metadata." actions={<><button className="button secondary"><RefreshCw size={16} /> Refresh</button><button className="button primary"><CloudUpload size={16} /> Export evidence</button></>} />
-      <section className="trace-overview"><div><Activity size={19} /><p><strong>5</strong><span>synthetic trace fixtures</span></p></div><div><Clock3 size={19} /><p><strong>n/a</strong><span>no cloud latency yet</span></p></div><div><ShieldCheck size={19} /><p><strong>100%</strong><span>fixture trace IDs</span></p></div><div><AlertTriangle size={19} /><p><strong>0</strong><span>publication receipts</span></p></div></section>
-      <section className="panel trace-panel"><div className="trace-filter"><div className="filter-pills"><button className="active">All events</button><button>Queries</button><button>Verification</button><button>Publication</button></div><label><SearchCheck size={15} /><input placeholder="Trace ID, actor, version…" /></label></div><div className="data-table"><div className="data-row header"><span>Trace</span><span>Action</span><span>Actor</span><span>Version</span><span>Duration</span><span>Status</span><span>Time</span><span /></div>{traceRows.map((row) => <div className="data-row" key={row.id}><code>{row.id}</code><strong>{row.action}</strong><span>{row.actor}</span><code>{row.version}</code><span>{row.duration}</span><em className={`trace-status ${row.status.toLowerCase()}`}>{row.status}</em><time>{row.time}</time><button className="icon-button"><ChevronRight size={15} /></button></div>)}</div></section>
-      <section className="audit-note"><Fingerprint size={20} /><div><strong>Synthetic audit preview</strong><p>Cloud Logging begins after dev deployment. This local table is fixture data and does not claim operational events.</p></div></section>
+      <PageHeader eyebrow="Observability" title="Trace & audit" description="Every answer and decision can be replayed from its inputs, artifacts, policy, and model metadata." actions={<><button className="button secondary" onClick={reload}><RefreshCw size={16} /> Refresh</button><button className="button primary"><CloudUpload size={16} /> Export evidence</button></>} />
+      {mode === "unavailable" && <div className="source-message" role="status">Live verification runs are currently unavailable. Showing synthetic fixture traces instead.</div>}
+      <section className="trace-overview">
+        <div><Activity size={19} /><p><strong>{showLiveRuns ? liveRuns.length : mode === "loading" ? "…" : traceRows.length}</strong><span>{showLiveRuns ? "recent verification runs" : "synthetic trace fixtures"}</span></p></div>
+        <div><Clock3 size={19} /><p><strong>{live?.verification.latestDecidedAt ? new Date(live.verification.latestDecidedAt).toLocaleDateString() : "n/a"}</strong><span>{live ? "latest run decided" : "no cloud latency yet"}</span></p></div>
+        <div><ShieldCheck size={19} /><p><strong>{live ? live.verification.runCount : "100%"}</strong><span>{live ? "verification runs recorded" : "fixture trace IDs"}</span></p></div>
+        <div><AlertTriangle size={19} /><p><strong>{live?.drift.latestStatus ? live.drift.latestStatus.replaceAll("_", " ").toLowerCase() : "0"}</strong><span>{live?.drift.latestDay ? `drift · ${live.drift.latestDay}` : "publication receipts"}</span></p></div>
+      </section>
+      <section className="panel trace-panel"><div className="trace-filter"><div className="filter-pills"><button className="active">All events</button><button>Queries</button><button>Verification</button><button>Publication</button></div><label><SearchCheck size={15} /><input placeholder="Trace ID, actor, version…" /></label></div><div className="data-table">
+        {showLiveRuns ? (
+          <>
+            <div className="data-row header"><span>Run</span><span>Action</span><span>Proposal</span><span>Verifier mode</span><span>Duration</span><span>Status</span><span>Decided</span><span /></div>
+            {liveRuns.map((run) => <div className="data-row" key={run.runId}><code>{run.runId}</code><strong>Verification run</strong><span>{run.proposalId ?? "unknown"}</span><code>{run.mode ?? "unknown"}</code><span>—</span><em className={`trace-status ${run.status === "HUMAN_REVIEW" ? "review" : run.status === "ABSTAINED" ? "partial" : "ok"}`}>{run.status ?? "UNKNOWN"}</em><time>{run.decidedAt ? new Date(run.decidedAt).toLocaleString() : "—"}</time><button className="icon-button"><ChevronRight size={15} /></button></div>)}
+          </>
+        ) : (
+          <>
+            <div className="data-row header"><span>Trace</span><span>Action</span><span>Actor</span><span>Version</span><span>Duration</span><span>Status</span><span>Time</span><span /></div>
+            {traceRows.map((row) => <div className="data-row" key={row.id}><code>{row.id}</code><strong>{row.action}</strong><span>{row.actor}</span><code>{row.version}</code><span>{row.duration}</span><em className={`trace-status ${row.status.toLowerCase()}`}>{row.status}</em><time>{row.time}</time><button className="icon-button"><ChevronRight size={15} /></button></div>)}
+          </>
+        )}
+      </div></section>
+      {showLiveRuns ? (
+        <section className="audit-note"><Fingerprint size={20} /><div><strong>Live verification ledger</strong><p>These rows are the latest immutable verification runs recorded in tenant Firestore state; each run is hash-bound to its frozen proposal and evidence.</p></div></section>
+      ) : (
+        <section className="audit-note"><Fingerprint size={20} /><div><strong>Synthetic audit preview</strong><p>{live !== null ? "No verification runs are recorded for this tenant yet; this table shows fixture data until discovery produces runs." : "Cloud Logging begins after dev deployment. This local table is fixture data and does not claim operational events."}</p></div></section>
+      )}
     </>
   );
 }
