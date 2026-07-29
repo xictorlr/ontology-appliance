@@ -220,6 +220,26 @@ function deterministicGenerator(model: string): ProposalDocument["generator"] {
   };
 }
 
+export interface SnapshotIdentity {
+  sha256: string;
+  snapshotId: string;
+}
+
+/**
+ * A stored snapshot is content-addressed: its document key and identity are
+ * the content hash, and its object coordinates record the first observation.
+ * Re-observing byte-identical content under a new object or generation is a
+ * legitimate event, not an immutability violation; only a stored snapshot
+ * whose identity fields no longer match its content-derived key conflicts.
+ */
+export function immutableSnapshotConflict(
+  stored: Record<string, unknown> | undefined,
+  expected: SnapshotIdentity,
+): boolean {
+  if (stored === undefined) return true;
+  return stored.sha256 !== expected.sha256 || stored.snapshotId !== expected.snapshotId;
+}
+
 export function buildIngestionProposal(
   input: IngestionProposalInput,
 ): ProposalDocument {
