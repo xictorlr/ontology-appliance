@@ -8,10 +8,13 @@ import type { SourceProfile } from "../src/lib/profiling";
 import {
   buildDriftProposal,
   buildIngestionProposal,
+  buildMappingProposal,
   buildVerificationDecision,
   canonicalSha256,
+  COLUMN_MAPPING_ALGORITHM_VERSION,
   immutableSnapshotConflict,
   type IndependentVerification,
+  type MappingProposalInput,
   VERIFICATION_POLICY_VERSION,
 } from "../src/lib/workflows";
 
@@ -21,6 +24,7 @@ const profile: SourceProfile = {
   recordCount: 2,
   mediaType: "text/csv",
   extractorVersion: "firebase-evidence-profiler/1.0.0",
+  columnNames: ["id", "name"],
 };
 
 function ingestionProposal() {
@@ -83,6 +87,110 @@ describe("durable ingestion discovery", () => {
       profile,
     });
     expect(changed.proposal_id).not.toBe(first.proposal_id);
+  });
+});
+
+describe("durable column mapping discovery", () => {
+  function mappingInput(): MappingProposalInput {
+    return {
+      tenantId: "demo-bank",
+      sourceId: "crm",
+      bucket: "demo-input",
+      objectName: "tenants/demo-bank/uploads/crm/parties.csv",
+      generation: "1721640000000000",
+      observedAt: "2026-07-22T13:51:12.123Z",
+      activeOntologyVersion: "2026.07.1-candidate",
+      profile,
+      columnName: "name",
+      concept: {
+        iri: "urn:ontology-appliance:vocab:Name",
+        label: "Name",
+        score: 1,
+        matchedOn: "prefLabel",
+        conceptType: "http://www.w3.org/2004/02/skos/core#Concept",
+      },
+    };
+  }
+
+  it("creates a deterministic schema-valid mapping proposal", () => {
+    const first = buildMappingProposal(mappingInput());
+    const second = buildMappingProposal(mappingInput());
+
+    expect(proposalSchema.parse(first)).toEqual(first);
+    expect(first).toEqual(second);
+    expect(first.proposal_id).toMatch(/^mapping-[a-f0-9]{64}$/u);
+    expect(first).toMatchObject({
+      kind: "mapping",
+      risk: "medium",
+      status: "PENDING_VERIFICATION",
+      tenant_id: "demo-bank",
+      algorithm_version: COLUMN_MAPPING_ALGORITHM_VERSION,
+      source_locator:
+        "gs://demo-input/tenants/demo-bank/uploads/crm/parties.csv" +
+        "#generation=1721640000000000#column=name",
+      target_iri: "urn:ontology-appliance:vocab:Name",
+      transformation: "column:name -> urn:ontology-appliance:vocab:Name",
+    });
+    expect(first.generator.model).toBe("column-resolver/1.0.0");
+    expect(first.generator.model_participated).toBe(false);
+    expect(first.confidence).toEqual({
+      lexical: 1,
+      structural: 0,
+      instance: 0,
+      external: 0,
+      model: 0,
+      evidence_coverage: 1,
+    });
+    expect(first.evidence).toHaveLength(1);
+    expect(first.evidence[0]).toMatchObject({
+      tenant_id: "demo-bank",
+      source_id: "crm",
+      snapshot_id: `crm@sha256:${profile.sha256}`,
+      content_sha256: profile.sha256,
+      observed_at: "2026-07-22T13:51:12.123Z",
+    });
+    expect(first.evidence[0]?.claim).toContain('column "name"');
+    expect(first.evidence[0]?.claim).toContain("urn:ontology-appliance:vocab:Name");
+  });
+
+  it("binds the column name and resolved concept into the proposal ID", () => {
+    const base = buildMappingProposal(mappingInput());
+    const otherColumn = buildMappingProposal({
+      ...mappingInput(),
+      columnName: "id",
+    });
+    const otherConcept = buildMappingProposal({
+      ...mappingInput(),
+      concept: { ...mappingInput().concept, iri: "urn:ontology-appliance:vocab:CustomerName" },
+    });
+    expect(otherColumn.proposal_id).not.toBe(base.proposal_id);
+    expect(otherConcept.proposal_id).not.toBe(base.proposal_id);
+    expect(otherColumn.evidence[0]?.evidence_id).not.toBe(base.evidence[0]?.evidence_id);
+    expect(otherConcept.evidence[0]?.evidence_id).not.toBe(base.evidence[0]?.evidence_id);
+  });
+
+  it("refuses unbounded columns and out-of-range resolver scores", () => {
+    expect(() =>
+      buildMappingProposal({ ...mappingInput(), columnName: "" }),
+    ).toThrow("Invalid column name");
+    expect(() =>
+      buildMappingProposal({ ...mappingInput(), columnName: " padded " }),
+    ).toThrow("Invalid column name");
+    expect(() =>
+      buildMappingProposal({ ...mappingInput(), columnName: "x".repeat(201) }),
+    ).toThrow("Invalid column name");
+    expect(() =>
+      buildMappingProposal({
+        ...mappingInput(),
+        concept: { ...mappingInput().concept, score: 1.2 },
+      }),
+    ).toThrow("Invalid resolver score");
+    expect(() =>
+      buildMappingProposal({
+        ...mappingInput(),
+        concept: { ...mappingInput().concept, iri: "" },
+      }),
+    ).toThrow("Incomplete resolved concept");
   });
 });
 

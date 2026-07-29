@@ -297,6 +297,22 @@ if [[ "${RUN_FUNCTIONS_E2E:-true}" == "true" ]]; then
   ingestion_proposal="$(wait_for_terminal_proposal "$changed_locator" assertion)"
   verify_terminal_run "$ingestion_proposal"
 
+  # Column-level semantic discovery: both smoke CSV header columns resolve
+  # against the bundled KYC ontology through the gateway's lexical resolver
+  # ("name" matches skos:prefLabel "Name" at 1.0; "id" is contained in the
+  # governed identifier labels at 0.84, above the 0.5 proposal threshold).
+  for column in id name; do
+    mapping_locator="${changed_locator}#column=${column}"
+    mapping_proposal="$(wait_for_terminal_proposal "$mapping_locator" mapping)"
+    jq -e \
+      --arg prefix "${changed_locator}#column=" \
+      '(.fields.source_locator.stringValue | startswith($prefix)) and
+       (.fields.source_locator.stringValue | contains("#column=")) and
+       (.fields.target_iri.stringValue | length) > 0' \
+      <<<"$mapping_proposal" >/dev/null
+    verify_terminal_run "$mapping_proposal"
+  done
+
   # Task-dispatched functions live in TASK_REGION (functions/src/config.ts);
   # Cloud Tasks does not serve europe-west4, so the queue region differs from
   # the primary deployment region.
