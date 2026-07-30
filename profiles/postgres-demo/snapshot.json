@@ -1,0 +1,33 @@
+{
+  "accessMode": "read_only",
+  "content": {
+    "byteCount": 5778,
+    "columnCount": 19,
+    "schemaCount": 1,
+    "sha256": "6be9d9d15e9c573ff1cbc774f0459f93e3e0f316aabe75f6e44b6fe2be2337db",
+    "sourceAssets": [
+      {
+        "byteCount": 5778,
+        "mediaType": "application/json",
+        "path": "data/synthetic/postgres-catalog.json",
+        "sha256": "6be9d9d15e9c573ff1cbc774f0459f93e3e0f316aabe75f6e44b6fe2be2337db"
+      }
+    ],
+    "tableCount": 3
+  },
+  "extractorName": "ontology-appliance-postgres-metadata-profiler",
+  "extractorVersion": "1.0.0",
+  "observedAt": "2026-07-01T06:30:00Z",
+  "profileLocator": "profiles/postgres-demo/profile.json",
+  "readOnlyEnforcement": {
+    "default_transaction_read_only": "on",
+    "idle_in_transaction_session_timeout": "30000",
+    "statement_timeout": "30000"
+  },
+  "schemaVersion": "1.0",
+  "snapshotId": "postgres-demo@sha256:6be9d9d15e9c573ff1cbc774f0459f93e3e0f316aabe75f6e44b6fe2be2337db",
+  "sourceId": "postgres-demo",
+  "sourceLocator": "data/synthetic/postgres-catalog.json",
+  "tenantId": "demo-bank",
+  "valueSampling": "disabled"
+}

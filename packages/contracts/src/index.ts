@@ -8,7 +8,7 @@ import { z } from "zod";
  * publish or manufacture an approval decision.
  */
 
-export const connectorSourceTypes = ["csv", "jsonl", "pdf", "openapi"] as const;
+export const connectorSourceTypes = ["csv", "jsonl", "pdf", "openapi", "postgres"] as const;
 export const connectorCapabilities = ["schema", "sample", "profile", "snapshot"] as const;
 export const connectorLogicalTypes = [
   "string",
@@ -52,6 +52,9 @@ const connectorLimitsSchema = z
     maximum_bytes: z.number().int().positive().optional(),
     maximum_records: z.number().int().positive().optional(),
     maximum_pages: z.number().int().positive().optional(),
+    maximum_schemas: z.number().int().positive().optional(),
+    maximum_tables: z.number().int().positive().optional(),
+    maximum_columns: z.number().int().positive().optional(),
     timeout_seconds: z.number().int().positive().optional(),
   })
   .strict();

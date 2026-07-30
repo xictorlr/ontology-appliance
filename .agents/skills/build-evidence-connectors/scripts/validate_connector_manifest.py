@@ -11,7 +11,7 @@ from pathlib import Path
 from typing import Any, Iterator
 from urllib.parse import urlsplit
 
-SOURCE_TYPES = {"csv", "jsonl", "pdf", "openapi"}
+SOURCE_TYPES = {"csv", "jsonl", "pdf", "openapi", "postgres"}
 CAPABILITIES = {"schema", "sample", "profile", "snapshot"}
 LOGICAL_TYPES = {"string", "integer", "number", "boolean", "date", "datetime", "object", "array", "binary"}
 SECRET_REF = re.compile(r"^projects/[^/]+/secrets/[^/]+/versions/[^/]+$")
@@ -165,6 +165,9 @@ def validate(data: Any) -> list[str]:
                 "maximum_bytes",
                 "maximum_records",
                 "maximum_pages",
+                "maximum_schemas",
+                "maximum_tables",
+                "maximum_columns",
                 "timeout_seconds",
             }
             unknown_limits = set(limits) - allowed_limits

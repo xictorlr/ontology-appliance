@@ -1,0 +1,108 @@
+{
+  "access_mode": "read_only",
+  "capabilities": [
+    "schema",
+    "profile",
+    "snapshot"
+  ],
+  "connector_id": "postgres-demo",
+  "credential_ref": "projects/oa-dev/secrets/oa-dev-postgres-readonly/versions/latest",
+  "evidence": {
+    "hash_algorithm": "sha256",
+    "locator_template": "postgres://kyc_core/{schema}/{table}#column={column}"
+  },
+  "fields": [
+    {
+      "logical_type": "string",
+      "nullable": false,
+      "source_path": "schemas[].schema_name"
+    },
+    {
+      "logical_type": "string",
+      "nullable": false,
+      "source_path": "tables[].table_schema"
+    },
+    {
+      "logical_type": "string",
+      "nullable": false,
+      "source_path": "tables[].table_name"
+    },
+    {
+      "logical_type": "string",
+      "nullable": false,
+      "source_path": "tables[].table_type",
+      "source_representation": "BASE TABLE|VIEW"
+    },
+    {
+      "logical_type": "integer",
+      "nullable": false,
+      "source_path": "tables[].row_estimate",
+      "source_representation": "GREATEST(pg_class.reltuples, 0)::bigint"
+    },
+    {
+      "logical_type": "string",
+      "nullable": false,
+      "source_path": "columns[].column_name"
+    },
+    {
+      "logical_type": "integer",
+      "nullable": false,
+      "source_path": "columns[].ordinal_position"
+    },
+    {
+      "logical_type": "string",
+      "nullable": false,
+      "source_path": "columns[].data_type"
+    },
+    {
+      "logical_type": "string",
+      "nullable": false,
+      "source_path": "columns[].is_nullable",
+      "source_representation": "YES|NO"
+    },
+    {
+      "logical_type": "string",
+      "nullable": false,
+      "source_path": "primary_keys[].constraint_name"
+    },
+    {
+      "logical_type": "array",
+      "nullable": false,
+      "source_path": "primary_keys[].column_names"
+    },
+    {
+      "logical_type": "string",
+      "nullable": false,
+      "source_path": "foreign_keys[].constraint_name"
+    },
+    {
+      "logical_type": "array",
+      "nullable": false,
+      "source_path": "foreign_keys[].column_names"
+    },
+    {
+      "logical_type": "string",
+      "nullable": false,
+      "source_path": "foreign_keys[].referenced_table"
+    },
+    {
+      "logical_type": "array",
+      "nullable": false,
+      "source_path": "foreign_keys[].referenced_columns"
+    }
+  ],
+  "limits": {
+    "maximum_columns": 2000,
+    "maximum_schemas": 16,
+    "maximum_tables": 200,
+    "timeout_seconds": 30
+  },
+  "schema_version": "1.0",
+  "source": {
+    "response_fixture": "data/synthetic/postgres-catalog.json",
+    "snapshot_strategy": "content_hash",
+    "uri": "postgresql://replica.internal:5432/kyc_core?sslmode=verify-full&options=-c%20default_transaction_read_only%3Don%20-c%20statement_timeout%3D30000"
+  },
+  "source_type": "postgres",
+  "tenant_id": "demo-bank"
+}

@@ -1,0 +1,232 @@
+{
+  "catalog_schema_version": "1.0",
+  "database": "kyc_core",
+  "server_version": "16.4",
+  "collected_at": "2026-07-01T06:30:00Z",
+  "schemas": [
+    { "schema_name": "kyc" }
+  ],
+  "tables": [
+    {
+      "table_schema": "kyc",
+      "table_name": "customers",
+      "table_type": "BASE TABLE",
+      "row_estimate": 1250
+    },
+    {
+      "table_schema": "kyc",
+      "table_name": "accounts",
+      "table_type": "BASE TABLE",
+      "row_estimate": 1810
+    },
+    {
+      "table_schema": "kyc",
+      "table_name": "payments",
+      "table_type": "BASE TABLE",
+      "row_estimate": 52340
+    }
+  ],
+  "columns": [
+    {
+      "table_schema": "kyc",
+      "table_name": "customers",
+      "column_name": "customer_id",
+      "ordinal_position": 1,
+      "data_type": "uuid",
+      "is_nullable": "NO"
+    },
+    {
+      "table_schema": "kyc",
+      "table_name": "customers",
+      "column_name": "full_name",
+      "ordinal_position": 2,
+      "data_type": "character varying",
+      "is_nullable": "NO"
+    },
+    {
+      "table_schema": "kyc",
+      "table_name": "customers",
+      "column_name": "date_of_birth",
+      "ordinal_position": 3,
+      "data_type": "date",
+      "is_nullable": "YES"
+    },
+    {
+      "table_schema": "kyc",
+      "table_name": "customers",
+      "column_name": "residency_country",
+      "ordinal_position": 4,
+      "data_type": "character",
+      "is_nullable": "YES"
+    },
+    {
+      "table_schema": "kyc",
+      "table_name": "customers",
+      "column_name": "risk_rating",
+      "ordinal_position": 5,
+      "data_type": "character varying",
+      "is_nullable": "NO"
+    },
+    {
+      "table_schema": "kyc",
+      "table_name": "customers",
+      "column_name": "created_at",
+      "ordinal_position": 6,
+      "data_type": "timestamp with time zone",
+      "is_nullable": "NO"
+    },
+    {
+      "table_schema": "kyc",
+      "table_name": "accounts",
+      "column_name": "account_id",
+      "ordinal_position": 1,
+      "data_type": "uuid",
+      "is_nullable": "NO"
+    },
+    {
+      "table_schema": "kyc",
+      "table_name": "accounts",
+      "column_name": "customer_id",
+      "ordinal_position": 2,
+      "data_type": "uuid",
+      "is_nullable": "NO"
+    },
+    {
+      "table_schema": "kyc",
+      "table_name": "accounts",
+      "column_name": "iban",
+      "ordinal_position": 3,
+      "data_type": "character varying",
+      "is_nullable": "NO"
+    },
+    {
+      "table_schema": "kyc",
+      "table_name": "accounts",
+      "column_name": "currency",
+      "ordinal_position": 4,
+      "data_type": "character",
+      "is_nullable": "NO"
+    },
+    {
+      "table_schema": "kyc",
+      "table_name": "accounts",
+      "column_name": "status",
+      "ordinal_position": 5,
+      "data_type": "character varying",
+      "is_nullable": "NO"
+    },
+    {
+      "table_schema": "kyc",
+      "table_name": "accounts",
+      "column_name": "opened_on",
+      "ordinal_position": 6,
+      "data_type": "date",
+      "is_nullable": "NO"
+    },
+    {
+      "table_schema": "kyc",
+      "table_name": "payments",
+      "column_name": "payment_id",
+      "ordinal_position": 1,
+      "data_type": "uuid",
+      "is_nullable": "NO"
+    },
+    {
+      "table_schema": "kyc",
+      "table_name": "payments",
+      "column_name": "debtor_account_id",
+      "ordinal_position": 2,
+      "data_type": "uuid",
+      "is_nullable": "NO"
+    },
+    {
+      "table_schema": "kyc",
+      "table_name": "payments",
+      "column_name": "creditor_account_id",
+      "ordinal_position": 3,
+      "data_type": "uuid",
+      "is_nullable": "YES"
+    },
+    {
+      "table_schema": "kyc",
+      "table_name": "payments",
+      "column_name": "amount",
+      "ordinal_position": 4,
+      "data_type": "numeric",
+      "is_nullable": "NO"
+    },
+    {
+      "table_schema": "kyc",
+      "table_name": "payments",
+      "column_name": "currency",
+      "ordinal_position": 5,
+      "data_type": "character",
+      "is_nullable": "NO"
+    },
+    {
+      "table_schema": "kyc",
+      "table_name": "payments",
+      "column_name": "executed_at",
+      "ordinal_position": 6,
+      "data_type": "timestamp with time zone",
+      "is_nullable": "NO"
+    },
+    {
+      "table_schema": "kyc",
+      "table_name": "payments",
+      "column_name": "screening_flags",
+      "ordinal_position": 7,
+      "data_type": "jsonb",
+      "is_nullable": "YES"
+    }
+  ],
+  "primary_keys": [
+    {
+      "table_schema": "kyc",
+      "table_name": "customers",
+      "constraint_name": "customers_pkey",
+      "column_names": ["customer_id"]
+    },
+    {
+      "table_schema": "kyc",
+      "table_name": "accounts",
+      "constraint_name": "accounts_pkey",
+      "column_names": ["account_id"]
+    },
+    {
+      "table_schema": "kyc",
+      "table_name": "payments",
+      "constraint_name": "payments_pkey",
+      "column_names": ["payment_id"]
+    }
+  ],
+  "foreign_keys": [
+    {
+      "table_schema": "kyc",
+      "table_name": "accounts",
+      "constraint_name": "accounts_customer_id_fkey",
+      "column_names": ["customer_id"],
+      "referenced_schema": "kyc",
+      "referenced_table": "customers",
+      "referenced_columns": ["customer_id"]
+    },
+    {
+      "table_schema": "kyc",
+      "table_name": "payments",
+      "constraint_name": "payments_debtor_account_id_fkey",
+      "column_names": ["debtor_account_id"],
+      "referenced_schema": "kyc",
+      "referenced_table": "accounts",
+      "referenced_columns": ["account_id"]
+    },
+    {
+      "table_schema": "kyc",
+      "table_name": "payments",
+      "constraint_name": "payments_creditor_account_id_fkey",
+      "column_names": ["creditor_account_id"],
+      "referenced_schema": "kyc",
+      "referenced_table": "accounts",
+      "referenced_columns": ["account_id"]
+    }
+  ]
+}

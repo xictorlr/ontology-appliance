@@ -25,13 +25,14 @@ def load(path: str) -> object:
 
 def test_all_implemented_connector_fixtures_match_pydantic_contract() -> None:
     paths = sorted((ROOT / "data" / "contracts").glob("*.connector.json"))
-    assert len(paths) == 6
+    assert len(paths) == 7
     records = [ConnectorManifestRecord.model_validate_json(path.read_text()) for path in paths]
     assert {record.source_type for record in records} == {
         ConnectorSourceType.CSV,
         ConnectorSourceType.JSONL,
         ConnectorSourceType.PDF,
         ConnectorSourceType.OPENAPI,
+        ConnectorSourceType.POSTGRES,
     }
     assert all(record.access_mode == "read_only" for record in records)
 
