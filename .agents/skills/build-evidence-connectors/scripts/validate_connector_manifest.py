@@ -11,7 +11,7 @@ from pathlib import Path
 from typing import Any, Iterator
 from urllib.parse import urlsplit
 
-SOURCE_TYPES = {"csv", "jsonl", "pdf", "openapi"}
+SOURCE_TYPES = {"csv", "jsonl", "pdf", "openapi", "postgres"}
 CAPABILITIES = {"schema", "sample", "profile", "snapshot"}
 LOGICAL_TYPES = {"string", "integer", "number", "boolean", "date", "datetime", "object", "array", "binary"}
 SECRET_REF = re.compile(r"^projects/[^/]+/secrets/[^/]+/versions/[^/]+$")
@@ -165,6 +165,9 @@ def validate(data: Any) -> list[str]:
                 "maximum_bytes",
                 "maximum_records",
                 "maximum_pages",
+                "maximum_schemas",
+                "maximum_tables",
+                "maximum_columns",
                 "timeout_seconds",
             }
             unknown_limits = set(limits) - allowed_limits
@@ -202,8 +205,13 @@ def self_test() -> int:
     assert any("inline secret" in error for error in errors)
     assert any("unsupported top-level" in error for error in errors)
     roadmap = valid_example()
-    roadmap["source_type"] = "postgres"
+    # snowflake stays a roadmap-only source type; postgres activated in
+    # metadata snapshot mode and now validates.
+    roadmap["source_type"] = "snowflake"
     assert any("source_type" in error for error in validate(roadmap))
+    activated = valid_example()
+    activated["source_type"] = "postgres"
+    assert not any("source_type" in error for error in validate(activated))
     print("self-test: ok")
     return 0
 

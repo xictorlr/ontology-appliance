@@ -85,11 +85,19 @@ export const connectorCatalog: readonly ConnectorDefinition[] = [
     id: "postgresql",
     label: "PostgreSQL",
     category: "database",
-    detail: "TLS read replica or read-only user, schema metadata, and bounded sampling.",
-    availability: "planned",
+    detail:
+      "Metadata-first catalog snapshots (schemas, tables, columns, keys, row estimates) from a " +
+      "read-only session; no live value sampling in this release.",
+    availability: "active",
     accept: "",
     credentialBoundary: "secret-manager",
-    activationRequirements: ["read-only-adapter", "secret-reference", "network-policy", "ephemeral-environment", "integration-test"],
+    activationRequirements: [
+      "read-only-adapter",
+      "secret-reference",
+      "metadata-only-snapshot",
+      "sha256-evidence",
+      "fail-closed-normalizer-test",
+    ],
   },
   {
     id: "mysql",

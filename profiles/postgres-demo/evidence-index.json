@@ -1,0 +1,266 @@
+{
+  "evidence": [
+    {
+      "claim": {
+        "byteCount": 5778,
+        "columnCount": 19,
+        "schemaCount": 1,
+        "tableCount": 3
+      },
+      "classification": "INTERNAL",
+      "contentSha256": "6be9d9d15e9c573ff1cbc774f0459f93e3e0f316aabe75f6e44b6fe2be2337db",
+      "evidenceId": "evidence-postgres-demo-edee55109e86bcc4",
+      "extractorName": "ontology-appliance-postgres-metadata-profiler",
+      "extractorVersion": "1.0.0",
+      "locator": "data/synthetic/postgres-catalog.json",
+      "normalizedCoordinates": {
+        "artifact": "catalog-snapshot"
+      },
+      "observedAt": "2026-07-01T06:30:00Z",
+      "policyTags": [
+        "metadata-only",
+        "read-only",
+        "snapshot"
+      ],
+      "snapshotId": "postgres-demo@sha256:6be9d9d15e9c573ff1cbc774f0459f93e3e0f316aabe75f6e44b6fe2be2337db",
+      "sourceId": "postgres-demo",
+      "tenantId": "demo-bank"
+    },
+    {
+      "claim": {
+        "profileStatistics": {
+          "columnCount": 19,
+          "foreignKeyCount": 3,
+          "primaryKeyCount": 3,
+          "schemaCount": 1,
+          "tableCount": 3
+        }
+      },
+      "classification": "INTERNAL",
+      "contentSha256": "fe9b102a4f948aa926a95bc7029d76d91298d4df2508c5b0cf4b41d485d4a83b",
+      "evidenceId": "evidence-postgres-demo-a625268a96a8085a",
+      "extractorName": "ontology-appliance-postgres-metadata-profiler",
+      "extractorVersion": "1.0.0",
+      "locator": "profiles/postgres-demo/profile.json#/statistics",
+      "normalizedCoordinates": {
+        "profilePointer": "/statistics"
+      },
+      "observedAt": "2026-07-01T06:30:00Z",
+      "policyTags": [
+        "bounded-profile",
+        "metadata-only",
+        "read-only"
+      ],
+      "snapshotId": "postgres-demo@sha256:6be9d9d15e9c573ff1cbc774f0459f93e3e0f316aabe75f6e44b6fe2be2337db",
+      "sourceId": "postgres-demo",
+      "tenantId": "demo-bank"
+    },
+    {
+      "claim": {
+        "tableMetadata": {
+          "columnCount": 6,
+          "primaryKey": {
+            "columns": [
+              "account_id"
+            ],
+            "constraintName": "accounts_pkey"
+          },
+          "rowEstimate": 1810,
+          "tableType": "BASE TABLE"
+        }
+      },
+      "classification": "INTERNAL",
+      "contentSha256": "166738e669e7f38497e88b503709339d13869cff0238a74b162bc5cfd5e3b507",
+      "evidenceId": "evidence-postgres-demo-ff388c69feb9fdf6",
+      "extractorName": "ontology-appliance-postgres-metadata-profiler",
+      "extractorVersion": "1.0.0",
+      "locator": "postgres://kyc_core/kyc/accounts",
+      "normalizedCoordinates": {
+        "profilePointer": "/tables/kyc.accounts",
+        "table": "kyc.accounts"
+      },
+      "observedAt": "2026-07-01T06:30:00Z",
+      "policyTags": [
+        "metadata-only",
+        "read-only"
+      ],
+      "snapshotId": "postgres-demo@sha256:6be9d9d15e9c573ff1cbc774f0459f93e3e0f316aabe75f6e44b6fe2be2337db",
+      "sourceId": "postgres-demo",
+      "tenantId": "demo-bank"
+    },
+    {
+      "claim": {
+        "relationshipEvidence": {
+          "columns": [
+            "customer_id"
+          ],
+          "constraintName": "accounts_customer_id_fkey",
+          "referencedColumns": [
+            "customer_id"
+          ],
+          "referencedTable": "kyc.customers"
+        }
+      },
+      "classification": "INTERNAL",
+      "contentSha256": "69e045426b42b315ce95aa8ea52ad612a54933c595429cda54f3f58daaceb2a1",
+      "evidenceId": "evidence-postgres-demo-375aad8ba2e474b8",
+      "extractorName": "ontology-appliance-postgres-metadata-profiler",
+      "extractorVersion": "1.0.0",
+      "locator": "postgres://kyc_core/kyc/accounts#constraint=accounts_customer_id_fkey",
+      "normalizedCoordinates": {
+        "constraint": "accounts_customer_id_fkey",
+        "profilePointer": "/tables/kyc.accounts/foreignKeys"
+      },
+      "observedAt": "2026-07-01T06:30:00Z",
+      "policyTags": [
+        "metadata-only",
+        "read-only",
+        "relationship-profile"
+      ],
+      "snapshotId": "postgres-demo@sha256:6be9d9d15e9c573ff1cbc774f0459f93e3e0f316aabe75f6e44b6fe2be2337db",
+      "sourceId": "postgres-demo",
+      "tenantId": "demo-bank"
+    },
+    {
+      "claim": {
+        "tableMetadata": {
+          "columnCount": 6,
+          "primaryKey": {
+            "columns": [
+              "customer_id"
+            ],
+            "constraintName": "customers_pkey"
+          },
+          "rowEstimate": 1250,
+          "tableType": "BASE TABLE"
+        }
+      },
+      "classification": "INTERNAL",
+      "contentSha256": "811533b27294824fd557a80c683ca930a683461d1d405e5b5a0be03723b715fd",
+      "evidenceId": "evidence-postgres-demo-9b21f1a2df66d61a",
+      "extractorName": "ontology-appliance-postgres-metadata-profiler",
+      "extractorVersion": "1.0.0",
+      "locator": "postgres://kyc_core/kyc/customers",
+      "normalizedCoordinates": {
+        "profilePointer": "/tables/kyc.customers",
+        "table": "kyc.customers"
+      },
+      "observedAt": "2026-07-01T06:30:00Z",
+      "policyTags": [
+        "metadata-only",
+        "read-only"
+      ],
+      "snapshotId": "postgres-demo@sha256:6be9d9d15e9c573ff1cbc774f0459f93e3e0f316aabe75f6e44b6fe2be2337db",
+      "sourceId": "postgres-demo",
+      "tenantId": "demo-bank"
+    },
+    {
+      "claim": {
+        "tableMetadata": {
+          "columnCount": 7,
+          "primaryKey": {
+            "columns": [
+              "payment_id"
+            ],
+            "constraintName": "payments_pkey"
+          },
+          "rowEstimate": 52340,
+          "tableType": "BASE TABLE"
+        }
+      },
+      "classification": "INTERNAL",
+      "contentSha256": "9d341f7d79bea054f141f84992e7454aa3438b68d9326d41de83da71e7cac6c0",
+      "evidenceId": "evidence-postgres-demo-427ee9abf65872f6",
+      "extractorName": "ontology-appliance-postgres-metadata-profiler",
+      "extractorVersion": "1.0.0",
+      "locator": "postgres://kyc_core/kyc/payments",
+      "normalizedCoordinates": {
+        "profilePointer": "/tables/kyc.payments",
+        "table": "kyc.payments"
+      },
+      "observedAt": "2026-07-01T06:30:00Z",
+      "policyTags": [
+        "metadata-only",
+        "read-only"
+      ],
+      "snapshotId": "postgres-demo@sha256:6be9d9d15e9c573ff1cbc774f0459f93e3e0f316aabe75f6e44b6fe2be2337db",
+      "sourceId": "postgres-demo",
+      "tenantId": "demo-bank"
+    },
+    {
+      "claim": {
+        "relationshipEvidence": {
+          "columns": [
+            "creditor_account_id"
+          ],
+          "constraintName": "payments_creditor_account_id_fkey",
+          "referencedColumns": [
+            "account_id"
+          ],
+          "referencedTable": "kyc.accounts"
+        }
+      },
+      "classification": "INTERNAL",
+      "contentSha256": "43ef6d00268f491887dca6a652b0b4bd13e878d354e3a170b37847ec0293e378",
+      "evidenceId": "evidence-postgres-demo-03fd48d5e1fb3be4",
+      "extractorName": "ontology-appliance-postgres-metadata-profiler",
+      "extractorVersion": "1.0.0",
+      "locator": "postgres://kyc_core/kyc/payments#constraint=payments_creditor_account_id_fkey",
+      "normalizedCoordinates": {
+        "constraint": "payments_creditor_account_id_fkey",
+        "profilePointer": "/tables/kyc.payments/foreignKeys"
+      },
+      "observedAt": "2026-07-01T06:30:00Z",
+      "policyTags": [
+        "metadata-only",
+        "read-only",
+        "relationship-profile"
+      ],
+      "snapshotId": "postgres-demo@sha256:6be9d9d15e9c573ff1cbc774f0459f93e3e0f316aabe75f6e44b6fe2be2337db",
+      "sourceId": "postgres-demo",
+      "tenantId": "demo-bank"
+    },
+    {
+      "claim": {
+        "relationshipEvidence": {
+          "columns": [
+            "debtor_account_id"
+          ],
+          "constraintName": "payments_debtor_account_id_fkey",
+          "referencedColumns": [
+            "account_id"
+          ],
+          "referencedTable": "kyc.accounts"
+        }
+      },
+      "classification": "INTERNAL",
+      "contentSha256": "eb25b3d9f73f8e0afdbf5ed35ae23b7ea7f87427d39087a1b3436b3395074fad",
+      "evidenceId": "evidence-postgres-demo-eee21ddcc59e2433",
+      "extractorName": "ontology-appliance-postgres-metadata-profiler",
+      "extractorVersion": "1.0.0",
+      "locator": "postgres://kyc_core/kyc/payments#constraint=payments_debtor_account_id_fkey",
+      "normalizedCoordinates": {
+        "constraint": "payments_debtor_account_id_fkey",
+        "profilePointer": "/tables/kyc.payments/foreignKeys"
+      },
+      "observedAt": "2026-07-01T06:30:00Z",
+      "policyTags": [
+        "metadata-only",
+        "read-only",
+        "relationship-profile"
+      ],
+      "snapshotId": "postgres-demo@sha256:6be9d9d15e9c573ff1cbc774f0459f93e3e0f316aabe75f6e44b6fe2be2337db",
+      "sourceId": "postgres-demo",
+      "tenantId": "demo-bank"
+    }
+  ],
+  "extractorName": "ontology-appliance-postgres-metadata-profiler",
+  "extractorVersion": "1.0.0",
+  "observedAt": "2026-07-01T06:30:00Z",
+  "schemaVersion": "1.0",
+  "snapshotId": "postgres-demo@sha256:6be9d9d15e9c573ff1cbc774f0459f93e3e0f316aabe75f6e44b6fe2be2337db",
+  "sourceContentSha256": "6be9d9d15e9c573ff1cbc774f0459f93e3e0f316aabe75f6e44b6fe2be2337db",
+  "sourceId": "postgres-demo",
+  "sourceLocator": "data/synthetic/postgres-catalog.json",
+  "tenantId": "demo-bank"
+}

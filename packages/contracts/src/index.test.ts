@@ -6,6 +6,7 @@ import amlConnector from "../../../data/contracts/aml-cases.connector.json";
 import crmConnector from "../../../data/contracts/crm-parties.connector.json";
 import kycConnector from "../../../data/contracts/kyc-documents.connector.json";
 import paymentsConnector from "../../../data/contracts/payments-ledger.connector.json";
+import postgresConnector from "../../../data/contracts/postgres.connector.json";
 import sanctionsConnector from "../../../data/contracts/sanctions-api.connector.json";
 import proposalFixture from "../../../semantic/artifacts/proposals/mapping-crm-cif.json";
 import {
@@ -27,6 +28,7 @@ describe("canonical connector manifest contract", () => {
       crmConnector,
       kycConnector,
       paymentsConnector,
+      postgresConnector,
       sanctionsConnector,
     ];
     for (const connector of fixtures) {

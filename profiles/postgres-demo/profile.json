@@ -1,0 +1,252 @@
+{
+  "bounds": {
+    "maximumColumns": 2000,
+    "maximumSchemas": 16,
+    "maximumTables": 200,
+    "observedColumns": 19,
+    "observedSchemas": 1,
+    "observedTables": 3
+  },
+  "database": "kyc_core",
+  "extractorName": "ontology-appliance-postgres-metadata-profiler",
+  "extractorVersion": "1.0.0",
+  "observedAt": "2026-07-01T06:30:00Z",
+  "readOnlyEnforcement": {
+    "default_transaction_read_only": "on",
+    "idle_in_transaction_session_timeout": "30000",
+    "statement_timeout": "30000"
+  },
+  "schemaVersion": "1.0",
+  "schemas": [
+    "kyc"
+  ],
+  "serverVersion": "16.4",
+  "snapshotId": "postgres-demo@sha256:6be9d9d15e9c573ff1cbc774f0459f93e3e0f316aabe75f6e44b6fe2be2337db",
+  "sourceContentSha256": "6be9d9d15e9c573ff1cbc774f0459f93e3e0f316aabe75f6e44b6fe2be2337db",
+  "sourceId": "postgres-demo",
+  "sourceLocator": "data/synthetic/postgres-catalog.json",
+  "statistics": {
+    "columnCount": 19,
+    "foreignKeyCount": 3,
+    "primaryKeyCount": 3,
+    "schemaCount": 1,
+    "tableCount": 3
+  },
+  "tables": {
+    "kyc.accounts": {
+      "columns": {
+        "account_id": {
+          "dataType": "uuid",
+          "logicalType": "string",
+          "nullable": false,
+          "ordinalPosition": 1,
+          "sourceLocator": "postgres://kyc_core/kyc/accounts#column=account_id"
+        },
+        "currency": {
+          "dataType": "character",
+          "logicalType": "string",
+          "nullable": false,
+          "ordinalPosition": 4,
+          "sourceLocator": "postgres://kyc_core/kyc/accounts#column=currency"
+        },
+        "customer_id": {
+          "dataType": "uuid",
+          "logicalType": "string",
+          "nullable": false,
+          "ordinalPosition": 2,
+          "sourceLocator": "postgres://kyc_core/kyc/accounts#column=customer_id"
+        },
+        "iban": {
+          "dataType": "character varying",
+          "logicalType": "string",
+          "nullable": false,
+          "ordinalPosition": 3,
+          "sourceLocator": "postgres://kyc_core/kyc/accounts#column=iban"
+        },
+        "opened_on": {
+          "dataType": "date",
+          "logicalType": "date",
+          "nullable": false,
+          "ordinalPosition": 6,
+          "sourceLocator": "postgres://kyc_core/kyc/accounts#column=opened_on"
+        },
+        "status": {
+          "dataType": "character varying",
+          "logicalType": "string",
+          "nullable": false,
+          "ordinalPosition": 5,
+          "sourceLocator": "postgres://kyc_core/kyc/accounts#column=status"
+        }
+      },
+      "foreignKeys": [
+        {
+          "columns": [
+            "customer_id"
+          ],
+          "constraintName": "accounts_customer_id_fkey",
+          "referencedColumns": [
+            "customer_id"
+          ],
+          "referencedTable": "kyc.customers"
+        }
+      ],
+      "name": "accounts",
+      "primaryKey": {
+        "columns": [
+          "account_id"
+        ],
+        "constraintName": "accounts_pkey"
+      },
+      "rowEstimate": 1810,
+      "schema": "kyc",
+      "sourceLocator": "postgres://kyc_core/kyc/accounts",
+      "tableType": "BASE TABLE"
+    },
+    "kyc.customers": {
+      "columns": {
+        "created_at": {
+          "dataType": "timestamp with time zone",
+          "logicalType": "datetime",
+          "nullable": false,
+          "ordinalPosition": 6,
+          "sourceLocator": "postgres://kyc_core/kyc/customers#column=created_at"
+        },
+        "customer_id": {
+          "dataType": "uuid",
+          "logicalType": "string",
+          "nullable": false,
+          "ordinalPosition": 1,
+          "sourceLocator": "postgres://kyc_core/kyc/customers#column=customer_id"
+        },
+        "date_of_birth": {
+          "dataType": "date",
+          "logicalType": "date",
+          "nullable": true,
+          "ordinalPosition": 3,
+          "sourceLocator": "postgres://kyc_core/kyc/customers#column=date_of_birth"
+        },
+        "full_name": {
+          "dataType": "character varying",
+          "logicalType": "string",
+          "nullable": false,
+          "ordinalPosition": 2,
+          "sourceLocator": "postgres://kyc_core/kyc/customers#column=full_name"
+        },
+        "residency_country": {
+          "dataType": "character",
+          "logicalType": "string",
+          "nullable": true,
+          "ordinalPosition": 4,
+          "sourceLocator": "postgres://kyc_core/kyc/customers#column=residency_country"
+        },
+        "risk_rating": {
+          "dataType": "character varying",
+          "logicalType": "string",
+          "nullable": false,
+          "ordinalPosition": 5,
+          "sourceLocator": "postgres://kyc_core/kyc/customers#column=risk_rating"
+        }
+      },
+      "foreignKeys": [],
+      "name": "customers",
+      "primaryKey": {
+        "columns": [
+          "customer_id"
+        ],
+        "constraintName": "customers_pkey"
+      },
+      "rowEstimate": 1250,
+      "schema": "kyc",
+      "sourceLocator": "postgres://kyc_core/kyc/customers",
+      "tableType": "BASE TABLE"
+    },
+    "kyc.payments": {
+      "columns": {
+        "amount": {
+          "dataType": "numeric",
+          "logicalType": "number",
+          "nullable": false,
+          "ordinalPosition": 4,
+          "sourceLocator": "postgres://kyc_core/kyc/payments#column=amount"
+        },
+        "creditor_account_id": {
+          "dataType": "uuid",
+          "logicalType": "string",
+          "nullable": true,
+          "ordinalPosition": 3,
+          "sourceLocator": "postgres://kyc_core/kyc/payments#column=creditor_account_id"
+        },
+        "currency": {
+          "dataType": "character",
+          "logicalType": "string",
+          "nullable": false,
+          "ordinalPosition": 5,
+          "sourceLocator": "postgres://kyc_core/kyc/payments#column=currency"
+        },
+        "debtor_account_id": {
+          "dataType": "uuid",
+          "logicalType": "string",
+          "nullable": false,
+          "ordinalPosition": 2,
+          "sourceLocator": "postgres://kyc_core/kyc/payments#column=debtor_account_id"
+        },
+        "executed_at": {
+          "dataType": "timestamp with time zone",
+          "logicalType": "datetime",
+          "nullable": false,
+          "ordinalPosition": 6,
+          "sourceLocator": "postgres://kyc_core/kyc/payments#column=executed_at"
+        },
+        "payment_id": {
+          "dataType": "uuid",
+          "logicalType": "string",
+          "nullable": false,
+          "ordinalPosition": 1,
+          "sourceLocator": "postgres://kyc_core/kyc/payments#column=payment_id"
+        },
+        "screening_flags": {
+          "dataType": "jsonb",
+          "logicalType": "object",
+          "nullable": true,
+          "ordinalPosition": 7,
+          "sourceLocator": "postgres://kyc_core/kyc/payments#column=screening_flags"
+        }
+      },
+      "foreignKeys": [
+        {
+          "columns": [
+            "creditor_account_id"
+          ],
+          "constraintName": "payments_creditor_account_id_fkey",
+          "referencedColumns": [
+            "account_id"
+          ],
+          "referencedTable": "kyc.accounts"
+        },
+        {
+          "columns": [
+            "debtor_account_id"
+          ],
+          "constraintName": "payments_debtor_account_id_fkey",
+          "referencedColumns": [
+            "account_id"
+          ],
+          "referencedTable": "kyc.accounts"
+        }
+      ],
+      "name": "payments",
+      "primaryKey": {
+        "columns": [
+          "payment_id"
+        ],
+        "constraintName": "payments_pkey"
+      },
+      "rowEstimate": 52340,
+      "schema": "kyc",
+      "sourceLocator": "postgres://kyc_core/kyc/payments",
+      "tableType": "BASE TABLE"
+    }
+  },
+  "tenantId": "demo-bank",
+  "valueSampling": "disabled"
+}

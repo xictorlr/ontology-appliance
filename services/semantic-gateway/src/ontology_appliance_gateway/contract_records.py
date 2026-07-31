@@ -24,6 +24,7 @@ class ConnectorSourceType(StrEnum):
     JSONL = "jsonl"
     PDF = "pdf"
     OPENAPI = "openapi"
+    POSTGRES = "postgres"
 
 
 class ConnectorCapability(StrEnum):
@@ -68,6 +69,9 @@ class ConnectorLimits(ContractRecord):
     maximum_bytes: int | None = Field(default=None, ge=1)
     maximum_records: int | None = Field(default=None, ge=1)
     maximum_pages: int | None = Field(default=None, ge=1)
+    maximum_schemas: int | None = Field(default=None, ge=1)
+    maximum_tables: int | None = Field(default=None, ge=1)
+    maximum_columns: int | None = Field(default=None, ge=1)
     timeout_seconds: int | None = Field(default=None, ge=1)
 
 

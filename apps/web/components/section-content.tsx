@@ -476,6 +476,7 @@ function Sources() {
                 <div className="connector-options">
                   {connectors.map((connector) => {
                     const active = isActiveFileConnector(connector);
+                    const activated = connector.availability === "active";
                     return (
                       <button
                         className={`connector-option ${active ? "" : "roadmap"}`}
@@ -486,7 +487,7 @@ function Sources() {
                         <span><CategoryIcon size={19} /></span>
                         <strong>{connector.label}</strong>
                         <small>{connector.detail}</small>
-                        <em>{active ? "Active" : "Planned"}</em>
+                        <em>{active ? "Active" : activated ? "Active · snapshot intake" : "Planned"}</em>
                       </button>
                     );
                   })}

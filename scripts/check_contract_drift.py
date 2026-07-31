@@ -111,9 +111,9 @@ def validate_record_contracts() -> tuple[int, int]:
         )
 
     connector_paths = sorted((ROOT / "data" / "contracts").glob("*.connector.json"))
-    if len(connector_paths) != 6:
+    if len(connector_paths) != 7:
         raise SystemExit(
-            f"expected 6 implemented connector fixtures, found {len(connector_paths)}"
+            f"expected 7 implemented connector fixtures, found {len(connector_paths)}"
         )
     for path in connector_paths:
         ConnectorManifestRecord.model_validate_json(path.read_text(encoding="utf-8"))
