@@ -205,8 +205,13 @@ def self_test() -> int:
     assert any("inline secret" in error for error in errors)
     assert any("unsupported top-level" in error for error in errors)
     roadmap = valid_example()
-    roadmap["source_type"] = "postgres"
+    # snowflake stays a roadmap-only source type; postgres activated in
+    # metadata snapshot mode and now validates.
+    roadmap["source_type"] = "snowflake"
     assert any("source_type" in error for error in validate(roadmap))
+    activated = valid_example()
+    activated["source_type"] = "postgres"
+    assert not any("source_type" in error for error in validate(activated))
     print("self-test: ok")
     return 0
 
