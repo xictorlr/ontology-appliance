@@ -26,13 +26,13 @@ firebase = [
 cloud-function = ["functions-framework>=3.9,<4"]
 vertex = ["google-genai>=1.30,<2"]
 test = [
-  "pytest>=8.3,<9",
+  "pytest>=8.3,<10",
   "pytest-cov>=6,<8",
 ]
 
 [dependency-groups]
 dev = [
-  "pytest>=8.3,<9",
+  "pytest>=8.3,<10",
   "pytest-cov>=6,<8",
   "ruff>=0.12,<1",
   "truststore>=0.10,<1",
